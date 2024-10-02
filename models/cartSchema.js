@@ -19,9 +19,9 @@ const cartSchema = new Schema({
             type:Number,
             default:1
         },
-        status:{
-            type :String,
-            default:'placed'
+        isCheckout:{
+            type:Boolean,
+            default:false
         },
         cancellationReason:{
             type:String,
@@ -33,4 +33,5 @@ const cartSchema = new Schema({
 })
 
 const Cart = mongoose.model("Cart",cartSchema);
+
 module.exports = Cart;
