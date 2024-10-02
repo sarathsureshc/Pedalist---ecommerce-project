@@ -78,12 +78,13 @@ const userSchema = new Schema({
             type : Schema.Types.ObjectId,
             ref : 'Category'
         },
-        brand : {
-            type : String
-        },
         searchOn : {
             type : Date,
             default : Date.now
         }
     }]
 })
+
+const User = mongoose.model("User",userSchema);
+
+module.exports = User;
