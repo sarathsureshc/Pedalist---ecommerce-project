@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pedalist</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Racing Sans One Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Racing+Sans+One&display=swap" rel="stylesheet">
+
+  <!-- Bullseye bullet -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <!-- Navbar (transparent and positioned over the image) -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <img src="pedalist-logo.png" alt="Logo" width="60" height="50">
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mx-auto"> <!-- Centered items -->
+          <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Bicycles</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Accessories</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Login</a></li>
+        </ul>
+        <ul class="navbar-nav ms-auto"> <!-- Ensures the cart is aligned to the right -->
+          <li class="nav-item">
+            <a href="#" class="nav-link cart-link">
+              <i class="bi bi-cart-fill"></i>
+              <span class="cart-badge">3</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- Background image section -->
+  <div class="background-image">
+    <div class="color-overlay"></div>
+
+    <div class="container text-white overlay-text">
+      <h5 class="subheading">Newly Launched</h5>
+      <h1 class="main-heading">Marlin GRS100</h1>
+      <h6 class="small-heading mt-4">Specifications</h6>
+      <ul class="specifications-list">
+        <li><i class="fas fa-bullseye"></i> Frame: Carbon Fiber</li>
+        <li><i class="fas fa-bullseye"></i> Gears: Shimano 21-Speed</li>
+        <li><i class="fas fa-bullseye"></i> Brakes: Hydraulic Disc Brakes</li>
+        <li><i class="fas fa-bullseye"></i> Suspension: Front Suspension Fork</li>
+      </ul>
+      <a href="#" class="btn buy-now-btn">BUY NOW</a>
+    </div>
+
+  </div>
+
+  <!-- New Arrivals Section -->
+  <section class="new-arrivals">
+    <div class="container">
+      <h2 class="text-center my-4">New Arrivals</h2>
+      <div class="row d-none d-lg-flex"> <!-- For larger screens -->
+        <!-- Replace these with dynamic content -->
+        <div class="col-md-3 mb-4">
+          <div class="card">
+            <img src="https://via.placeholder.com/300" class="card-img-top" alt="Bicycle 1">
+            <div class="card-body">
+              <h5 class="card-title">Bicycle Model 1</h5>
+              <p class="card-text">$299.99</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-4">
+          <div class="card">
+            <img src="https://via.placeholder.com/300" class="card-img-top" alt="Bicycle 2">
+            <div class="card-body">
+              <h5 class="card-title">Bicycle Model 2</h5>
+              <p class="card-text">$399.99</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-4">
+          <div class="card">
+            <img src="https://via.placeholder.com/300" class="card-img-top" alt="Bicycle 3">
+            <div class="card-body">
+              <h5 class="card-title">Bicycle Model 3</h5>
+              <p class="card-text">$499.99</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-4">
+          <div class="card">
+            <img src="https://via.placeholder.com/300" class="card-img-top" alt="Bicycle 3">
+            <div class="card-body">
+              <h5 class="card-title">Bicycle Model 3</h5>
+              <p class="card-text">$499.99</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Carousel for small screens -->
+      <div id="newArrivalsCarousel" class="carousel slide d-lg-none" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div class="card">
+              <img src="https://via.placeholder.com/300" class="card-img-top" alt="Bicycle 1">
+              <div class="card-body">
+                <h5 class="card-title">Bicycle Model 1</h5>
+                <p class="card-text">$299.99</p>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="card">
+              <img src="https://via.placeholder.com/300" class="card-img-top" alt="Bicycle 2">
+              <div class="card-body">
+                <h5 class="card-title">Bicycle Model 2</h5>
+                <p class="card-text">$399.99</p>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="card">
+              <img src="https://via.placeholder.com/300" class="card-img-top" alt="Bicycle 3">
+              <div class="card-body">
+                <h5 class="card-title">Bicycle Model 3</h5>
+                <p class="card-text">$499.99</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#newArrivalsCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#newArrivalsCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mountain Bikes Section -->
+  <section class="mountain-bikes-section">
+    <div class="mountain-bikes-background">
+      <div class="gradient-overlay"></div>
+      <div class="content">
+        <h4 class="discover-heading">Discover the collection</h4>
+        <h2 class="mountain-bikes-heading">Mountain Bikes</h2>
+        <p class="description">Conquer every trail with our premium Mountain Bikes, designed for ultimate performance
+          and unmatched durability. Explore the thrill of off-road adventures with the best gear at unbeatable prices!
+        </p>
+        <div class="mtb-specifications">
+          <ul class="mtb-specifications-list">
+            <li class="bullet"><i class="fas fa-bullseye"></i> Lightweight Aluminum Frame</li>
+            <li class="bullet"><i class="fas fa-bullseye"></i> Hydraulic Disc Brakes</li>
+            <li class="bullet"><i class="fas fa-bullseye"></i> 27.5” Wheels for Better Control</li>
+            <li class="bullet"><i class="fas fa-bullseye"></i> Front Suspension for Smooth Ride</li>
+            <li class="bullet"><i class="fas fa-bullseye"></i> High-Performance Tires</li>
+            <li class="bullet"><i class="fas fa-bullseye"></i> Available in Multiple Sizes</li>
+          </ul>
+        </div>
+        <a href="#" class="explore-more-btn">Explore More</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Road Bikes Section -->
+  <section class="road-bikes-section">
+    <div class="road-bikes-background">
+      <div class="gradient-overlay"></div>
+      <div class="content">
+        <h4 class="discover-heading">Discover the collection</h4>
+        <h2 class="mountain-bikes-heading">Road Bikes</h2>
+        <p class="description">Navigate the city with ease and style on our lightweight road bikes, perfect for daily
+          commutes and urban adventures. Experience unmatched speed, comfort, and control on every ride with sleek
+          designs built for the streets!
+        </p>
+        <div class="mtb-specifications">
+          <ul class="mtb-specifications-list">
+            <li class="bullet"><i class="fas fa-bullseye"></i> Lightweight Frame</li>
+            <li class="bullet"><i class="fas fa-bullseye"></i> High Gear Range</li>
+            <li class="bullet"><i class="fas fa-bullseye"></i> Drop Handlebars</li>
+            <li class="bullet"><i class="fas fa-bullseye"></i> Aerodynamic Design</li>
+            <li class="bullet"><i class="fas fa-bullseye"></i> Rigid Fork</li>
+            <li class="bullet"><i class="fas fa-bullseye"></i> Internal Cable Routing</li>
+          </ul>
+        </div>
+        <a href="#" class="explore-more-btn">Explore More</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Road Bikes Section -->
+  <section class="hybrid-bikes-section">
+    <div class="hybrid-bikes-background">
+      <div class="gradient-overlay"></div>
+      <div class="content">
+        <h4 class="discover-heading">Discover the collection</h4>
+        <h2 class="mountain-bikes-heading">Hybrid Bikes</h2>
+        <p class="description">Discover the perfect blend of comfort and versatility with our hybrid bikes, designed for
+          both city streets and light trails. Enjoy smooth rides with ergonomic features and all-terrain capabilities,
+          making every journey effortless and enjoyable!
+        </p>
+        <div class="mtb-specifications">
+          <ul class="mtb-specifications-list">
+            <li class="bullet"><i class="fas fa-bullseye"></i> Versatile Frame Design</li>
+            <li class="bullet"><i class="fas fa-bullseye"></i> Comfortable Riding Position</li>
+            <li class="bullet"><i class="fas fa-bullseye"></i> Front Suspension</li>
+            <li class="bullet"><i class="fas fa-bullseye"></i> Multi-Terrain Tires</li>
+            <li class="bullet"><i class="fas fa-bullseye"></i> Comfortable Saddle</li>
+            <li class="bullet"><i class="fas fa-bullseye"></i> Wide Gear Range</li>
+          </ul>
+        </div>
+        <a href="#" class="explore-more-btn">Explore More</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Pedalista Section -->
+  <section class="why-choose-us">
+    <div class="container">
+      <h2 class="text-center my-5">Why Choose Pedalista</h2>
+
+      <div class="row image-collage">
+        <div class="col-lg-6 col-md-6 mb-4">
+          <div class="image-container">
+            <img src="https://wallpapers.com/images/high/leogang-downhill-4k-mountain-bike-track-luel5gej0olnx6ik.webp"
+              alt="Image 1" class="img-fluid">
+            <div class="overlay">
+              <p>Genuine and Branded Products</p>
+              <div class="desc">Featuring top brands known for durability, performance, and style.</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-6 mb-4">
+          <div class="image-container">
+            <img
+              src="https://img.goodfon.com/wallpaper/nbig/8/a6/velogonka-velobaik-daunkhill-spusk-s-gory-skorostnoi-spusk-v.webp"
+              alt="Image 2" class="img-fluid">
+            <div class="overlay">
+              <p>Wide Selection of Bikes</p>
+              <div class="desc">From road bikes and mountain bikes to hybrids and electric bikes, find the perfect ride
+                for every need and budget.</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="image-container">
+            <img src="https://wallpapers.com/images/high/brave-woman-riding-4k-mountain-bike-tga87nlaep2pe1xt.webp"
+              alt="Image 3" class="img-fluid">
+            <div class="overlay">
+              <p>Biggest Service Network</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="image-container">
+            <img src="https://wallpapers.com/images/high/back-unweighting-4k-mountain-bike-c7f0q1gm8p8pimbi.webp"
+              alt="Image 4" class="img-fluid">
+            <div class="overlay">
+              <p>99% Assembled Delivery</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="image-container">
+            <img src="https://wallpapers.com/images/high/woman-on-a-4k-mountain-bike-steep-trail-m5aa7q35ooqc2l0z.webp"
+              alt="Image 5" class="img-fluid">
+            <div class="overlay">
+              <p>Free First Bike Service</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Eco biking program section -->
+  <section class="media-section py-5">
+    <div class="container">
+      <h2 class="text-center mb-5">Join #GoEcoBiking Program</h2>
+      <div class="row">
+        <!-- Media (Image or Video) -->
+        <div class="col-lg-12 text-center mb-4">
+          <a href="https://www.youtube.com/" target="_blank">
+            <img
+              src="https://images.sbs.com.au/dims4/default/7867651/2147483647/strip/true/crop/1024x576+0+32/resize/1280x720!/quality/90/?url=http%3A%2F%2Fsbs-au-brightspot.s3.amazonaws.com%2F57%2F79%2F9b9b17864de6989490f668896f9e%2Ftp-tdf2022.jpg&imwidth=1280"
+              alt="Project Preview" class="img-fluid">
+          </a>
+        </div>
+      </div>
+      <div class="row">
+        <!-- Subheading and Paragraph on the Left -->
+        <div class="col-lg-8">
+          <h3>Pedal with purpose: Embrace eco-biking for a greener tomorrow.</h3>
+          <p>Pedal with purpose and join our eco-biking program to make a positive impact on the environment. By
+            choosing eco-biking, you're not only enjoying a healthier lifestyle but also contributing to a greener, more
+            sustainable future for everyone.</p>
+        </div>
+        <!-- Button on the Right -->
+        <div class="col-lg-4 text-end">
+          <a href="#" class="btn btn-lg" style="background-color: rgb(223, 69, 62); color: white;">Join The Program</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- All new product section -->
+  <section class="image-bg-section">
+    <div class="overlay">
+      <div class="content text-center">
+        <h3 class="subheading">The All New</h3>
+        <h1 class="main-heading">Marlin GRS100 is Here</h1>
+        <p class="lead">An all-terrain hybrid bike suited for roads and gravel trails. 1x Groupset for easy shifting;
+          the reliable hydraulic disc brakes provide you with a powerful stopping in any condition and easier
+          maintenance; and take you wherever you’re heading faster than before with its low rolling resistance tire.
+          This bike is equipped with a narrow wide chain ring that helps you against frequent chain drop. As you cruise
+          faster and farther, the Marlin GRS100 brings you the best riding feels ever.</p>
+        <a href="#" class="btn btn-lg" style="background-color: rgb(223, 69, 62); color: white;">Buy Now</a>
+      </div>
+    </div>
+  </section>
+
+  <%- include('../partials/user/footer.ejs') %>

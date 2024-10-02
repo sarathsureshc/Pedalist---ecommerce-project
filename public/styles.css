@@ -1,0 +1,648 @@
+/* Custom Styles */
+
+body, html {
+  height: 100%;
+  margin: 0;
+  position: relative;
+}
+
+.navbar {
+  background: transparent;
+  position: absolute; /* Position navbar above the image */
+  width: 100%;
+  z-index: 10; /* Ensure it's above everything else */
+  padding-top: 15px;
+}
+
+/* Flexbox properties for the navbar collapse */
+.navbar-collapse {
+  display: flex; /* Use flexbox for the collapse items */
+  justify-content: space-between; /* Space between nav items and cart */
+  align-items: center; /* Center items vertically */
+}
+
+/* Centering the navbar items */
+.navbar-nav {
+  display: flex; /* Use flexbox for alignment */
+  justify-content: center; /* Center the items */
+  flex-grow: 1; /* Allow navbar items to grow */
+}
+
+.navbar-nav .nav-item {
+  margin: 0 20px; /* Increase space between the links */
+}
+
+.navbar-nav .nav-link {
+  padding: 10px 0; /* Vertical padding for nav links */
+  color: white; /* Set navbar text to white */
+}
+
+.navbar-nav .nav-link:hover {
+  color: #f1f1f1; /* Slight hover effect */
+}
+
+/* Cart icon and badge styles */
+.cart-link {
+  position: relative;
+}
+
+.cart-link i {
+  color: white; /* Cart icon in white */
+  font-size: 24px;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px; /* Keep the badge close to the cart icon */
+  background-color: white; /* White background for the badge */
+  color: rgb(223, 69, 62); /* Red text for the number of items */
+  border-radius: 50%;
+  padding: 3px 7px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* Align the cart on the right */
+.ms-auto {
+  margin-left: auto; /* Push cart to the right */
+}
+
+/* Background image styling */
+.background-image {
+  background-image: url('https://static.wixstatic.com/media/nsplsh_749918c29e0145af91d65853101d2040~mv2.jpg/v1/fill/w_1899,h_1155,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/nsplsh_749918c29e0145af91d65853101d2040~mv2.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 100vh; /* Full viewport height */
+  position: relative;
+  z-index: 1; /* Image and overlay are below the navbar */
+}
+
+/* Color overlay with left black and right red */
+.color-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(22, 22, 22, 0.67) 50%, rgba(223, 69, 62, 0.67) 50%);
+  z-index: 2;
+}
+
+/* Overlay text styles */
+.overlay-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  padding-left: 5vw;
+  margin-top: 10px;
+  transform: translate(-50%, -50%); /* Center the text */
+  text-align: left;
+  z-index: 3; /* Ensure it's above the overlay */
+}
+
+/* Subheading styles */
+.subheading {
+  font-size: 1.5rem;
+  font-family: 'Racing Sans One', sans-serif;
+  font-weight: 500;
+  color: #f1f1f1;
+}
+
+/* Main heading styles */
+.main-heading {
+  font-size: 3.5rem;
+  font-family: 'Racing Sans One', sans-serif;
+  font-weight: bold;
+  color: white;
+}
+
+/* Small heading for specifications */
+.small-heading {
+  font-size: 1.2rem;
+  font-family: 'Racing Sans One', sans-serif;
+  font-weight: 400;
+  margin-bottom: 20px;
+}
+
+/* Specifications list styling */
+.specifications-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.specifications-list li {
+  font-size: 1rem;
+  font-weight: 400;
+  margin-bottom: 10px;
+}
+
+.buy-now-btn {
+  display: inline-block;
+  background-color: rgb(223, 69, 62); /* Red color */
+  color: white; /* White text */
+  padding: 10px 30px; /* Padding for the button */
+  margin-top: 20px;
+  font-size: 16px; /* Font size */
+  text-align: center;
+  text-decoration: none; /* Remove underline */
+  border-radius: 5px; /* Rounded corners */
+  transition: background-color 0.05s ease; /* Smooth transition for hover */
+}
+
+.buy-now-btn:hover {
+  background-color: rgb(200, 60, 55); /* Darker red on hover */
+  text-decoration: none; /* Remove underline on hover */
+  color: white;
+}
+
+/* Make sure page content scrolls if needed */
+html, body {
+  height: 100%;
+  overflow-x: hidden; /* Avoid horizontal scroll */
+}
+
+/* New Arrivals Section */
+.new-arrivals {
+  height: 100vh; /* Full height of the screen */
+  display: flex;
+  align-items: center; /* Center vertically */
+ 
+}
+
+.new-arrivals h2{
+  font-family: 'Racing Sans One', sans-serif;
+  padding-bottom: 100px;
+}
+
+.new-arrivals .card {
+  transition: transform 0.3s; /* Smooth hover effect */
+  border: none;
+  box-shadow: none; /* Optional: to remove any shadow if present */
+  padding-bottom: 10px;
+}
+
+.new-arrivals .card:hover {
+  transform: scale(1.05); /* Scale up on hover */
+}
+
+/* Mountain Bikes Section */
+.mountain-bikes-section {
+  position: relative; /* For absolute positioning of overlay */
+  height: 100vh; /* Full height */
+  overflow: hidden; /* Prevent overflow */
+}
+
+.mountain-bikes-background {
+  background-image: url('https://a.storyblok.com/f/126392/3043x1679/ac89eb89f5/2022-kt-project-banner-bdiamond.jpg/m/1024x0/filters:format(webp):quality(90)'); /* Replace with your background image */
+  background-size: cover;
+  background-position: center;
+  height: 100%; /* Full height */
+  display: flex;
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center horizontally */
+  position: relative; /* For overlay positioning */
+}
+
+.gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, rgba(22, 22, 22, 0) 0%, rgba(22, 22, 22, 1) 100%); /* Gradient overlay */
+  z-index: 1; /* On top of the background */
+}
+
+.content {
+  position: relative;
+  text-align: left; /* left text */
+  color: white; /* Text color */
+  z-index: 2; /* On top of the overlay */
+  padding: 20px; /* Padding */
+  padding-left: 7vw;
+}
+
+.discover-heading {
+  font-size: 24px; /* Font size */
+  margin-bottom: 10px; /* Spacing */
+  font-family: 'Racing Sans One', sans-serif;
+
+}
+
+.mountain-bikes-heading {
+  font-size: 48px; /* Font size */
+  margin: 10px 0; /* Spacing */
+  font-family: 'Racing Sans One', sans-serif;
+}
+
+.description {
+  font-size: 18px; /* Font size */
+  margin: 20px 0; /* Spacing */
+  width: 60%;
+}
+
+.mtb-specifications {
+  display: flex; /* Flexbox layout */
+  justify-content: left; /* left items */
+  margin-top: 20px; /* Spacing above specifications */
+}
+
+.mtb-specifications-list {
+  list-style: none; /* Remove bullets */
+  padding: 0; /* Remove padding */
+  display: grid; /* Use grid layout */
+  grid-template-columns: repeat(2, 1fr); /* Two columns */
+  gap: 15px; /* Gap between items */
+}
+
+.mtb-specifications-list .bullet {
+  position: relative; /* For bullet positioning */
+  padding-left: 20px; /* Space for bullet */
+  text-align: left;
+}
+
+.mtb-specifications-list .bullet i{
+  color: rgb(223, 69, 62);
+}
+
+.explore-more-btn {
+  display: inline-block; /* Inline-block for button */
+  background-color: rgb(223, 69, 62); /* Button color */
+  color: white; /* Text color */
+  padding: 10px 20px; /* Padding */
+  border-radius: 5px; /* Rounded corners */
+  font-size: 18px; /* Font size */
+  text-decoration: none; /* Remove underline */
+  margin-top: 20px; /* Margin above button */
+  transition: background-color 0.3s; /* Transition effect */
+}
+
+.explore-more-btn:hover {
+  background-color: darkred; /* Darker color on hover */
+}
+
+/* Hide mtb-specifications list on smaller screens */
+@media (max-width: 768px) {
+  .description {
+    display: none; /* Hide the specifications list */
+  }
+
+  .lead{
+    display: none;
+  }
+}
+
+/* Road Bikes Section */
+.road-bikes-section {
+  position: relative; /* For absolute positioning of overlay */
+  height: 100vh; /* Full height */
+  overflow: hidden; /* Prevent overflow */
+}
+
+.road-bikes-background {
+  background-image: url('https://c0.wallpaperflare.com/preview/1024/195/816/black-bike-bicycle-product.jpg'); /* Replace with your background image */
+  background-size: cover;
+  background-position: center;
+  height: 100%; /* Full height */
+  display: flex;
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center horizontally */
+  position: relative; /* For overlay positioning */
+}
+
+/* Hybrid Bikes Section */
+.hybrid-bikes-section {
+  position: relative; /* For absolute positioning of overlay */
+  height: 100vh; /* Full height */
+  overflow: hidden; /* Prevent overflow */
+}
+
+.hybrid-bikes-background {
+  background-image: url('https://e1.pxfuel.com/desktop-wallpaper/791/241/desktop-wallpaper-bike-sport-bike-bicycle-carbon-sport-road-love-on-the-bike-pinarello-section-%D1%80%D0%B0%D0%B7%D0%BD%D0%BE%D0%B5-pinarello.jpg'); /* Replace with your background image */
+  background-size: cover;
+  background-position: center;
+  height: 100%; /* Full height */
+  display: flex;
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center horizontally */
+  position: relative; /* For overlay positioning */
+}
+
+/* Why Choose Pedalista Section */
+.why-choose-us {
+  padding: 80px 0; /* Section padding */
+}
+
+.why-choose-us h2 {
+  font-family: 'Racing Sans One', sans-serif;
+  margin-bottom: 40px; /* Spacing below heading */
+}
+
+.why-choose-us p{
+  text-align: left;
+  font-family: 'Racing Sans One', sans-serif;
+  font-size: 4vh;
+}
+
+.why-choose-us .desc{
+  text-align: left;
+}
+
+.image-container {
+   position: relative;
+   width: 100%;
+   height: 100%;
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to bottom, rgba(22, 22, 22, 0) 0%, rgba(22, 22, 22, 1) 100%);
+  padding: 20px;
+  color: white;
+  font-size: 18px;
+  font-weight: 400;
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .why-choose-us {
+    padding: 40px 0; /* Reduced section padding on smaller screens */
+  }
+  .image-container {
+    margin-bottom: 20px; /* Spacing between images on smaller screens */
+  }
+}
+
+.media-section h2 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  font-family: 'Racing Sans One', sans-serif;
+}
+
+.media-section img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.media-section h3 {
+  font-size: 1.75rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+  font-family: 'Racing Sans One', sans-serif;
+  letter-spacing: 0.1vw;
+}
+
+.media-section p {
+  font-size: 1.1rem;
+}
+
+.media-section .btn {
+  padding: 10px 20px;
+  font-size: 1.25rem;
+  border-radius: 5px;
+}
+
+/* Image Background Section */
+.image-bg-section {
+  position: relative;
+  background: url('https://static.wixstatic.com/media/nsplsh_749918c29e0145af91d65853101d2040~mv2.jpg/v1/fill/w_1899,h_1155,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/nsplsh_749918c29e0145af91d65853101d2040~mv2.jpg') no-repeat center center/cover;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4); /* 40% Dark Overlay */
+}
+
+.content {
+  z-index: 1; /* Ensure the content is on top of the overlay */
+}
+
+.subheading {
+  font-size: 1.75rem;
+  font-weight: 500;
+  margin-bottom: 50px;
+  margin-top: 100px;
+
+}
+
+.main-heading {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.lead {
+  font-size: 1.25rem;
+  margin-bottom: 80px;
+}
+
+.image-bg-section .btn {
+  padding: 10px 30px;
+  font-size: 1.25rem;
+  border-radius: 5px;
+}
+
+.footer {
+  background-color: #161616;
+  padding: 30px 0;
+}
+
+.footer h5 {
+  font-size: 1.25rem;
+  margin-bottom: 15px;
+  font-family: 'Racing Sans One', sans-serif;
+}
+
+.footer img{
+  width: 10vw;
+  height: auto;
+}
+
+.footer ul {
+  padding-left: 0;
+  list-style: none;
+}
+
+.footer ul li a {
+  color: #ffffff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer ul li a:hover {
+  color: #a4a4a4;
+}
+
+.footer-bottom {
+  border-top: 1px solid #000000;
+  padding-top: 20px;
+}
+
+.footer-bottom p {
+  margin-bottom: 0;
+}
+
+.footer-bottom a {
+  font-size: 1.25rem;
+}
+
+
+/* Login form styles */
+
+.login-form {
+  background-color: white;
+  border-radius: 8px;
+  padding: 30px;
+  width: 400px;
+  max-width: 90%; /* For responsiveness */
+  position: absolute;
+  top: 50%;
+  left: 70%;
+  transform: translate(50%, -50%);
+}
+
+.login-form h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.login-form .form-label {
+  font-weight: bold;
+}
+
+.login-form .btn-danger {
+  background-color: #d9534f;
+  border-color: #d9534f;
+}
+
+.login-form .separator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin-top: 30px;
+}
+
+.login-form .separator span {
+  flex-grow: 1;
+  border-bottom: 1px solid #ccc;
+  line-height: 1px;
+  position: relative;
+}
+
+.login-form .separator span:before,
+.login-form .separator span:after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  background-color: #ccc;
+  border-radius: 50%;
+  position: absolute;
+  top: -4px;
+}
+
+.login-form .separator span:before {
+  left: -15px;
+}
+
+.login-form .separator span:after {
+  right: -15px;
+}
+
+.login-form .btn-outline-dark {
+  border-color: #333;
+  color: #333;
+}
+
+.login-form .btn-outline-dark:hover {
+  background-color: #333;
+  color: white;
+}
+
+/* ... Add styles for Facebook and Apple buttons */
+
+.login-form .forgot-password {
+  color: #d9534f;
+}
+
+/***** Page not found *****/ 
+
+/* General Reset */
+
+
+.not-found-wrapper {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.not-found-title {
+  font-size: 8rem;
+  font-weight: 600;
+  color: #f76c6c;
+  margin-bottom: 20px;
+}
+
+.not-found-subtitle {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.not-found-message {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+}
+
+.not-found-btn {
+  text-decoration: none;
+  color: white;
+  background-color: #f76c6c;
+  padding: 12px 30px;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease;
+}
+
+.not-found-btn:hover {
+  background-color: #ff5151;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .not-found-title {
+      font-size: 6rem;
+  }
+
+  .not-found-subtitle {
+      font-size: 1.5rem;
+  }
+
+  .not-found-btn {
+      padding: 10px 20px;
+      font-size: 1rem;
+  }
+}
+
+
+/***** End Page not found *****/
