@@ -3,7 +3,7 @@ const app = express();
 const env = require("dotenv").config();
 const db = require("./config/db");
 const router = require('./routes/userRouter')
-const path = require
+const path = require('path')
 db()
 
 app.use("/",router)
