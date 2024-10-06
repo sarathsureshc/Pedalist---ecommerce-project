@@ -23,6 +23,33 @@ const loadHomepage = async (req,res)=>{
 
     } catch (error) {
         console.log("Home page not found");
+        res.render("pageNotFound")
+        res.status(500).send({ message: "Server error" });        
+
+    }
+}
+
+const loadLoginpage = async (req,res)=>{
+    try {
+        
+        return res.render("login");
+
+    } catch (error) {
+        console.log("Login page not found");
+        res.render("pageNotFound")
+        res.status(500).send({ message: "Server error" });        
+
+    }
+}
+
+const loadSignuppage = async (req,res)=>{
+    try {
+        
+        return res.render("signup");
+
+    } catch (error) {
+        console.log("Signup page not found");
+        res.render("pageNotFound")
         res.status(500).send({ message: "Server error" });        
 
     }
@@ -31,5 +58,7 @@ const loadHomepage = async (req,res)=>{
 
 module.exports = {
     loadHomepage,
-    pageNotFound
+    pageNotFound,
+    loadLoginpage,
+    loadSignuppage
 };
