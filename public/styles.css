@@ -509,7 +509,7 @@ html, body {
 }
 
 
-/* Login form styles */
+/* Login page styles */
 
 .login-form {
   background-color: white;
@@ -524,8 +524,10 @@ html, body {
 }
 
 .login-form h2 {
-  text-align: center;
+  text-align: left;
   margin-bottom: 20px;
+  margin-top: 20px;
+  font-size: 20px;
 }
 
 /***** Section *****/
@@ -563,30 +565,7 @@ html, body {
 .input-group input[type="password"] {
   font-family: 'Courier New', Courier, monospace;
 }
-.options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
-}
-.options label {
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-  color: #333;
-}
-.options input[type="checkbox"] {
-  margin-right: 5px;
-}
-.options a {
-  font-size: 14px;
-  color: #333;
-  text-decoration: none;
-  transition: color 0.3s;
-}
-.options a:hover {
-  color: #000;
-}
+
 .button {
   width: 100%;
   padding: 15px;
@@ -609,7 +588,7 @@ html, body {
   display: flex;
   align-items: center;
   text-align: center;
-  margin-top: 30px;
+  margin-top: 10px;
 }
 
 .login-form .separator span {
@@ -617,16 +596,6 @@ html, body {
   border-bottom: 1px solid #ccc;
   line-height: 1px;
   position: relative;
-}
-
-.login-form .separator span:before,
-.login-form .separator span:after {
-  content: '';
-  width: 10px;
-  height: 10px;
-  background-color: #ccc;
-  position: absolute;
-  top: -4px;
 }
 
 .login-form .separator span:before {
@@ -671,7 +640,6 @@ html, body {
 
 
 /**  Signup page  **/
-/* Login form styles */
 
 .signup-form {
   background-color: white;
@@ -686,8 +654,9 @@ html, body {
 }
 
 .signup-form h2 {
-  text-align: center;
-  margin-bottom: 10px;
+  text-align: left;
+  margin-bottom: 5px;
+  font-size: 20px;
 }
 
 /***** Section *****/
@@ -698,7 +667,7 @@ html, body {
   width: 90%;
 }
 .signup .input-group {
-  margin-bottom: 25px;
+  margin-bottom: 20px;
   position: relative;
 }
 .input-group label {
@@ -712,7 +681,7 @@ html, body {
 }
 .input-group input {
   width: 100%;
-  padding: 15px;
+  padding: 10px 15px;
   border: 1px solid #ccc;
   font-size: 16px;
   transition: border-color 0.3s;
@@ -725,30 +694,7 @@ html, body {
 .input-group input[type="password"] {
   font-family: 'Courier New', Courier, monospace;
 }
-.options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
-}
-.options label {
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-  color: #333;
-}
-.options input[type="checkbox"] {
-  margin-right: 5px;
-}
-.options a {
-  font-size: 14px;
-  color: #333;
-  text-decoration: none;
-  transition: color 0.3s;
-}
-.options a:hover {
-  color: #000;
-}
+
 .button {
   width: 100%;
   padding: 15px;
@@ -810,9 +756,8 @@ html, body {
 }
 
 /* ... Add styles for Facebook and Apple buttons */
-
-.signup-form .forgot-password {
-  color: #d9534f;
+.signup button{
+  margin: 3px;
 }
 
 @media (max-width: 768px) {
