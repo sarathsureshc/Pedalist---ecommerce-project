@@ -7,6 +7,7 @@ router.get("/pageNotFound", userController.pageNotFound);
 router.get("/",userController.loadHomepage);
 router.get("/login",userController.loadLoginpage);
 router.get("/signup",userController.loadSignuppage);
+router.get("/products",userController.loadProductpage)
 
 
 

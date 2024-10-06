@@ -717,7 +717,7 @@ html, body {
   display: flex;
   align-items: center;
   text-align: center;
-  margin-top: 30px;
+  margin-top: 0px;
 }
 
 .signup-form .separator span {
@@ -725,24 +725,6 @@ html, body {
   border-bottom: 1px solid #ccc;
   line-height: 1px;
   position: relative;
-}
-
-.signup-form .separator span:before,
-.signup-form .separator span:after {
-  content: '';
-  width: 10px;
-  height: 10px;
-  background-color: #ccc;
-  position: absolute;
-  top: -4px;
-}
-
-.signup-form .separator span:before {
-  left: -15px;
-}
-
-.signup-form .separator span:after {
-  right: -15px;
 }
 
 .signup-form .btn-outline-dark {

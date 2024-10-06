@@ -55,10 +55,24 @@ const loadSignuppage = async (req,res)=>{
     }
 }
 
+const loadProductpage = async (req,res)=>{
+    try {
+        
+        return res.render("product");
+
+    } catch (error) {
+        console.log("Product page not found");
+        res.render("pageNotFound")
+        res.status(500).send({ message: "Server error" });        
+
+    }
+}
+
 
 module.exports = {
     loadHomepage,
     pageNotFound,
     loadLoginpage,
-    loadSignuppage
+    loadSignuppage,
+    loadProductpage
 };
