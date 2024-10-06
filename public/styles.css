@@ -828,11 +828,12 @@ html, body {
 /***** OTP PAGE *****/ 
 
 .otp {
-  text-align: center;
+  width: 50vh;
   background-color: #ffffff;
   padding: 40px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 11;
 }
 .otp img {
   width: 150px;
