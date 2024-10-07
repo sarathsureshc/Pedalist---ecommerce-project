@@ -67,28 +67,34 @@
     <!-- Login Form -->
     <div class="signup-form">
       <h2>Sign Up</h2>
-      <form method="post" action="/signup">
+      <form id="signform" method="post" action="/signup">
         <div class="signup container">
-            <div class="input-group">
-                <label for="email">First Name</label>
-                <input type="text" id="firstName" name="firstName" placeholder="Enter your First Name">
-            </div>
-            <div class="input-group">
-                <label for="email">Last Name</label>
-                <input type="text" id="lastName" name="lastName" placeholder="Enter your Last Name">
-            </div>
-            <div class="input-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="Enter your Email">
-            </div>
-            <div class="input-group">
-                <label for="Mobile Number">Email</label>
-                <input type="tel" id="mobileNumber" name="mobileNumber" placeholder="Enter your Mobile Number">
-            </div>
-            <div class="input-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter a password">
-            </div>
+          <div class="input-group">
+            <label for="email">First Name</label>
+            <input type="text" id="firstName" name="firstName" placeholder="Enter your First Name">
+            <div id="firstNameError" class="error-message"></div>
+          </div>
+          <div class="input-group">
+            <label for="email">Last Name</label>
+            <input type="text" id="lastName" name="lastName" placeholder="Enter your Last Name">
+            <div id="lastNameError" class="error-message"></div>
+          </div>
+          <div class="input-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="Enter your Email">
+            <div id="emailError" class="error-message"></div>
+          </div>
+          <div class="input-group">
+            <label for="Mobile Number">Mobile Number</label>
+            <input type="tel" id="mobileNumber" name="mobileNumber" placeholder="Enter your Mobile Number">
+            <div id="mobileNumberError" class="error-message"></div>
+          </div>
+          <div class="input-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter a password">
+            <div id="passwordError" class="error-message"></div>
+
+          </div>
           <button class="button">CONTINUE</button>
         </div>
 
@@ -111,4 +117,145 @@
     </div>
   </div>
 
-    <%- include('../partials/user/footer.ejs') %>
+  <%- include('../partials/user/footer.ejs') %>
+
+  <script>
+
+    const firstnameid = document.getElementById("firstName");
+    const lastnameid = document.getElementById("lastName");
+    const emailid = document.getElementById("email");
+    const mobilenumberid = document.getElementById("mobileNumber");
+    const passid = document.getElementById("password");
+
+    const firstnameerror = document.getElementById("firstNameError");
+    const lastnameerror = document.getElementById("lastNameError");
+    const emailerror = document.getElementById("emailError");
+    const mobilenumbererror = document.getElementById("mobileNumberError");
+    const passworderror = document.getElementById("passwordError");
+    const signform = document.getElementById("signform");
+
+    function firstNameValidateChecking(e){
+     
+      const firstnameval = firstnameid.value;
+      const firstnamepattern = /^[A-Za-z\s]+$/;
+
+      if(firstnameval.trim()==""){
+        firstnameerror.style.display="block";
+        firstnameerror.innerHTML="Please enter your first name";
+      }else if(!firstnamepattern.test(firstnameval)){
+        firstnameerror.style.display="block";
+        firstnameerror.innerHTML="First Name can only contain alphabets and spaces";
+      }else{
+        firstnameerror.style.display = "none";
+        firstnameerror.innerHTML = "";
+      }
+    }
+
+    function lastNameValidateChecking(e){
+     
+     const lastnameval = lastnameid.value;
+     const lastnamepattern = /^[A-Za-z\s]+$/;
+
+     if(lastnameval.trim()==""){
+       lastnameerror.style.display="block";
+       lastnameerror.innerHTML="Please enter your first name";
+     }else if(!lastnamepattern.test(lastnameval)){
+       lastnameerror.style.display="block";
+       lastnameerror.innerHTML="First Name can only contain alphabets and spaces";
+     }else{
+       lastnameerror.style.display = "none";
+       lastnameerror.innerHTML = "";
+     }
+   }
+
+   function emailValidateChecking(e){
+
+    const  emailval = emailid.value;
+    const emailpattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    if (!emailpattern.test(emailval)) {
+      emailerror.style.display="block";
+      emailerror.innerHTML="Invalid email address";
+    } else {
+      emailerror.style.display="none";
+      emailerror.innerHTML="";
+    }
+
+   }
+
+   function  mobileNumberValidateChecking(e){
+
+    const mobilenumberval = mobilenumberid.value;
+
+    if(mobilenumberval.trim()===""){
+      mobilenumbererror.style.display="block";
+      mobilenumbererror.innerHTML="Please enter valid mobile number";
+    } else if(mobilenumberval.length<10 ||  mobilenumberval.length>10){
+      mobilenumbererror.style.display="block";
+      mobilenumbererror.innerHTML="Enter 10 digits";
+   } else{
+    mobilenumbererror.style.display = "none";
+    mobilenumbererror.innerHTML = "";
+   }
+  }
+
+  function  passwordValidateChecking(e){
+    const passwordval = passwordid.value;
+    const alpha =  /[a-zA-Z]/;
+    const digit = /\d/;
+
+    if(passwordval.length<8){
+      passworderror.style.display="block";
+      passworderror.innerHTML="Password should be at least 8 characters long";
+    } else if(!alpha.test(passwordval)  || !digit.test(passwordval)){
+      passworderror.style.display="block";
+      passworderror.innerHTML="Password should contain at least alphabets and digits";
+    } else{
+      passworderror.style.display = "none";
+      passworderror.innerHTML = "";
+    }
+  }
+
+
+
+
+
+
+    document.addEventListener("DOMContentLoaded",function(){
+      signform.addEventListener("submit",function(e){
+
+        firstNameValidateChecking();
+        lastNameValidateChecking();
+        emailValidateChecking();
+        mobileNumberValidateChecking();
+        passwordValidateChecking();
+
+        if(
+          !firstnameid ||
+          !lastnameid ||
+          !emailid ||
+          !mobilenumberid ||
+          !passid ||
+          !firstnameerror ||
+          !lastnameerror ||
+          !emailerror ||
+          !mobilenumbererror ||
+          !passworderror ||
+          !signform
+        ){
+          console.error("One or more elements not found!!!");
+        }
+
+        if(
+          firstnameerror.innerHTML ||
+          lastnameerror.innerHTML ||
+          emailerror.innerHTML ||
+          mobilenumbererror.innerHTML ||
+          passworderror.innerHTML
+        ){
+          e.preventDefault();
+        }
+
+      })
+    })
+  </script>

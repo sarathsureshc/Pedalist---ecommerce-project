@@ -59,10 +59,19 @@ const signup = async (req,res) => {
     const{firstName,lastName,email,mobileNumber,password} = req.body;
     try {
         
-        const newUser = new User({firstName,lastName,email,mobileNumber,password})
+        const newUser = new User({firstName,lastName,email,mobileNumber,password});
+
+        
+
+        await newUser.save();
+
+        return res.redirect("/signup")
 
     } catch (error) {
         
+        console.error("Error in saving user",error);
+        res.status(500).send("Internal Server Error");
+
     }
 }
 
@@ -85,5 +94,6 @@ module.exports = {
     pageNotFound,
     loadLoginpage,
     loadSignuppage,
+    signup,
     loadProductpage
 };
