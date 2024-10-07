@@ -67,27 +67,27 @@
     <!-- Login Form -->
     <div class="signup-form">
       <h2>Sign Up</h2>
-      <form>
+      <form method="post" action="/signup">
         <div class="signup container">
             <div class="input-group">
                 <label for="email">First Name</label>
-                <input type="text" id="firstName" placeholder="Enter your First Name">
+                <input type="text" id="firstName" name="firstName" placeholder="Enter your First Name">
             </div>
             <div class="input-group">
                 <label for="email">Last Name</label>
-                <input type="text" id="lastName" placeholder="Enter your Last Name">
+                <input type="text" id="lastName" name="lastName" placeholder="Enter your Last Name">
             </div>
             <div class="input-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" placeholder="Enter your Email">
+                <input type="email" id="email" name="email" placeholder="Enter your Email">
             </div>
             <div class="input-group">
                 <label for="Mobile Number">Email</label>
-                <input type="tel" id="mobileNumber" placeholder="Enter your Mobile Number">
+                <input type="tel" id="mobileNumber" name="mobileNumber" placeholder="Enter your Mobile Number">
             </div>
             <div class="input-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" placeholder="Enter a password">
+                <input type="password" id="password" name="password" placeholder="Enter a password">
             </div>
           <button class="button">CONTINUE</button>
         </div>

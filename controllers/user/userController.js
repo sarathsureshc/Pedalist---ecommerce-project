@@ -1,5 +1,5 @@
 
-
+const User = require('../../models/userSchema');
 
 const pageNotFound = async (req,res) => {
 
@@ -52,6 +52,17 @@ const loadSignuppage = async (req,res)=>{
         res.render("pageNotFound")
         res.status(500).send({ message: "Server error" });        
 
+    }
+}
+
+const signup = async (req,res) => {
+    const{firstName,lastName,email,mobileNumber,password} = req.body;
+    try {
+        
+        const newUser = new User({firstName,lastName,email,mobileNumber,password})
+
+    } catch (error) {
+        
     }
 }
 
