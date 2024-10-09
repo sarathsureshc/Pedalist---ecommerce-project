@@ -9,6 +9,8 @@ router.get("/login",userController.loadLoginpage);
 
 router.get("/signup",userController.loadSignuppage);
 router.post("/signup",userController.signup);
+router.post("/verify-otp",userController.verifyOtp)
+router.post("/resend-otp",userController.resendOtp)
 
 router.get("/products",userController.loadProductpage)
 

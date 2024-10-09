@@ -105,10 +105,10 @@
 
         <!-- Social login buttons -->
         <div class="d-grid gap-2">
-          <button type="button" class="btn btn-outline-dark"><i class="fab fa-google"></i> Login with Google</button>
-          <button type="button" class="btn btn-outline-primary"><i class="fab fa-facebook"></i> Login with
-            Facebook</button>
-          <button type="button" class="btn btn-outline-secondary"><i class="fab fa-apple"></i> Login with Apple</button>
+          <a href="/auth/google" class="btn btn-outline-dark"><i class="fab fa-google"></i> Login with Google</a>
+          <a type="button" class="btn btn-outline-primary"><i class="fab fa-facebook"></i> Login with
+            Facebook</a>
+          <a type="button" class="btn btn-outline-secondary"><i class="fab fa-apple"></i> Login with Apple</a>
         </div>
 
         <!-- Sign up -->
@@ -134,128 +134,120 @@
     const passworderror = document.getElementById("passwordError");
     const signform = document.getElementById("signform");
 
-    function firstNameValidateChecking(e){
-     
-      const firstnameval = firstnameid.value;
-      const firstnamepattern = /^[A-Za-z\s]+$/;
 
-      if(firstnameval.trim()==""){
-        firstnameerror.style.display="block";
-        firstnameerror.innerHTML="Please enter your first name";
-      }else if(!firstnamepattern.test(firstnameval)){
-        firstnameerror.style.display="block";
-        firstnameerror.innerHTML="First Name can only contain alphabets and spaces";
-      }else{
-        firstnameerror.style.display = "none";
-        firstnameerror.innerHTML = "";
-      }
+    document.addEventListener("DOMContentLoaded", function() {
+  // Add event listeners to validate on input change
+  firstnameid.addEventListener("input", firstNameValidateChecking);
+  lastnameid.addEventListener("input", lastNameValidateChecking);
+  emailid.addEventListener("input", emailValidateChecking);
+  mobilenumberid.addEventListener("input", mobileNumberValidateChecking);
+  passid.addEventListener("input", passwordValidateChecking);
+
+  signform.addEventListener("submit", function(e) {
+    const isFirstNameValid = firstNameValidateChecking();
+    const isLastNameValid = lastNameValidateChecking();
+    const isEmailValid = emailValidateChecking();
+    const isMobileNumberValid = mobileNumberValidateChecking();
+    const isPasswordValid = passwordValidateChecking();
+
+    if (
+      !isFirstNameValid ||
+      !isLastNameValid ||
+      !isEmailValid ||
+      !isMobileNumberValid ||
+      !isPasswordValid
+    ) {
+      e.preventDefault(); // Prevent form submission if there are errors
     }
+  });
+});
 
-    function lastNameValidateChecking(e){
-     
-     const lastnameval = lastnameid.value;
-     const lastnamepattern = /^[A-Za-z\s]+$/;
+function firstNameValidateChecking() {
+  const firstnameval = firstnameid.value;
+  const firstnamepattern = /^[A-Za-z\s]+$/;
 
-     if(lastnameval.trim()==""){
-       lastnameerror.style.display="block";
-       lastnameerror.innerHTML="Please enter your first name";
-     }else if(!lastnamepattern.test(lastnameval)){
-       lastnameerror.style.display="block";
-       lastnameerror.innerHTML="First Name can only contain alphabets and spaces";
-     }else{
-       lastnameerror.style.display = "none";
-       lastnameerror.innerHTML = "";
-     }
-   }
+  if (firstnameval.trim() === "") {
+    firstnameerror.style.display = "block";
+    firstnameerror.innerHTML = "Please enter your first name";
+    return false;
+  } else if (!firstnamepattern.test(firstnameval)) {
+    firstnameerror.style.display = "block";
+    firstnameerror.innerHTML = "First Name can only contain alphabets and spaces";
+    return false;
+  } else {
+    firstnameerror.style.display = "none";
+    return true;
+  }
+}
 
-   function emailValidateChecking(e){
+function lastNameValidateChecking() {
+  const lastnameval = lastnameid.value;
+  const lastnamepattern = /^[A-Za-z\s]+$/;
 
-    const  emailval = emailid.value;
-    const emailpattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (lastnameval.trim() === "") {
+    lastnameerror.style.display = "block";
+    lastnameerror.innerHTML = "Please enter your last name";
+    return false;
+  } else if (!lastnamepattern.test(lastnameval)) {
+    lastnameerror.style.display = "block";
+    lastnameerror.innerHTML = "Last Name can only contain alphabets and spaces";
+    return false;
+  } else {
+    lastnameerror.style.display = "none";
+    return true;
+  }
+}
 
-    if (!emailpattern.test(emailval)) {
-      emailerror.style.display="block";
-      emailerror.innerHTML="Invalid email address";
-    } else {
-      emailerror.style.display="none";
-      emailerror.innerHTML="";
-    }
+function emailValidateChecking() {
+  const emailval = emailid.value;
+  const emailpattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-   }
+  if (!emailpattern.test(emailval)) {
+    emailerror.style.display = "block";
+    emailerror.innerHTML = "Invalid email address";
+    return false;
+  } else {
+    emailerror.style.display = "none";
+    return true;
+  }
+}
 
-   function  mobileNumberValidateChecking(e){
+function mobileNumberValidateChecking() {
+  const mobilenumberval = mobilenumberid.value;
+  const mobilenumberpattern = /^[0-9]{10}$/;
 
-    const mobilenumberval = mobilenumberid.value;
-
-    if(mobilenumberval.trim()===""){
-      mobilenumbererror.style.display="block";
-      mobilenumbererror.innerHTML="Please enter valid mobile number";
-    } else if(mobilenumberval.length<10 ||  mobilenumberval.length>10){
-      mobilenumbererror.style.display="block";
-      mobilenumbererror.innerHTML="Enter 10 digits";
-   } else{
+  if (mobilenumberval.trim() === "") {
+    mobilenumbererror.style.display = "block";
+    mobilenumbererror.innerHTML = "Please enter a valid mobile number";
+    return false;
+  } else if (!mobilenumberpattern.test(mobilenumberval)) {
+    mobilenumbererror.style.display = "block";
+    mobilenumbererror.innerHTML = "Enter 10 digits";
+    return false;
+  } else {
     mobilenumbererror.style.display = "none";
-    mobilenumbererror.innerHTML = "";
-   }
+    return true;
   }
+}
 
-  function  passwordValidateChecking(e){
-    const passwordval = passwordid.value;
-    const alpha =  /[a-zA-Z]/;
-    const digit = /\d/;
+function passwordValidateChecking() {
+  const passwordval = passid.value;
+  const alpha = /[a-zA-Z]/;
+  const digit = /\d/;
 
-    if(passwordval.length<8){
-      passworderror.style.display="block";
-      passworderror.innerHTML="Password should be at least 8 characters long";
-    } else if(!alpha.test(passwordval)  || !digit.test(passwordval)){
-      passworderror.style.display="block";
-      passworderror.innerHTML="Password should contain at least alphabets and digits";
-    } else{
-      passworderror.style.display = "none";
-      passworderror.innerHTML = "";
-    }
+  if (passwordval.length < 8) {
+    passworderror.style.display = "block";
+    passworderror.innerHTML = "Password should be at least 8 characters long";
+    return false;
+  } else if (!alpha.test(passwordval) || !digit.test(passwordval)) {
+    passworderror.style.display = "block";
+    passworderror.innerHTML = "Password should contain both alphabets and digits";
+    return false;
+  } else {
+    passworderror.style.display = "none";
+    return true;
   }
+}
 
 
-
-
-
-
-    document.addEventListener("DOMContentLoaded",function(){
-      signform.addEventListener("submit",function(e){
-
-        firstNameValidateChecking();
-        lastNameValidateChecking();
-        emailValidateChecking();
-        mobileNumberValidateChecking();
-        passwordValidateChecking();
-
-        if(
-          !firstnameid ||
-          !lastnameid ||
-          !emailid ||
-          !mobilenumberid ||
-          !passid ||
-          !firstnameerror ||
-          !lastnameerror ||
-          !emailerror ||
-          !mobilenumbererror ||
-          !passworderror ||
-          !signform
-        ){
-          console.error("One or more elements not found!!!");
-        }
-
-        if(
-          firstnameerror.innerHTML ||
-          lastnameerror.innerHTML ||
-          emailerror.innerHTML ||
-          mobilenumbererror.innerHTML ||
-          passworderror.innerHTML
-        ){
-          e.preventDefault();
-        }
-
-      })
-    })
   </script>

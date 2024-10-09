@@ -756,6 +756,12 @@ html, body {
   }
 }
 
+.error-message{
+  color: red;
+  font-size: 0.75rem;
+  display: none;
+}
+
 
 /** End of sign up page **/
 
