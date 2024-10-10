@@ -679,7 +679,7 @@ html, body {
   width: 400px;
   max-width: 90%; /* For responsiveness */
   position: absolute;
-  top: 20%;
+  top: 10%;
   left: 50%;
   z-index: 10;
 }
@@ -694,11 +694,11 @@ html, body {
 
 .signup {
   background-color: #fff;
-  padding: 30px 10px;
+  padding: 30px 10px 10px 10px;
   width: 90%;
 }
 .signup .input-group {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   position: relative;
 }
 .input-group label {
