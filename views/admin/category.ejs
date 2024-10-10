@@ -1,0 +1,370 @@
+<%- include('../partials/admin/header.ejs') %>
+
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .content-main {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .content-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Form Styles */
+        .form-label {
+            font-weight: bold;
+        }
+
+        .form-control {
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+        }
+
+        .text-start a {
+            text-decoration: none;
+            color: white;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Table Styles */
+        .table {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+            text-align: left;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Pagination Styles */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination-container a {
+            padding: 8px 12px;
+            border: 1px solid #007bff;
+            color: #007bff;
+            margin: 0 5px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .pagination-container a:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .current-page {
+            padding: 8px 12px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            margin: 0 5px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.875rem;
+            margin-top: 5px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .input-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <section class="content-main">
+
+        <div class="content-header">
+            <div>
+                <h2 class="content-title card-title">Category</h2>
+                <a href="/admin/logout" class="dashboard-logout-button">Logout</a>
+            </div>
+        </div>
+
+        <nav class="dashboard-breadcrumbs">
+            <a href="/admin">Home</a> &gt; <span>Category</span>
+        </nav>
+
+        <header class="card-header text-center mb-20">
+            <form action="/admin/category/" method="get" class="d-inline">
+                <div class="input-group input-group-sm border border-1 border-grey rounded-pill"
+                    style="width: 500px; margin: auto;">
+                    <input type="text" class="form-control border-0 rounded-pill mt-3" placeholder="Search categories"
+                        name="search" />
+                    <button class="btn" type="submit">Search</button>
+                </div>
+            </form>
+        </header>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <form method="post" action="/admin/addCategory" onsubmit="return handleFormSubmit(event)">
+                            <div class="mb-4">
+                                <label for="product_name" class="form-label">Name</label>
+                                <input type="text" name="name" placeholder="Type here" class="form-control"
+                                    id="product_name" required />
+                                <div id="name-error" class="error-message"></div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Description</label>
+                                <textarea placeholder="Type here" name="description" class="form-control"
+                                    id="descriptionId" required></textarea>
+                                <div id="description-error" class="error-message"></div>
+                            </div>
+                            <div class="d-grid">
+                                <button class="btn btn-primary" type="submit">
+                                    Add Category
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">#</th>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Offer Price</th>
+                                        <th>Offer</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                        <th class="text-start">Edit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Loop through existing categories -->
+                                    <% cat.reverse().forEach((category, index)=> { %>
+                                        <tr>
+                                            <td class="text-center">
+                                                <%= index + 1 %>
+                                            </td>
+                                            <td class="text-start">
+                                                <%= category.name %>
+                                            </td>
+                                            <td class="text-start">
+                                                <%= category.description %>
+                                            </td>
+                                            <td></td>
+                                            <td class="text-start">
+                                                <button class="btn btn-info"
+                                                    style="width: 100px; text-decoration: none; color: #fff;">
+                                                    <a href="#" class="text-white">Add Offer</a>
+                                                </button>
+                                                <button class="btn btn-info" style="width: 100px">
+                                                    <a href="#" class="text-white">Remove</a>
+                                                </button>
+                                            </td>
+                                            <td class="text-start">
+                                                <span
+                                                    class="badge rounded-pill <%= category.isListed ? 'alert-success' : 'alert-danger' %>"
+                                                    style="width: 60px">
+                                                    <%= category.isListed ? 'Listed' : 'Unlisted' %>
+                                                </span>
+                                            </td>
+                                            <td class="text-start">
+                                                <button class="btn btn-danger" style="width: 70px">
+                                                    <a href="/admin/unlistCategory?id=<%= category._id %>"
+                                                        class="text-white">Unlist</a>
+                                                </button>
+                                                <button class="btn btn-success" style="width: 70px">
+                                                    <a href="/admin/listCategory?id=<%= category._id %>"
+                                                        class="text-white">List</a>
+                                                </button>
+                                            </td>
+                                            <td class="text-start">
+                                                <a href="/admin/editCategory?id=<%= category._id %>"
+                                                    class="btn btn-info text-white">Edit</a>
+                                            </td>
+                                        </tr>
+                                        <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pagination-container">
+            <% if(currentPage>1) { %>
+                <a href="?page=<%= currentPage -1 %>">&laquo; Previous</a>
+                <% } %>
+                    <% for( let i=1; i <=totalPages; i++) { %>
+                        <% if(i==currentPage) { %>
+                            <span class="current-page">
+                                <%= i %>
+                            </span>
+                            <% } else { %>
+                                <a href="?page=<%= i %>"></a>
+                                <% } %>
+                                    <% } %>
+                                        <% if(currentPage < totalPages){ %>
+                                            <a href="?page=<%= currentPage +1 %>">Next &raquo;</a>
+                                            <% } %>
+        </div>
+    </section>
+
+    <%- include('../partials/admin/footer.ejs') %>
+
+        <script>
+            function handleFormSubmit(event) {
+
+                event.preventDefault();
+                if (!validateForm()) {
+                    return;
+                }
+                const name = document.getElementsByName("name")[0].value;
+                const description = document.getElementById("descriptionId").value;
+
+                fetch('/admin/addCategory', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name, description }) // Ensure this line is correct
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(err => {
+                                throw new Error(response.statusText);
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        location.reload();
+                    })
+                    .catch(error => {
+                        if (error.message === "Category already exists") {
+                            swal.fire({
+                                icon: "error",
+                                title: "Oops",
+                                text: "Category already exists",
+                            });
+                        } else {
+                            swal.fire({
+                                icon: "error",
+                                title: "Oops",
+                                text: "An error occurred while adding the category",
+                            });
+                        }
+                    });
+
+            }
+
+
+            function validateForm() {
+                console.log('Validating form...');
+
+                clearErrorMessages();
+                const name = document.getElementsByName("name")[0].value.trim();
+                const description = document.getElementById("descriptionId").value.trim();
+                isValid = true;
+
+
+                if (name === "") {
+                    console.log("Name is empty")
+                    displayErrorMessage("name-error", "Please  enter category name");
+                    isValid = false;
+                } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+                    console.log("Name contains invalid characters");
+                    displayErrorMessage("name-error", "Category name should only contain alphabets and spaces");
+                    isValid = false;
+                }
+
+                if (description === "") {
+                    displayErrorMessage("description-error", "Please enter category description");
+                    isValid = false;
+                }
+                return isValid;
+            }
+
+            function displayErrorMessage(elementId, message) {
+                console.log("Displaying error for:", elementId);
+                var errorElement = document.getElementById(elementId);
+                errorElement.innerHTML = message;
+                errorElement.style.display = "block";
+            }
+
+
+            function clearErrorMessages() {
+                const errorElements = document.getElementsByClassName("error-message");
+                Array.from(errorElements).forEach((element) => {
+                    element.innerText = "";
+                    element.style.display = "none";
+
+                });
+            }
+
+
+
+        </script>

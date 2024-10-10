@@ -24,6 +24,7 @@ const  adminAuth = (req,res,next)=>{
     User.findOne({isAdmin:true})
     .then(data=>{
         if(data){
+            console.log("The user exist")
         next();
         }else{
             res.redirect("/admin/login")

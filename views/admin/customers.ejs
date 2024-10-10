@@ -1,0 +1,110 @@
+<%- include('../partials/admin/header.ejs') %>
+
+    <div class="dashboard-main-content">
+        <header class="dashboard-header">
+            <h1>User Management</h1>
+            <a href="/admin/logout" class="dashboard-logout-button">Logout</a>
+        </header>
+
+        <!-- Breadcrumbs -->
+        <nav class="dashboard-breadcrumbs">
+            <a href="/admin">Home</a> &gt; <span>User Management</span>
+        </nav>
+
+        <div class="dashboard-content">
+            <div class="user-management-card"
+                style="border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: 20px; background-color: #fff;">
+                <h3>User List</h3>
+
+                <!-- Search Bar -->
+                <form method="GET" action="/admin/users" class="mb-3">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control" placeholder="Search Users"
+                            value="<%= search %>" />
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="submit">Search</button>
+                        </div>
+                    </div>
+                </form>
+
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Mobile Number</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Sample User Data -->
+                        <% for(let i=0 ; i<data.length ; i++){ %>
+                            <tr>
+                                <td>
+                                    <%= data[i].id %>
+                                </td>
+                                <td>
+                                    <%= data[i].firstName %>
+                                </td>
+                                <td>
+                                    <%= data[i].email %>
+                                </td>
+                                <td>
+                                    <%= data[i].mobileNumber %>
+                                </td>
+                                <td></td>
+                                <td><span class="badge bg-success"></span></td>
+                                <td>
+                                    <% if(data[i].isBlocked===false) { %>
+                                        <button class="btn btn-danger"><a
+                                                href="/admin/blockCustomer?id=<%= data[i]._id %>">Block</a></button>
+                                        <% } else { %>
+                                            <button class="btn btn-success"><a
+                                                    href="/admin/unblockCustomer?id=<%= data[i]._id %>">Unblock</a></button>
+                                            <% } %>
+                                </td>
+                            </tr>
+                            <% } %>
+                                <!-- Add more user rows as necessary -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PAGINATION -->
+
+        <div class="pagination-container mt-3">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <% for(let i=1 ; i<=totalPages;i++) {%>
+                        <li class="page-item <%= (i===currentPage) ?  'active' : '' %>">
+                            <a class="page-link" href="?page=<%= i %>">
+                                <%= i %>
+                            </a>
+
+
+                        </li>
+                        <% } %>
+                </ul>
+            </nav>
+        </div>
+
+    </div>
+
+    <%- include('../partials/admin/footer.ejs') %>
+
+        <!-- <script>
+            function blockUser(userId) {
+                // Implement block user functionality here
+                alert("User " + userId + " has been blocked.");
+                // Optionally, make an AJAX call to block the user on the server
+            }
+
+            function unblockUser(userId) {
+                // Implement unblock user functionality here
+                alert("User " + userId + " has been unblocked.");
+                // Optionally, make an AJAX call to unblock the user on the server
+            }
+        </script> -->
