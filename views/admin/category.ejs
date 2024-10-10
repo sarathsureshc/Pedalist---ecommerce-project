@@ -213,15 +213,23 @@
                                             <td class="text-start">
                                                 <%= category.description %>
                                             </td>
-                                            <td></td>
+                                            <td>
+                                                <% if(category.categoryOffer){ %>
+                                                    <%=category.categoryOffer %>%
+                                                    <% } else { %>
+                                                        0%
+                                                        <% } %>
+                                            </td>
                                             <td class="text-start">
-                                                <button class="btn btn-info"
-                                                    style="width: 100px; text-decoration: none; color: #fff;">
-                                                    <a href="#" class="text-white">Add Offer</a>
-                                                </button>
-                                                <button class="btn btn-info" style="width: 100px">
-                                                    <a href="#" class="text-white">Remove</a>
-                                                </button>
+                                                <% if(!category.categoryOffer || category.categoryOffer === 0){ %>
+                                                    <button class="btn btn-info" style="width: 100px">
+                                                        <a href="#" class="text-white" onclick="addOffer('<%=category._id%>')">Add Offer</a>
+                                                    </button>
+                                                <% } else { %>
+                                                    <button class="btn btn-info" style="width: 100px">
+                                                        <a href="#" class="text-white" onclick="removeOffer('<%=category._id%>')">Remove</a>
+                                                    </button>
+                                                <% } %>
                                             </td>
                                             <td class="text-start">
                                                 <span
@@ -231,14 +239,17 @@
                                                 </span>
                                             </td>
                                             <td class="text-start">
+                                                <% if(category.isListed) {%>
                                                 <button class="btn btn-danger" style="width: 70px">
                                                     <a href="/admin/unlistCategory?id=<%= category._id %>"
                                                         class="text-white">Unlist</a>
                                                 </button>
+                                                <% }else{ %>
                                                 <button class="btn btn-success" style="width: 70px">
                                                     <a href="/admin/listCategory?id=<%= category._id %>"
                                                         class="text-white">List</a>
                                                 </button>
+                                                <% } %>
                                             </td>
                                             <td class="text-start">
                                                 <a href="/admin/editCategory?id=<%= category._id %>"
@@ -365,6 +376,91 @@
                 });
             }
 
+
+            async function addOffer(categoryId) {
+                const {value:amount} =  await Swal.fire({
+                    title: 'Enter Offer Percentage',
+                    input: 'number',
+                    inputLabel: 'Percentage',
+                    inpurPlaceholder:"%"
+                    });
+
+                    if(amount){
+                        try {
+
+                            const response = await fetch("/admin/addCategoryOffer",{
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                    },
+                                    body: JSON.stringify({
+                                        categoryId: categoryId,
+                                        percentage: amount
+                                    }),
+                            });
+
+                            const data = await response.json();
+                            if(response.ok && data.status === true){
+                                Swal.fire(
+                                    'Offer Added', 
+                                    'Offer has been added successfully', 
+                                    'success'
+                            ).then(()=>{
+                                        location.reload();
+                                    })
+                            }else{
+                                Swal.fire("failed",data.message || "Adding offer failed" , "error")
+                            }
+                            
+                        } catch (error) {
+                            swal.fire(
+                                'Error',
+                                'Failed to add offer',
+                                'error'
+                            );
+                            console.log("Error adding offer", error);
+                        }
+                    }
+
+            }
+
+            
+            async function removeOffer(categoryId) {
+                try {
+
+                    const response =  await fetch("/admin/removeCategoryOffer",{
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                categoryId: categoryId
+                                }),
+                                });
+
+                                const data =  await response.json();
+                                if(response.ok && data.status === true){
+                                    Swal.fire(
+                                        'Offer Removed',
+                                        'Offer has been removed successfully',
+                                        'success'
+                                        ).then(()=>{
+                                            location.reload();
+                                        });
+                                } else{
+                                    Swal.fire("failed",data.message || "Removing offer failed" , "error")
+                                }
+
+                } catch (error) {
+                    swal.fire(
+                        'Error',
+                        'Failed to remove offer',
+                        'error'
+                        );
+                        console.log("Error removing offer", error);
+                    
+                }
+            }
 
 
         </script>
