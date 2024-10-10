@@ -41,6 +41,37 @@ body, html {
   color: #f1f1f1; /* Slight hover effect */
 }
 
+.navbar .dropdown{
+  position: relative;
+  display: inline-block;
+}
+
+.navbar .dropdown-content{
+  display: none;
+  position: absolute;
+  background-color: white;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  right: 0;
+}
+
+.navbar .dropdown-content a{
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+}
+
+.navbar .dropdown-content a:hover{
+background-color: #f1f1f1;
+}
+
+.navbar .dropdown:hover .dropdown-content{
+  display: block;
+}
+
 /* Cart icon and badge styles */
 .cart-link {
   position: relative;

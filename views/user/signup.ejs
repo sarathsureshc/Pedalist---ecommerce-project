@@ -93,8 +93,12 @@
             <label for="password">Password</label>
             <input type="password" id="password" name="password" placeholder="Enter a password">
             <div id="passwordError" class="error-message"></div>
-
           </div>
+          <% if(locals.message && message.length >0){ %>
+            <div  class="alert alert-danger text-center">
+              <%= message %>
+            </div>
+          <%}%>
           <button class="button">CONTINUE</button>
         </div>
 
