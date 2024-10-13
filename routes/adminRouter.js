@@ -24,5 +24,7 @@ router.get("/listCategory",adminAuth,categoryController.getListCategory);
 router.get("/unlistCategory",adminAuth,categoryController.getUnlistCategory);
 router.get("/editCategory",adminAuth,categoryController.getEditCategory);
 router.post("/editCategory/:id",adminAuth,categoryController.editCategory);
+router.post('/deleteCategory',adminAuth,categoryController.deleteCategory);
+router.post('/restoreCategory',adminAuth,categoryController.restoreCategory);
 
 module.exports = router;

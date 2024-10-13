@@ -1,10 +1,19 @@
-<%- include("../../views/partials/admin/header") %>
-<div class="container">
+<%- include("../../views/partials/admin/header") %>\
+<div class="wrapper">
+<div class="user-main-content">
     <div class="row justify-content-center">
         <div class="col-md-6 mt-60">
+            <% if (typeof error !== 'undefined') { %>
+                <div class="alert alert-danger"><%= error %></div>
+              <% } %>
             <form method="post" action="/admin/editCategory/<%=category._id %>">
-                <div class="d-grid text-end mt-30 col-md-5">
-                    <button class="btn btn-primary" type="submit">Update category</button>
+                <div class="d-flex justify-content-end mt-30">
+                    <div class="me-2"> <!-- Add margin to the right for spacing -->
+                        <button class="btn btn-primary" type="submit">Update category</button>
+                    </div>
+                    <div>
+                        <a class="btn btn-danger" href="/admin/category">Cancel</a>
+                    </div>
                 </div>
                 <div class="mb-4 mt-30">
                     <label for="product_name" class="form-label">Name</label>
@@ -18,5 +27,6 @@
             </form>
         </div>
     </div>
+</div>
 </div>
 <%- include("../../views/partials/admin/footer") %>

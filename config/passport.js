@@ -19,7 +19,7 @@ async  (accessToken, refreshToken, profile, done) => {
             return done(null, user);
         } else {
             user = new User({
-                firstName:profile.displayName,
+                firstName:profile.displayName.split(' ')[0],
                 email:profile.emails[0].value,
                 googleId:profile.id
             });
@@ -29,7 +29,7 @@ async  (accessToken, refreshToken, profile, done) => {
 
     } catch (error) {
 
-        return done(err,null)
+        return done(error,null)
         
     }
 }
@@ -48,6 +48,7 @@ passport.deserializeUser((id, done)=>{
         done(null,user)
     })
     .catch(err=>{
+        console.log("Error occured during deserialization",err)
         done(err,null)
     })
 })

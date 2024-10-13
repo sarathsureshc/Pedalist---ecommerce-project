@@ -23,7 +23,7 @@ const userAuth = (req,res,next)=>{
 const  adminAuth = (req,res,next)=>{
     User.findOne({isAdmin:true})
     .then(data=>{
-        if(data){
+        if(data && req.session.admin){
             console.log("The user exist")
         next();
         }else{

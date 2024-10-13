@@ -25,7 +25,7 @@ const userSchema = new Schema({
     },
     googleId :  {
         type : String,
-        unique  : true
+        required: false
     },
     password : {
         type : String,
@@ -80,6 +80,7 @@ const userSchema = new Schema({
         }
     }]
 })
+
 
 const User = mongoose.model("User",userSchema);
 

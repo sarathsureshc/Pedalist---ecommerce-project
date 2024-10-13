@@ -13,7 +13,7 @@ const pageNotFound = async (req, res) => {
 
 const loadHomepage = async (req, res) => {
   try {
-    const user = req.session.user;
+    const user = req.session.user || req.user;
     if(user){
       const userData = await User.findOne({_id:user._id});
       res.render("home", { user: userData });
@@ -244,6 +244,7 @@ const login = async (req, res) => {
 
     // Store the entire user object
     req.session.user = findUser; 
+    console.log("User logged In")
     res.redirect("/");
   } catch (error) {
     console.error("Login error", error);
