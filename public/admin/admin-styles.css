@@ -162,6 +162,21 @@ th {
     text-decoration: none;
 }
 
+/* add product  */
+
+.error-message {
+    color: red;
+}
+
+.thumbnails-container {
+    display: flex;
+    overflow-x: auto;
+}
+
+.thumbnail {
+    margin-right: 10px;
+}
+
 /* Footer Styles */
 .dashboard-footer {
     background-color: #4b4b4b; /* Matches header color */
@@ -171,6 +186,50 @@ th {
     width: 100%;
     position: relative; /* Positioning to ensure it's at the bottom */
     bottom: 0; /* Align to bottom */
+}
+
+.thumbnail {
+    width: 100px; /* Set thumbnail width */
+    height: auto; /* Maintain aspect ratio */
+    margin-top: 10px; /* Spacing above thumbnail */
+}
+
+/* pagination styles */
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0; /* Space around the pagination */
+}
+
+.pagination-container a,
+.pagination-container .current-page {
+    display: inline-block;
+    padding: 10px 15px; /* Space inside the buttons */
+    margin: 0 5px; /* Space between buttons */
+    text-decoration: none; /* Remove underline from links */
+    border: 1px solid #007bff; /* Border color */
+    color: #007bff; /* Text color */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+}
+
+.pagination-container a:hover {
+    background-color: #007bff; /* Background color on hover */
+    color: #fff; /* Text color on hover */
+}
+
+.pagination-container .current-page {
+    background-color: #007bff; /* Background color for the current page */
+    color: #fff; /* Text color for the current page */
+    border: none; /* Remove border for the current page */
+    cursor: default; /* Cursor change for the current page */
+}
+
+.pagination-container a:disabled {
+    color: #ccc; /* Color for disabled links */
+    pointer-events: none; /* Disable clicks */
 }
 
 

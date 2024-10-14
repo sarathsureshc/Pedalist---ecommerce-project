@@ -3,6 +3,7 @@ const router = express.Router();
 const adminController = require("../controllers/admin/adminController");
 const customerController = require("../controllers/admin/customerController");
 const categoryController = require("../controllers/admin/categoryController");
+const productController = require("../controllers/admin/productController");
 const {userAuth,adminAuth} = require("../middlewares/auth");
 
 router.get("/pageerror",adminController.pageerror);
@@ -26,5 +27,8 @@ router.get("/editCategory",adminAuth,categoryController.getEditCategory);
 router.post("/editCategory/:id",adminAuth,categoryController.editCategory);
 router.post('/deleteCategory',adminAuth,categoryController.deleteCategory);
 router.post('/restoreCategory',adminAuth,categoryController.restoreCategory);
+
+router.get("/addProduct",adminAuth, productController.getProductAddPage);
+router.post("/addProducts",adminAuth,uploads.array("images",4), productController.addProducts);
 
 module.exports = router;

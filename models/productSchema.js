@@ -47,7 +47,12 @@ const productSchema =  new Schema({
     isListed : {
         type: Boolean,
         default: true
-    }
+    },
+    createdOn : {
+        type: Date,
+        default: Date.now,
+        required: true
+    },
 })
 
 const Product = Mongoose.model("Product",productSchema)

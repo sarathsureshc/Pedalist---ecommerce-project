@@ -89,17 +89,19 @@
                                             <td class="text-start">
                                                 <button
                                                     class="btn <%= category.isListed ? 'btn-danger' : 'btn-success' %>"
-                                                    style="width: 70px" <% if (category.isDeleted) { %> disabled <% } %>>
-                                                    <a href="/admin/<%= category.isListed ? 'unlist' : 'list' %>Category?id=<%= category._id %>"
-                                                        class="text-white">
-                                                        <%= category.isListed ? 'Unlist' : 'List' %>
-                                                    </a>
+                                                    style="width: 70px" <% if (category.isDeleted) { %> disabled <% } %>
+                                                        >
+                                                        <a href="/admin/<%= category.isListed ? 'unlist' : 'list' %>Category?id=<%= category._id %>"
+                                                            class="text-white">
+                                                            <%= category.isListed ? 'Unlist' : 'List' %>
+                                                        </a>
                                                 </button>
                                             </td>
                                             <td class="text-start">
-                                                <button class="btn btn-info text-white" <% if (category.isDeleted) { %> disabled <% } %>>
-                                                <a href="/admin/editCategory?id=<%= category._id %>">
-                                                    Edit</a></button>
+                                                <button class="btn btn-info text-white" <% if (category.isDeleted) { %>
+                                                    disabled <% } %>>
+                                                        <a href="/admin/editCategory?id=<%= category._id %>">
+                                                            Edit</a></button>
                                             </td>
                                             <td class="text-start">
                                                 <% if (!category.isDeleted) { %>
