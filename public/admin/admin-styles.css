@@ -126,7 +126,7 @@ body {
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin: 20px auto; /* Center the table within the wrapper */
 }
 
 th, td {

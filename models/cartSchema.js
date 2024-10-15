@@ -19,9 +19,9 @@ const cartSchema = new Schema({
             type:Number,
             default:1
         },
-        isCheckout:{
-            type:Boolean,
-            default:false
+        status:{
+            type:String,
+            default:"placed"
         },
         cancellationReason:{
             type:String,

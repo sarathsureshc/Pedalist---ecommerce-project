@@ -34,94 +34,93 @@
                     </form>
 
                     <!-- Category Table -->
-                    <div class="col-md-8">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">#</th>
-                                        <th>Name</th>
-                                        <th>Description</th>
-                                        <th>Offer Price</th>
-                                        <th>Offer</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                        <th class="text-start">Edit</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% cat.reverse().forEach((category, index)=> { %>
-                                        <tr style="<%= category.isDeleted ? 'opacity: 0.5;' : '' %>">
-                                            <td class="text-center">
-                                                <%= index + 1 %>
-                                            </td>
-                                            <td class="text-start">
-                                                <%= category.name %>
-                                            </td>
-                                            <td class="text-start">
-                                                <%= category.description %>
-                                            </td>
-                                            <td>
-                                                <%= category.categoryOffer ? category.categoryOffer + '%' : '0%' %>
-                                            </td>
-                                            <td class="text-start">
-                                                <% if (!category.categoryOffer || category.categoryOffer===0) { %>
-                                                    <button class="btn btn-primary text-white" style="width: 100px"
-                                                        onclick="addOffer('<%= category._id %>')" <% if
-                                                        (category.isDeleted) { %> disabled <% } %>>
-                                                            Add Offer
-                                                    </button>
-                                                    <% } else { %>
-                                                        <button class="btn btn-danger text-white" style="width: 100px"
-                                                            onclick="removeOffer('<%= category._id %>')" <% if
-                                                            (category.isDeleted) { %> disabled <% } %>>
-                                                                Remove
-                                                        </button>
-                                                        <% } %>
-                                            </td>
-                                            <td class="text-start">
-                                                <span
-                                                    class="badge rounded-pill <%= category.isListed ? 'bg-success' : 'bg-danger' %>"
-                                                    style="width: 60px">
-                                                    <%= category.isListed ? 'Listed' : 'Unlisted' %>
-                                                </span>
-                                            </td>
-                                            <td class="text-start">
-                                                <button
-                                                    class="btn <%= category.isListed ? 'btn-danger' : 'btn-success' %>"
-                                                    style="width: 70px" <% if (category.isDeleted) { %> disabled <% } %>
-                                                        >
-                                                        <a href="/admin/<%= category.isListed ? 'unlist' : 'list' %>Category?id=<%= category._id %>"
-                                                            class="text-white">
-                                                            <%= category.isListed ? 'Unlist' : 'List' %>
-                                                        </a>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">#</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Offer Price</th>
+                                    <th>Offer</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                    <th class="text-start">Edit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% cat.reverse().forEach((category, index)=> { %>
+                                    <tr style="<%= category.isDeleted ? 'opacity: 0.5;' : '' %>">
+                                        <td class="text-center">
+                                            <%= index + 1 %>
+                                        </td>
+                                        <td class="text-start">
+                                            <%= category.name %>
+                                        </td>
+                                        <td class="text-start">
+                                            <%= category.description %>
+                                        </td>
+                                        <td>
+                                            <%= category.categoryOffer ? category.categoryOffer + '%' : '0%' %>
+                                        </td>
+                                        <td class="text-start">
+                                            <% if (!category.categoryOffer || category.categoryOffer===0) { %>
+                                                <button class="btn btn-primary text-white" style="width: 100px"
+                                                    onclick="addOffer('<%= category._id %>')" <% if (category.isDeleted)
+                                                    { %> disabled <% } %>>
+                                                        Add Offer
                                                 </button>
-                                            </td>
-                                            <td class="text-start">
-                                                <button class="btn btn-info text-white" <% if (category.isDeleted) { %>
-                                                    disabled <% } %>>
-                                                        <a href="/admin/editCategory?id=<%= category._id %>">
-                                                            Edit</a></button>
-                                            </td>
-                                            <td class="text-start">
-                                                <% if (!category.isDeleted) { %>
-                                                    <button class="btn btn-danger text-white"
-                                                        onclick="deleteCategory('<%= category._id %>')">
-                                                        Delete
+                                                <% } else { %>
+                                                    <button class="btn btn-danger text-white" style="width: 100px"
+                                                        onclick="removeOffer('<%= category._id %>')" <% if
+                                                        (category.isDeleted) { %> disabled <% } %>>
+                                                            Remove
                                                     </button>
-                                                    <% }else{ %>
-                                                        <button class="btn btn-success"
-                                                            onclick="restoreCategory('<%= category._id %>')">
-                                                            Restore
-                                                        </button>
-                                                        <% } %>
-                                            </td>
-                                        </tr>
-                                        <% }); %>
-                                </tbody>
-                            </table>
-                        </div>
+                                                    <% } %>
+                                        </td>
+                                        <td class="text-start">
+                                            <span
+                                                class="badge rounded-pill <%= category.isListed ? 'bg-success' : 'bg-danger' %>"
+                                                style="width: 60px">
+                                                <%= category.isListed ? 'Listed' : 'Unlisted' %>
+                                            </span>
+                                        </td>
+                                        <td class="text-start">
+                                            <button class="btn <%= category.isListed ? 'btn-danger' : 'btn-success' %>"
+                                                style="width: 70px" <% if (category.isDeleted) { %> disabled <% } %>
+                                                    >
+                                                    <a href="/admin/<%= category.isListed ? 'unlist' : 'list' %>Category?id=<%= category._id %>"
+                                                        class="text-white">
+                                                        <%= category.isListed ? 'Unlist' : 'List' %>
+                                                    </a>
+                                            </button>
+                                        </td>
+                                        <td class="text-start">
+                                            <button class="btn btn-info text-white" <% if (category.isDeleted) { %>
+                                                disabled <% } %>>
+                                                    <a href="/admin/editCategory?id=<%= category._id %>">
+                                                        Edit</a></button>
+                                        </td>
+                                        <td class="text-start">
+                                            <% if (!category.isDeleted) { %>
+                                                <button class="btn btn-danger text-white"
+                                                    onclick="deleteCategory('<%= category._id %>')">
+                                                    Delete
+                                                </button>
+                                                <% }else{ %>
+                                                    <button class="btn btn-success"
+                                                        onclick="restoreCategory('<%= category._id %>')">
+                                                        Restore
+                                                    </button>
+                                                    <% } %>
+                                        </td>
+                                    </tr>
+                                    <% }); %>
+                            </tbody>
+                        </table>
                     </div>
+
                 </div>
 
                 <!-- Pagination -->

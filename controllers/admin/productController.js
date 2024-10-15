@@ -12,10 +12,10 @@ const getProductAddPage = async(req,res)=>{
     try {
         
         const category =await Category.find({isListed:true});
-        // const brand = await Brand.find({isBlocked:false});
+        const brand = await Brand.find({isBlocked:false});
         res.render('add-product',{
             cat:category,
-            // brand:brand
+            brand:brand
         });
 
     } catch (error) {
@@ -55,7 +55,7 @@ const addProducts = async(req,res)=>{
             specification2: products.specification2,
             specification3: products.specification3,
             specification4: products.specification4,
-            // brand: products.brand,
+            brand: products.brand,
             category:categoryId._id,
             price: products.price,
             createdOn:new Date(),
