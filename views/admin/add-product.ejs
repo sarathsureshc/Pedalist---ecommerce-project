@@ -20,6 +20,17 @@
                                     <div id="productName-error" class="error-message"></div>
                                 </div>
 
+                                <div class="col-lg-4 mb-4">
+                                    <label class="form-label">Brand</label>
+                                    <select class="form-select border" name="brand">
+                                    <option value="" disabled selected>Select the Brand</option>
+                                    <% brand.forEach(brand => { %>
+                                    <option value="<%= brand.brandName %>"><%= brand.brandName %></option>
+                                    <% }); %>
+                                    </select>
+                                    <div id="brand-error" class="error-message"></div>
+                                    </div>
+
                                 <div class="mb-4">
                                     <label for="specification_1" class="form-label">Specification 1</label>
                                     <input type="text" placeholder="Type here" name="specification1"
@@ -47,19 +58,6 @@
                                         class="form-control border" id="specification_4" required>
                                     <div id="specification4-error" class="error-message"></div>
                                 </div>
-
-
-
-                                <!-- <div class="col-lg-4 mb-4"> -->
-                                <!-- <label class="form-label">Brand</label> -->
-                                <!-- <select class="form-select border" name="brand"> -->
-                                <!-- <option value=""></option> -->
-                                <!-- < brands.forEach(brand => { %> -->
-                                <!-- <option value="<= brand.id %>">< brand.name %></option> -->
-                                <!-- < }); %> -->
-                                <!-- </select> -->
-                                <!-- <div id="brand-error" class="error-message"></div> -->
-                                <!-- </div> -->
 
                                 <div class="mb-4">
                                     <label class="form-label">Full description</label>
@@ -178,7 +176,7 @@
 
                                 <div>
                                     <button class="btn btn-md rounded font-sm hover-up" type="button"
-                                        onclick="validateAndSubmit()">Publish</button>
+                                        onclick="validateAndSubmit()">Submit</button>
                                 </div>
                             </form>
                         </div>
@@ -189,14 +187,12 @@
     </div>
 
     <!-- Cropper js script -->
-    <script src="
-    https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js
-    "></script>
+    <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
 
     <script>
         function validateAndSubmit() {
-            if (!validateForm()) {
-                document.forms(0).submit();
+            if (validateForm()) {
+                document.forms[0].submit();
             }
         }
 
@@ -217,7 +213,7 @@
             let reader = new FileReader();
             reader.onload = function () {
                 let dataURL = reader.result;
-                let image = document.getElementById(`imgView${index}`);
+                let image = document.getElementById("imgView"+index);
                 image.src = dataURL;
                 let cropper = new Cropper(image, {
                     aspectRatio: 1,
@@ -239,7 +235,7 @@
                     croppedImage.src = croppedCanvas.toDataURL('image/jpeg', 1.0);
 
                     let timestamp = new Date().getTime();
-                    let fileName = 'cropped-img-$(timestamp)-$(index).png';
+                    let fileName = `cropped-img-${timestamp}-${index}.png`;
 
                     await croppedCanvas.toBlob(blob => {
                         let input = document.getElementById('input' + index);
@@ -304,7 +300,7 @@
             const specification3 = document.getElementsByName('specification3')[0].value;
             const specification4 = document.getElementsByName('specification4')[0].value;
             const description = document.getElementById('descriptionid').value;
-            // const brand = document.getElementsByName('brand')[0].value;
+            const brand = document.getElementsByName('brand')[0].value;
             const price = document.getElementsByName('price')[0].value;
             // const saleprice = document.getElementsByName('salePrice')[0].value;
             const color = document.getElementsByName('color')[0].value;
@@ -352,7 +348,7 @@
             if (description.trim() === "") {
                 displayErrorMessage('description-error', 'Please enter a product description.');
                 isValid = false;
-            } else if (!/^[a-zA-Z0-9\s]+$/.test(description.trim())) {
+            } else if (!/^[a-zA-Z0-9\s.,!:;"'()/@&*-]+$/.test(description.trim())) {
                 displayErrorMessage('description-error', 'Product description should contain only alphabetic characters and numbers.');
                 isValid = false;
             }

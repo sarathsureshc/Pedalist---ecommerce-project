@@ -36,8 +36,13 @@ router.get('/brands',adminAuth,brandController.getBrandPage);
 router.post("/addBrand",adminAuth,uploads.single("image"),brandController.addBrand);
 router.get("/unblockBrand",adminAuth,brandController.getUnblockBrand);
 router.get("/blockBrand",adminAuth,brandController.getBlockBrand);
+router.get("/editBrand",adminAuth,brandController.getEditBrand);
+router.post("/editBrand/:id",adminAuth,uploads.single('image'),brandController.editBrand);
+router.post('/deleteBrand',adminAuth,brandController.deleteBrand);
+router.post('/restoreBrand',adminAuth,brandController.restoreBrand);
 
+router.get("/products",adminAuth,productController.getProductPage)
 router.get("/addProduct",adminAuth, productController.getProductAddPage);
-router.post("/addProducts",adminAuth,uploads.array("images",4), productController.addProducts);
+router.post("/addProduct",adminAuth,uploads.array("images",4), productController.addProducts);
 
 module.exports = router;

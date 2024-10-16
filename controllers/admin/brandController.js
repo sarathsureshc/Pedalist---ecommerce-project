@@ -75,9 +75,107 @@ const getBlockBrand = async(req, res)=>{
 
 }
 
+const getEditBrand = async (req, res) => {
+    try {
+        const id = req.query.id; 
+        const brand = await Brand.findById(id); 
+        if (!brand) {
+            return res.redirect("/pageerror"); 
+        }
+        res.render("edit-brand", { brand }); 
+    } catch (error) {
+        res.redirect("/pageerror"); 
+    }
+};
+
+
+const editBrand = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const { brandName } = req.body;
+
+        // Check if an image is uploaded
+        let brandImage = req.file ? req.file.filename : undefined;
+
+        // Find the existing brand to check its current image
+        const existingBrand = await Brand.findById(id);
+
+        // Check if a brand with the same name already exists, excluding the current one
+        const duplicateBrand = await Brand.findOne({
+            brandName: { $regex: new RegExp(`^${brandName}$`, 'i') },
+            _id: { $ne: id }
+        });
+
+        // If a duplicate exists, render the edit form with an error
+        if (duplicateBrand) {
+            return res.render('edit-brand', { brand: existingBrand, error: "Brand already exists" });
+        }
+
+        // Prepare the update data
+        const updateData = {
+            brandName: brandName,
+            brandImage: brandImage || existingBrand.brandImage // Retain old image if no new image is uploaded
+        };
+
+        // Update the brand in the database
+        const updatedBrand = await Brand.findByIdAndUpdate(id, updateData, { new: true });
+
+        if (updatedBrand) {
+            res.redirect('/admin/brands');
+        } else {
+            return res.render('edit-brand', { brand: existingBrand, error: "Brand not found" });
+        }
+    } catch (error) {
+        console.error(error); // Log error for debugging
+        const brand = await Brand.findById(req.params.id);
+        res.render('edit-brand', { brand, error: "Internal Server Error" });
+    }
+};
+
+
+const deleteBrand = async(req, res) => {
+    const { brandId } = req.body;
+
+    if(!brandId) {
+        console.log("Brand not found");
+        return res.status(400).json({ status: false, message: "Brand ID is required" });
+    }
+
+    try {
+        
+        const result = await Brand.findByIdAndUpdate(brandId,{isDeleted  : true , isBlocked : true},{new:true});
+        
+        if (!result) {
+            return res.status(404).json({ status: false, message: "Brand not found" });
+        }
+        res.status(200).json({ status:true, message: "Brand deleted successfully"});
+    } catch (error) {
+        console.error("Error deleting brand:", error); // Log the error for debugging
+        res.status(500).json({ status: false, message: "Failed to delete brand" });
+        
+    }
+}
+
+const restoreBrand = async(req, res) => {
+    const { brandId} = req.body;
+
+    try {
+        await Brand.findByIdAndUpdate(brandId,{isDeleted: false});
+        res.status(200).json({ status: true, message: "Brand restored successfully" });
+        
+    } catch (error) {
+        res.status(500).json({status: true, message:"Failed to restore brand"});
+    }
+}
+
 module.exports = {
     getBrandPage,
     addBrand,
     getUnblockBrand,
-    getBlockBrand
+    getBlockBrand,
+    getEditBrand,
+    editBrand,
+    deleteBrand,
+    restoreBrand,
+ 
 }

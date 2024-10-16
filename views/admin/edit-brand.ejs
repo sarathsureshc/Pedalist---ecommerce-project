@@ -1,0 +1,37 @@
+<%- include("../../views/partials/admin/header") %>
+<div class="wrapper">
+    <div class="user-main-content">
+        <div class="row justify-content-center">
+            <div class="col-md-6 mt-60">
+                <% if (typeof error !== 'undefined') { %>
+                    <div class="alert alert-danger"><%= error %></div>
+                <% } %>
+                <form method="post" action="/admin/editBrand/<%= brand._id %>" enctype="multipart/form-data">
+                    <div class="d-flex justify-content-end mt-30">
+                        <div class="me-2"> <!-- Add margin to the right for spacing -->
+                            <button class="btn btn-primary" type="submit">Update Brand</button>
+                        </div>
+                        <div>
+                            <a class="btn btn-danger" href="/admin/brands">Cancel</a>
+                        </div>
+                    </div>
+                    <div class="mb-4 mt-30">
+                        <label for="brand_name" class="form-label">Brand Name</label>
+                        <input type="text" name="brandName" value="<%= brand.brandName %>" class="form-control border" required />
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label">Brand Image</label>
+                        <input type="file" name="image" class="form-control border" accept="image/*" />
+                        <% if (brand.brandImage) { %>
+                            <div class="mt-2">
+                                <img src="/uploads/re-image/<%= brand.brandImage %>" alt="<%= brand.brandName %> Image" style="width: 100%; height: auto;" />
+                            </div>
+                        <% } %>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include("../../views/partials/admin/footer") %>

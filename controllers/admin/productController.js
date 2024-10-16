@@ -1,34 +1,38 @@
 const Product = require("../../models/productSchema")
-const category = require("../../models/categorySchema")
+const Category = require("../../models/categorySchema")
+const Brand = require("../../models/brandSchema")
 const User = require("../../models/userSchema")
 const fs = require("fs");
 const path = require("path");
 const sharp = require("sharp");
-const Category = require("../../models/categorySchema");
 
 
 
-const getProductAddPage = async(req,res)=>{
+
+const getProductAddPage = async (req, res) => {
     try {
-        
-        const category =await Category.find({isListed:true});
-        const brand = await Brand.find({isBlocked:false});
-        res.render('add-product',{
-            cat:category,
-            brand:brand
-        });
 
+        const categories = await Category.find({ isListed: true });
+
+        const brands = await Brand.find({ isBlocked: false });
+
+        res.render('add-product', {
+            cat: categories,
+            brand: brands
+        });
     } catch (error) {
-        res.redirect("/pageerror")
+        console.error("Error fetching categories and brands:", error); // Log the error for debugging
+        res.redirect("/pageerror");
     }
 };
+
 
 const addProducts = async(req,res)=>{
     try {
 
         const product = req.body;
         const productExists = await Product.findOne({
-            productName: products.productName,
+            productName: product.productName,
             
         });
 
@@ -50,24 +54,24 @@ const addProducts = async(req,res)=>{
             return res.status(404).join("Invalid category name");
         }
         const newProduct = new Product({
-            productName: products.productName,
-            specification1: products.specification1,
-            specification2: products.specification2,
-            specification3: products.specification3,
-            specification4: products.specification4,
-            brand: products.brand,
+            productName: product.productName,
+            specification1: product.specification1,
+            specification2: product.specification2,
+            specification3: product.specification3,
+            specification4: product.specification4,
+            brand: product.brand,
             category:categoryId._id,
-            price: products.price,
+            price: product.price,
             createdOn:new Date(),
-            quantity: products.quantity,
-            description: products.description,
-            size: products.size,
-            color: products.color,
+            quantity: product.quantity,
+            description: product.description,
+            size: product.size,
+            color: product.color,
             productImage: images,
             status: 'Available'
         });
         await newProduct.save();
-        return res.redirect("/admin/addProducts");
+        return res.redirect("/admin/addProduct");
     }else{
         return res.status(400).json({ message: "Product already exists" });
     }
@@ -79,8 +83,32 @@ const addProducts = async(req,res)=>{
     }
 }
 
+const getProductPage = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 4;
+        const skip = (page - 1) * limit;
+        // Fetch products in descending order
+        const productData = await Product.find({}).sort({ createdAt: -1 }).skip(skip).limit(limit);
+        const totalProducts = await Product.countDocuments();
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        res.render("products", {
+            data: productData, // Send data directly without reversing
+            currentPage: page,
+            totalPages: totalPages,
+            totalProducts: totalProducts,
+        });
+
+    } catch (error) {
+        res.redirect("/pageerror");
+    }
+}
+
+
 
 module.exports = {
     getProductAddPage,
-    addProducts
+    addProducts,
+    getProductPage
 }

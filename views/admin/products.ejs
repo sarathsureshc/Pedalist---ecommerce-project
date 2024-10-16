@@ -1,0 +1,158 @@
+<%- include('../partials/admin/header.ejs') %>
+<div class="wrapper">
+    <section class="product-main-content">
+        <header class="dashboard-header">
+            <h1>Product Management</h1>
+            <a href="/admin/logout" class="dashboard-logout-button btn btn-danger">Logout</a>
+        </header>
+
+        <!-- Breadcrumbs -->
+        <nav class="dashboard-breadcrumbs" style="display: flex; align-items: center;">
+            <div>
+                <a href="/admin">Home</a> &gt; <span>Products</span>
+            </div>
+            <a class="btn btn-info" href="/admin/addProduct" style="margin-left: auto;">Add Product</a>
+        </nav>
+        
+        <div class="dashboard-content">
+            <div class="product-management-card">
+                <!-- Products Table -->
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-center">#</th>
+                                <th>Product Name</th>
+                                <th>Brand</th> 
+                                <th>Product ID</th>
+                                <th>Image</th>
+                                <th>Listed Status</th>
+                                <th>Actions</th>
+                                <th>Deleted Status</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% data.forEach((product, index) => { %>
+                                <tr style="<%= product.isDeleted ? 'opacity: 0.5;' : '' %>">
+                                    <td class="text-center">
+                                        <%= index + 1 + (currentPage - 1) * 4 %>
+                                    </td>
+                                    <td class="text-start">
+                                        <%= product.productName %>
+                                    </td>
+                                    <td class="text-start"> <!-- Added Brand data here -->
+                                        <%= product.brand %>
+                                    </td>
+                                    <td class="text-start">
+                                        <%= product._id %>
+                                    </td>
+                                    <td class="text-start">
+                                        <div class="d-flex align-items-center justify-content-center"
+                                             style="width: 60px; height: 60px; border-radius: 8px; overflow: hidden;">
+                                            <img src="/uploads/product-images/<%= product.images[0] %>"
+                                                 alt="<%= product.productName %> Image" class="img-fluid"
+                                                 style="width: 100%; height: 100%; object-fit: cover;">
+                                        </div>
+                                    </td>
+                                    <td class="text-start">
+                                        <span class="badge rounded-pill <%= product.isListed ? 'bg-success' : 'bg-danger' %>"
+                                              style="width: 60px">
+                                            <%= product.isListed ? 'Listed' : 'Not Listed' %>
+                                        </span>
+                                    </td>
+                                    <td class="text-start">
+                                        <button class="btn <%= product.isListed ? 'btn-danger' : 'btn-success' %>"
+                                                <% if (product.isDeleted) { %> disabled <% } %>>
+                                            <a href="/admin/<%= product.isListed ? 'unlist' : 'list' %>Product?id=<%= product._id %>"
+                                               class="text-white">
+                                                <%= product.isListed ? 'Unlist' : 'List' %>
+                                            </a>
+                                        </button>
+                                    </td>
+                                    <td class="text-start">
+                                        <span class="badge rounded-pill <%= product.isDeleted ? 'bg-danger' : 'bg-success' %>"
+                                              style="width: 60px">
+                                            <%= product.isDeleted ? 'Deleted' : 'Active' %>
+                                        </span>
+                                    </td>
+                                    <td class="text-start">
+                                        <% if (product.isDeleted) { %>
+                                            <button class="btn btn-success text-white"
+                                                    onclick="restoreProduct('<%= product._id %>')">Restore</button>
+                                        <% } else { %>
+                                            <button class="btn btn-danger text-white"
+                                                    onclick="deleteProduct('<%= product._id %>')">Delete</button>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination-container">
+                    <% if (currentPage > 1) { %>
+                        <a href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+                    <% } %>
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <% if (i === currentPage) { %>
+                            <span class="current-page"><%= i %></span>
+                        <% } else { %>
+                            <a href="?page=<%= i %>"><%= i %></a>
+                        <% } %>
+                    <% } %>
+                    <% if (currentPage < totalPages) { %>
+                        <a href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<%- include('../partials/admin/footer.ejs') %>
+
+<script>
+    async function deleteProduct(productId) {
+        const confirmation = confirm("Are you sure you want to delete this product?");
+        if (!confirmation) return;
+
+        try {
+            const response = await fetch("/admin/deleteProduct", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ productId }),
+            });
+
+            const data = await response.json();
+            if (response.ok && data.status) {
+                Swal.fire('Deleted', 'Product has been deleted successfully', 'success').then(() => location.reload());
+            } else {
+                Swal.fire("Failed", data.message || "Deleting product failed", "error");
+            }
+        } catch (error) {
+            Swal.fire('Error', 'Failed to delete product', 'error');
+        }
+    }
+
+    async function restoreProduct(productId) {
+        try {
+            const response = await fetch("/admin/restoreProduct", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ productId }),
+            });
+
+            const data = await response.json();
+            if (response.ok && data.status) {
+                Swal.fire('Product Restored', 'Product has been restored successfully', 'success').then(() => location.reload());
+            } else {
+                Swal.fire("Failed", data.message || "Restoring product failed", "error");
+            }
+        } catch (error) {
+            Swal.fire('Error', 'Failed to restore product', 'error');
+        }
+    }
+</script>
