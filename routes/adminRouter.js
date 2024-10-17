@@ -44,5 +44,11 @@ router.post('/restoreBrand',adminAuth,brandController.restoreBrand);
 router.get("/products",adminAuth,productController.getProductPage)
 router.get("/addProduct",adminAuth, productController.getProductAddPage);
 router.post("/addProduct",adminAuth,uploads.array("images",4), productController.addProducts);
+router.get("/listProduct",adminAuth,productController.getListProduct);
+router.get("/unlistProduct",adminAuth,productController.getUnlistProduct);
+router.get("/editProduct",adminAuth,productController.getEditProduct);
+router.post("/editProduct/:id",adminAuth,uploads.array("images",4), productController.editProduct);
+router.post('/deleteProduct',adminAuth,productController.deleteProduct);
+router.post('/restoreProduct',adminAuth,productController.restoreProduct);
 
 module.exports = router;

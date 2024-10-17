@@ -74,13 +74,13 @@ const addCategoryOffer = async (req, res) => {
         });
     }
 
-    // Update the category's offer
+    
     await Category.updateOne(
       { _id: categoryId },
       { $set: { categoryOffer: percentage } }
     );
 
-    // Update each product under the category with the new offer
+   
     for (const product of products) {
       product.productOffer = percentage;
       product.salePrice =
@@ -206,7 +206,7 @@ try {
     }
     res.status(200).json({ status: true, message: "Category deleted successfully" });
 } catch (error) {
-    console.error("Error deleting category:", error); // Log the error for debugging
+    console.error("Error deleting category:", error); 
     res.status(500).json({ status: false, message: "Failed to delete category" });
 }
 };

@@ -41,24 +41,7 @@
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto"> <!-- Centered items -->
-                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Bicycles</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Accessories</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Login</a></li>
-                </ul>
-                <ul class="navbar-nav ms-auto"> <!-- Ensures the cart is aligned to the right -->
-                    <li class="nav-item">
-                        <a href="#" class="nav-link cart-link">
-                            <i class="bi bi-cart-fill"></i>
-                            <span class="cart-badge">3</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            
         </div>
     </nav>
 
@@ -109,6 +92,9 @@
                 const resendLink = document.getElementById('resendLink');
                 const otpInputs = document.querySelectorAll('.otp-input'); // Define otpInputs globally
                 let timer = 30; // Timer starts from 30 seconds
+
+                resendLink.style.pointerEvents = 'none';
+                resendLink.style.opacity = '0.5';
 
                 // Countdown function
                 const countdown = setInterval(function () {

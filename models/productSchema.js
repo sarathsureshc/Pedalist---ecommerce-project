@@ -35,11 +35,15 @@ const productSchema =  new Schema({
         type: String,
         required: true
     },
+    color : {
+        type: String,
+        required: true
+    },
     price : {
         type: Number,
         required : true
     },
-    stockQuantity : {
+    quantity : {
         type: Number,
         required: true
     },
@@ -50,12 +54,24 @@ const productSchema =  new Schema({
     },
     isListed : {
         type: Boolean,
-        default: true
+        default: true,
+        required: true
+    },
+    isDeleted:{
+        type: Boolean,
+        default: false,
+        required: true
     },
     createdOn : {
         type: Date,
         default: Date.now,
         required: true
+    },
+    status:{
+        type:String,
+        enum:["Available","out of stock","Discountinued"],
+        required:true,
+        default:"Available"
     },
 })
 

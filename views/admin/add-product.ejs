@@ -23,13 +23,15 @@
                                 <div class="col-lg-4 mb-4">
                                     <label class="form-label">Brand</label>
                                     <select class="form-select border" name="brand">
-                                    <option value="" disabled selected>Select the Brand</option>
-                                    <% brand.forEach(brand => { %>
-                                    <option value="<%= brand.brandName %>"><%= brand.brandName %></option>
-                                    <% }); %>
+                                        <option value="" disabled selected>Select the Brand</option>
+                                        <% brand.forEach(brand=> { %>
+                                            <option value="<%= brand.brandName %>">
+                                                <%= brand.brandName %>
+                                            </option>
+                                            <% }); %>
                                     </select>
                                     <div id="brand-error" class="error-message"></div>
-                                    </div>
+                                </div>
 
                                 <div class="mb-4">
                                     <label for="specification_1" class="form-label">Specification 1</label>
@@ -119,13 +121,13 @@
                                     <div class="image-upload-section">
                                         <div class="row">
                                             <div class="card-body align-items-center mb-3">
-                                                <img src="" alt="" id="imgView1">
+                                                <img src="" alt="" id="imgView1" class="img-upload">
                                                 <input class="form-control" type="file" name="images" id="input1"
                                                     accept="image/png, image/jpeg, image/jpg"
                                                     onchange="viewImage1(event), viewImage(event, 1)">
                                                 <div class="image-cropper d-flex align-items-center"
-                                                    style="display:none; width: 300px; height: 200px; margin-top: 10px;">
-                                                    <img src="" id="croppedImg1" alt="">
+                                                    style="display:none; width: 300px; height: 300px; margin-top: 10px;">
+                                                        <img src="" id="croppedImg1" alt="" class="img-cropped">
                                                     <button type="button" id="saveButton1"
                                                         class="btn-sm btn-primary">Save</button>
                                                 </div>
@@ -133,39 +135,39 @@
                                             </div>
 
                                             <div class="card-body align-items-center mb-3">
-                                                <img src="" alt="" id="imgView2">
+                                                <img src="" alt="" id="imgView2" class="img-upload">
                                                 <input class="form-control" type="file" name="images" id="input2"
                                                     accept="image/png, image/jpeg, image/jpg"
                                                     onchange="viewImage2(event), viewImage(event, 2)">
                                                 <div class="image-cropper d-flex align-items-center"
-                                                    style="display:none; width: 300px; height: 200px; margin-top: 10px;">
-                                                    <img src="" id="croppedImg2" alt="">
+                                                    style="display:none; width: 300px; height: 300px; margin-top: 10px;">
+                                                        <img src="" id="croppedImg2" alt="" class="img-cropped">
                                                     <button type="button" id="saveButton2"
                                                         class="btn-sm btn-primary">Save</button>
                                                 </div>
                                             </div>
 
                                             <div class="card-body align-items-center mb-3">
-                                                <img src="" alt="" id="imgView3">
+                                                <img src="" alt="" id="imgView3" class="img-upload">
                                                 <input class="form-control" type="file" name="images" id="input3"
                                                     accept="image/png, image/jpeg, image/jpg"
                                                     onchange="viewImage3(event), viewImage(event, 3)">
                                                 <div class="image-cropper d-flex align-items-center"
-                                                    style="display:none; width: 300px; height: 200px; margin-top: 10px;">
-                                                    <img src="" id="croppedImg3" alt="">
+                                                    style="display:none; width: 300px; height: 300px; margin-top: 10px;">
+                                                        <img src="" id="croppedImg3" alt="" class="img-cropped">
                                                     <button type="button" id="saveButton3"
                                                         class="btn-sm btn-primary">Save</button>
                                                 </div>
                                             </div>
 
                                             <div class="card-body align-items-center mb-3">
-                                                <img src="" alt="" id="imgView4">
+                                                <img src="" alt="" id="imgView4" class="img-upload">
                                                 <input class="form-control" type="file" name="images" id="input4"
                                                     accept="image/png, image/jpeg, image/jpg"
                                                     onchange="viewImage4(event), viewImage(event, 4)">
                                                 <div class="image-cropper d-flex align-items-center"
-                                                    style="display:none; width: 300px; height: 200px; margin-top: 10px;">
-                                                    <img src="" id="croppedImg4" alt="">
+                                                    style="display:none; width: 300px; height: 300px; margin-top: 10px;">
+                                                        <img src="" id="croppedImg4" alt="" class="img-cropped">
                                                     <button type="button" id="saveButton4"
                                                         class="btn-sm btn-primary">Save</button>
                                                 </div>
@@ -213,7 +215,7 @@
             let reader = new FileReader();
             reader.onload = function () {
                 let dataURL = reader.result;
-                let image = document.getElementById("imgView"+index);
+                let image = document.getElementById("imgView"+ index);
                 image.src = dataURL;
                 let cropper = new Cropper(image, {
                     aspectRatio: 1,
@@ -221,7 +223,8 @@
                     guides: true,
                     background: false,
                     autoCropArea: 1,
-                    zoomable: true
+                    zoomable: true,
+
                 });
 
                 let cropperContainer = document.querySelector("#croppedImg" + index).parentNode;
@@ -231,7 +234,7 @@
                 saveButton.addEventListener("click", async function () {
 
                     let croppedCanvas = cropper.getCroppedCanvas();
-                    let croppedImage = document.getElementById("croppedImage" + index);
+                    let croppedImage = document.getElementById("croppedImg" + index);
                     croppedImage.src = croppedCanvas.toDataURL('image/jpeg', 1.0);
 
                     let timestamp = new Date().getTime();
@@ -239,7 +242,7 @@
 
                     await croppedCanvas.toBlob(blob => {
                         let input = document.getElementById('input' + index);
-                        let imgFile = new File([blob], fileName.blob)
+                        let imgFile = new File([blob], fileName)
                         const fileList = new DataTransfer();
                         fileList.items.add(imgFile);
                         input.files = fileList.files;
@@ -257,7 +260,7 @@
         const selectedImages = [];
         document.getElementById("input1").addEventListener("change", handleFileSelect);
 
-        function handleFileSelect(event){
+        function handleFileSelect(event) {
             const addedImagesContainer = document.getElementById("addedImagesContainer");
             addedImagesContainer.innerHTML = "";
             const files = event.target.files;
@@ -270,24 +273,25 @@
                 const img = document.createElement("img");
                 img.src = URL.createObjectURL(file);
                 img.alt = "thumbnail";
+
                 img.style.width = "50px";
                 img.style.height = "auto";
                 const removeIcon = document.createElement("span");
                 removeIcon.classList.add("remove-icon");
-                removeIcon.textContent = "&times;";
-                removeIcon.addEventListener("click", function(){
+                removeIcon.innerHTML = "X";
+                removeIcon.addEventListener("click", function () {
                     const index = selectedImages.indexOf(file);
                     if (index !== -1) {
                         selectedImages.splice(index, 1);
                     }
-                        thumbnail.remove();
-                    
+                    thumbnail.remove();
+
                 });
                 thumbnail.appendChild(img);
                 thumbnail.appendChild(removeIcon);
                 addedImagesContainer.appendChild(thumbnail);
-                    }
-                }
+            }
+        }
 
 
 
@@ -302,8 +306,6 @@
             const description = document.getElementById('descriptionid').value;
             const brand = document.getElementsByName('brand')[0].value;
             const price = document.getElementsByName('price')[0].value;
-            // const saleprice = document.getElementsByName('salePrice')[0].value;
-            const color = document.getElementsByName('color')[0].value;
             const category = document.getElementsByName('category')[0].value;
             const images = document.getElementById('input1')
             const quantity = document.getElementsByName('quantity')
@@ -319,28 +321,28 @@
             if (specification1.trim() === "") {
                 displayErrorMessage('specification1-error', 'Please enter a specification.');
                 isValid = false;
-            } else if (!/^[a-zA-Z0-9\s]+$/.test(specification1.trim())) {
+            } else if (!/^[a-zA-Z0-9\s.,!:;"'()/@&*-]+$/.test(specification1.trim())) {
                 displayErrorMessage('specification1-error', 'Specification should contain only alphabetic characters and numbers.');
                 isValid = false;
             }
             if (specification2.trim() === "") {
                 displayErrorMessage('specification2-error', 'Please enter a specification.');
                 isValid = false;
-            } else if (!/^[a-zA-Z0-9\s]+$/.test(specification2.trim())) {
+            } else if (!/^[a-zA-Z0-9\s.,!:;"'()/@&*-]+$/.test(specification2.trim())) {
                 displayErrorMessage('specification2-error', 'Specification should contain only alphabetic characters and numbers.');
                 isValid = false;
             }
             if (specification3.trim() === "") {
                 displayErrorMessage('specification3-error', 'Please enter a specification.');
                 isValid = false;
-            } else if (!/^[a-zA-Z0-9\s]+$/.test(specification3.trim())) {
+            } else if (!/^[a-zA-Z0-9\s.,!:;"'()/@&*-]+$/.test(specification3.trim())) {
                 displayErrorMessage('specification3-error', 'Specification should contain only alphabetic characters and numbers.');
                 isValid = false;
             }
             if (specification4.trim() === "") {
                 displayErrorMessage('specification4-error', 'Please enter a specification.');
                 isValid = false;
-            } else if (!/^[a-zA-Z0-9\s]+$/.test(specification4.trim())) {
+            } else if (!/^[a-zA-Z0-9\s.,!:;"'()/@&*-]+$/.test(specification4.trim())) {
                 displayErrorMessage('specification4-error', 'Specification should contain only alphabetic characters and numbers.');
                 isValid = false;
             }
@@ -369,14 +371,6 @@
                 displayErrorMessage('Price-error', 'Please enter a valid non-negative price.');
                 isValid = false;
             }
-
-
-
-            if (color.trim() === "") {
-                displayErrorMessage('color-error', 'Please enter a color.');
-                isValid = false;
-            }
-
 
             if (images.files.length === 0) {
                 displayErrorMessage("images-error", 'Please select an image.');
