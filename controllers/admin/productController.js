@@ -201,12 +201,11 @@ const getEditProduct = async (req, res) => {
   try {
     const id = req.query.id;
     const product = await Product.findOne({_id:id});
-    const categories = await Category.find({});
+    const category = await Category.find({});
     const brand = await Brand.find({});
-    console.log(product);
     res.render("edit-Product", { 
       product : product,
-      cat: categories,
+      cat: category,
       brand: brand
     });
   } catch (error) {
@@ -218,52 +217,74 @@ const getEditProduct = async (req, res) => {
 const editProduct = async (req, res) => {
   try {
     const id = req.body._id;
-    const { productName } = req.body;
-
-    let image = req.file ? req.file.filename : undefined;
-    const existingProduct = await Product.findById(id);
-
-    const duplicateProduct = await Product.findOne({
-      ProductName: { $regex: new RegExp(`^${productName}$`, "i") },
+    const product  = await  Product.findOne({_id: id});
+    const data = req.body;
+    const existingProduct = await Product.findOne({
+      productName: data.productName,
       _id: { $ne: id },
-    });
-    if (duplicateProduct) {
-      return res.render("edit-product", {
-        product: existingProduct,
-        error: " Product already exists",
-      });
-    }
-    const updateData = {
-      productName,
-      specification1: req.body.specification1,
-      specification2: req.body.specification2,
-      specification3: req.body.specification3,
-      specification4: req.body.specification4,
-      brand: req.body.brand,
-      price: req.body.price,
-      quantity: req.body.quantity,
-      description: req.body.description,
-      color: req.body.color,
-      image: image || existingProduct.image,
-    };
+    })
 
-    const updatedProduct = await Product.findByIdAndUpdate(id, updateData, {
-      new: true,
-    });
-    if (updatedProduct) {
-      res.redirect("/admin/editProduct");
-    } else {
-      return res.render("edit-product", {
-        product: existingProduct,
-        error: "Failed to update product",
-      });
+    if (existingProduct) {
+      return res.status(400).json({ error:"Product with this name already exists. Please try another name."});
     }
-  } catch (error) {
-    console.error("Error editing product:", error);
-    const product = await Product.findById(req.params.id);
-    res.render("edit-product", { product, error: "Interna Server Error" });
+    
+    const images = [];
+
+    if(req.files && req.files.length > 0) {
+      for(let i=0; i<req.files.length; i++){
+        images.push(req.files[i].filename);
+    }
   }
+
+  const updateFields = {
+    productName: data.productName,
+    specification1: data.specification1,
+    specification2: data.specification2,
+    specification3: data.specification3,
+    specification4: data.specification4,
+    brand: data.brand,
+    category: data.category,
+    price: data.price,
+    quantity: data.quantity,
+    description: data.description,
+    color: data.color,
+  }
+
+  if(req.files.length > 0) {
+    updateFields.$push = {image:{$each:images}};
+  }
+
+  await Product.findByIdAndUpdate(id,updateFields,{new:true});
+  res.redirect('/admin/products');
+
+
+  }catch(error){
+    console.error("Error editing product:", error);
+    res.redirect("/pageerror");
+
+  }
+    
 };
+
+const deleteSingleImage = async (req, res) => {
+  try {
+
+    const {imageNameToServer,productIdToServer} = req.body;
+    const product = await Product.findByIdAndUpdate(productIdToServer,{$pull: {images: imageNameToServer}});
+    const imagePath = path.join("public","uploads","product-images",imageNameToServer,productIdToServer);
+    if(fs.existsSync(imagePath)){
+      await fs.unlinkSync(imagePath);
+      console.log(`Image ${imageNameToServer} deleted successfully`);
+    }else {
+      console.log(`Image ${imageNameToServer} does not exist`);
+    }
+    res.send({status:true});
+
+  } catch (error) {
+    res.redirect("/pageerror");
+    
+  }
+}
 
 module.exports = {
   getProductAddPage,
@@ -275,4 +296,6 @@ module.exports = {
   restoreProduct,
   getEditProduct,
   editProduct,
+  deleteSingleImage,
+ 
 };

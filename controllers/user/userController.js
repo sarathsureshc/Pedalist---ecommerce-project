@@ -1,4 +1,5 @@
 const User = require("../../models/userSchema");
+const Product = require("../../models/productSchema");
 const env = require("dotenv").config();
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
@@ -14,11 +15,12 @@ const pageNotFound = async (req, res) => {
 const loadHomepage = async (req, res) => {
   try {
     const user = req.session.user || req.user;
+    const newArrivals = await Product.find().sort({ createdAt: -1 }).limit(4);
     if(user){
       const userData = await User.findOne({_id:user._id});
-      res.render("home", { user: userData });
+      res.render("home", { user: userData ,newArrivals});
     } else{
-      return res.render("home");
+      return res.render("home",{newArrivals});
     }
   } catch (error) {
     console.log("Home page not found");
@@ -274,13 +276,47 @@ const logout = async (req,res)=>{
 
 const loadProductpage = async (req, res) => {
   try {
-    return res.render("product");
+    
+    const products = await Product.find({isListed : true}).populate('category');
+    const user = req.session.user || req.user;
+    if(user){
+      const userData = await User.findOne({_id:user._id});
+    return res.render("product", { products , user: userData });
+    }  else{
+      return res.render("product", { products});
+    }
+    
   } catch (error) {
     console.log("Product page not found");
     res.render("pageNotFound");
     res.status(500).send({ message: "Server error" });
   }
 };
+
+const loadProductDetailPage = async (req, res) => { 
+  try {
+    const id = req.query.id;
+    if (!id) {
+      return res.status(400).send({ message: "Product ID is required" });
+    }
+    const product = await Product.findById(id).populate('category');
+    const newArrivals = await Product.find({ _id: { $ne: id } }).sort({ createdAt: -1 }).limit(4);
+    if (!product) {
+      return res.status(404).render("pageNotFound", { message: "Product not found" });
+    }
+    const user = req.session.user || req.user;
+    if(user){
+      const userData = await User.findOne({_id:user._id});
+    return res.render("product-detail", { product , user : userData ,newArrivals});
+    } else{
+      return res.render("product-detail", { product,newArrivals });
+    }
+  } catch (error) {
+    console.error("Error loading product detail page:", error);
+    res.status(500).render("pageNotFound", { message: "Server error" });
+  } 
+};
+
 
 module.exports = {
   loadHomepage,
@@ -293,4 +329,5 @@ module.exports = {
   resendOtp,
   logout,
   loadProductpage,
+  loadProductDetailPage
 };

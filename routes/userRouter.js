@@ -22,7 +22,8 @@ router.get("/login",userController.loadLoginpage);
 router.post("/login",userController.login);
 router.get("/logout",userController.logout);
 
-router.get("/products",userController.loadProductpage)
+router.get("/products",userController.loadProductpage);
+router.get("/product-detail",userController.loadProductDetailPage);
 
 
 

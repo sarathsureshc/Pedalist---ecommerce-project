@@ -48,6 +48,7 @@ router.get("/listProduct",adminAuth,productController.getListProduct);
 router.get("/unlistProduct",adminAuth,productController.getUnlistProduct);
 router.get("/editProduct",adminAuth,productController.getEditProduct);
 router.post("/editProduct/:id",adminAuth,uploads.array("images",4), productController.editProduct);
+router.post("/deleteImage",adminAuth,productController.deleteSingleImage);
 router.post('/deleteProduct',adminAuth,productController.deleteProduct);
 router.post('/restoreProduct',adminAuth,productController.restoreProduct);
 

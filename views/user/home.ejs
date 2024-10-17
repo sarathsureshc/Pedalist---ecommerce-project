@@ -39,10 +39,9 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav mx-auto"> <!-- Centered items -->
+        <ul class="navbar-nav mx-auto"> 
           <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Bicycles</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Accessories</a></li>
+          <li class="nav-item"><a class="nav-link" href="/products">Products</a></li>
           <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
           <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
           <li class="nav-item">
@@ -96,92 +95,54 @@
   </div>
 
   <!-- New Arrivals Section -->
-  <section class="new-arrivals">
-    <div class="container">
+<section class="new-arrivals">
+  <div class="container">
       <h2 class="text-center my-4">New Arrivals</h2>
       <div class="row d-none d-lg-flex"> <!-- For larger screens -->
-        <!-- Replace these with dynamic content -->
-        <div class="col-md-3 mb-4">
-          <div class="card">
-            <img src="https://via.placeholder.com/300" class="card-img-top" alt="Bicycle 1">
-            <div class="card-body">
-              <h5 class="card-title">Bicycle Model 1</h5>
-              <p class="card-text">$299.99</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3 mb-4">
-          <div class="card">
-            <img src="https://via.placeholder.com/300" class="card-img-top" alt="Bicycle 2">
-            <div class="card-body">
-              <h5 class="card-title">Bicycle Model 2</h5>
-              <p class="card-text">$399.99</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3 mb-4">
-          <div class="card">
-            <img src="https://via.placeholder.com/300" class="card-img-top" alt="Bicycle 3">
-            <div class="card-body">
-              <h5 class="card-title">Bicycle Model 3</h5>
-              <p class="card-text">$499.99</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3 mb-4">
-          <div class="card">
-            <img src="https://via.placeholder.com/300" class="card-img-top" alt="Bicycle 3">
-            <div class="card-body">
-              <h5 class="card-title">Bicycle Model 3</h5>
-              <p class="card-text">$499.99</p>
-            </div>
-          </div>
-        </div>
+          <!-- Dynamic Content -->
+          <% newArrivals.forEach((product) => { %>
+              <div class="col-md-3 mb-4">
+                <a href="/product-detail?id=<%= product._id %>">
+                  <div class="card">
+                      <img src="./uploads/product-images/<%= product.image[0] %>" class="card-img-top" alt="<%= product.productName %>">
+                      <div class="card-body">
+                          <h5 class="card-title"><%= product.productName %></h5>
+                          <p class="card-text">&#8377;<%= product.price %></p>
+                      </div>
+                  </div>
+                </a>
+              </div>
+          <% }); %>
       </div>
-
 
       <!-- Carousel for small screens -->
       <div id="newArrivalsCarousel" class="carousel slide d-lg-none" data-bs-ride="carousel">
-        <div class="carousel-inner">
-          <div class="carousel-item active">
-            <div class="card">
-              <img src="https://via.placeholder.com/300" class="card-img-top" alt="Bicycle 1">
-              <div class="card-body">
-                <h5 class="card-title">Bicycle Model 1</h5>
-                <p class="card-text">$299.99</p>
-              </div>
-            </div>
+          <div class="carousel-inner">
+              <!-- Dynamic Carousel Items -->
+              <% newArrivals.forEach((product, index) => { %>
+                  <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                      <div class="card">
+                          <img src="./uploads/product-images/<%= product.image[0] %>" class="card-img-top" alt="<%= product.productName %>">
+                          <div class="card-body">
+                              <h5 class="card-title"><%= product.productName %></h5>
+                              <p class="card-text">&#8377;<%= product.price %></p>
+                          </div>
+                      </div>
+                  </div>
+              <% }); %>
           </div>
-          <div class="carousel-item">
-            <div class="card">
-              <img src="https://via.placeholder.com/300" class="card-img-top" alt="Bicycle 2">
-              <div class="card-body">
-                <h5 class="card-title">Bicycle Model 2</h5>
-                <p class="card-text">$399.99</p>
-              </div>
-            </div>
-          </div>
-          <div class="carousel-item">
-            <div class="card">
-              <img src="https://via.placeholder.com/300" class="card-img-top" alt="Bicycle 3">
-              <div class="card-body">
-                <h5 class="card-title">Bicycle Model 3</h5>
-                <p class="card-text">$499.99</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#newArrivalsCarousel" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#newArrivalsCarousel" data-bs-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Next</span>
-        </button>
+          <button class="carousel-control-prev" type="button" data-bs-target="#newArrivalsCarousel" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#newArrivalsCarousel" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+          </button>
       </div>
-    </div>
-  </section>
+  </div>
+</section>
+
 
   <!-- Mountain Bikes Section -->
   <section class="mountain-bikes-section">

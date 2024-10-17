@@ -1,0 +1,95 @@
+<%- include('../partials/user/header.ejs') %>
+<head><link rel="stylesheet" href="products/styles.css"></head>
+<div class="detail-content">
+<div class="pedalist-breadcrumb container mt-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/products">Bicycles</a></li>
+            <li class="breadcrumb-item"><a href="#"><%= product.category.name %></a></li>
+            <li class="breadcrumb-item active" aria-current="page"><%= product.productName %></li>
+        </ol>
+    </nav>
+</div>
+
+
+<div class="container pedalist-product-detail mt-4">
+    <div class="row">
+
+        <div class="col-md-6 pedalist-product-images">
+            <div class="main-image-container">
+                <img id="mainImage" src="./uploads/product-images/<%= product.image[0] %>" alt="Bicycle Model K" class="img-fluid main-image">
+            </div>
+            <div class="pedalist-thumbnail mt-3">
+                <% product.image.forEach((img, index) => { %>
+                    <img src="./uploads/product-images/<%= img %>" alt="Thumbnail <%= index + 1 %>" class="img-thumbnail pedalist-thumbnail-img" onclick="changeImage('<%= img %>')">
+                <% }); %>
+            </div>
+        </div>
+        
+        
+        
+
+        <div class="col-md-6 pedalist-product-info">
+            <h2><%=product.productName%></h2>
+            <h4>Brand: <%= product.brand %></h4>
+            <p class="text-muted"><%= product.category.name %></p>
+            <p class="price">&#8377;<%= product.price %></p>
+            <p> <ul class="specification-list">
+                <% for (let i = 1; i <= 4; i++) { %>
+                    <li><i class="bi bi-bullseye" style="color: red;"></i> <%= product[`specification${i}`] %></li>
+                <% } %>
+            </ul></p>
+            <p><strong>In Stock</strong></p>
+            <div class="pedalist-purchase-options">
+                
+                <div class="form-group">
+                    <label for="quantity">Quantity</label>
+                    <input type="number" id="quantity" class="form-control" min="1" value="1">
+                </div>
+                <div style="display: flex; gap: 10px; ">
+                    <button class="btn btn-warning pedalist-add-to-cart">Add to Cart</button>
+                    <button class="btn btn-warning pedalist-add-to-cart">Buy Now</button>
+                </div>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+<p class="product-description"><%= product.description %></strong>. Crafted with precision, this bicycle features a lightweight aluminum frame and cutting-edge technology to ensure a smooth and comfortable ride. Whether you're commuting through the city or exploring rugged trails, this bike is designed to handle it all with ease.
+</p>
+
+<section class="new-arrivals">
+    <div class="container">
+        <h2 class="text-center my-4">New Arrivals</h2>
+        <div class="row d-none d-lg-flex"> <!-- For larger screens -->
+            <!-- Dynamic Content -->
+            <% newArrivals.forEach((product) => { %>
+                <div class="col-md-3 mb-4">
+                    <a href="/product-detail?id=<%= product._id %>">
+                    <div class="card">
+                        <img src="./uploads/product-images/<%= product.image[0] %>" class="card-img-top" alt="<%= product.productName %>">
+                        <div class="card-body">
+                            <h5 class="card-title"><%= product.productName %></h5>
+                            <p class="card-text">&#8377;<%= product.price %></p>
+                        </div>
+                    </div>
+                </a>
+                </div>
+            <% }); %>
+        </div>
+        </div>
+</div>
+
+<%- include('../partials/user/footer.ejs') %>
+
+<script>
+
+function changeImage(imagePath) {
+    const mainImage = document.getElementById("mainImage");
+    mainImage.src = "./uploads/product-images/" + imagePath;
+}
+
+</script>

@@ -1,0 +1,84 @@
+<%- include('../partials/user/header.ejs') %>
+
+    <div class="wrapper">
+        <div class="sidebar">
+            <h3>
+                Search
+            </h3>
+            <input placeholder="Search products..." type="text" />
+            <button>
+                <i class="fas fa-search">
+                    Search
+                </i>
+            </button>
+            <div class="price-filter">
+                <h3>
+                    Filter by price
+                </h3>
+                <input max="350" min="20" type="range" value="185" />
+                <div>
+                    <span>
+                        $20
+                    </span>
+                    <span style="float: right;">
+                        $350
+                    </span>
+                </div>
+                <button>
+                    APPLY
+                </button>
+            </div>
+            <div class="categories">
+                <h3>
+                    Filter by categories
+                </h3>
+                <ul>
+                    <li>
+                        <a href="#">
+                            Accessories (10)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            Bicycles (4)
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="content-product">
+            <div class="breadcrumbs">
+                <a href="/">
+                    Home
+                </a>
+                <span>
+                    /
+                </span>
+                <a href="#">
+                    Products
+                </a>
+            </div>
+            <h1>
+                Products
+            </h1>
+            <p>
+                Showing all 4 results
+            </p>
+            <div class="products">
+                <% products.forEach(product => { %> 
+                    <a href="/product-detail?id=<%= product._id %>">
+                    <div class="product">
+                        <img alt="<%= product.productName %>" height="300" src="uploads/product-images/<%= product.image[0] %>" width="300" /> 
+                        <h3><%= product.productName %></h3>
+                        <h6><%= product.brand %></h6>
+                        <p><%= product.category.name %></p> 
+                        <p>₹<%= product.price.toFixed(2) %></p> 
+                    </div>
+                </a>
+                <% }); %>
+            </div>
+            
+        </div>
+    </div>
+    
+    <%- include('../partials/user/footer.ejs') %>
