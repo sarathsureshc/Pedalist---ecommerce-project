@@ -7,6 +7,7 @@ const db = require("./config/db");
 const userRouter = require("./routes/userRouter");
 const adminRouter = require("./routes/adminRouter.js");
 const path = require("path");
+const flash = require('connect-flash');
 db();
 
 app.use(express.json());
@@ -30,6 +31,13 @@ app.use(passport.session());
 app.use((req, res, next) => {
   res.set("cache-control", "no-store");
   next();
+});
+
+app.use(flash());
+// Middleware to set flash message to response locals
+app.use((req, res, next) => {
+    res.locals.errorMessage = req.flash('error');
+    next();
 });
 
 app.use("/", userRouter);

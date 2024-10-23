@@ -6,7 +6,7 @@
                 <% if (typeof error !== 'undefined') { %>
                     <div class="alert alert-danger"><%= error %></div>
                 <% } %>
-                <form method="post" action="/admin/editBrand/<%= brand._id %>" enctype="multipart/form-data">
+                <form method="post" action="/admin/edit-brand/<%= brand._id %>" enctype="multipart/form-data">
                     <div class="d-flex justify-content-end mt-30">
                         <div class="me-2"> <!-- Add margin to the right for spacing -->
                             <button class="btn btn-primary" type="submit">Update Brand</button>

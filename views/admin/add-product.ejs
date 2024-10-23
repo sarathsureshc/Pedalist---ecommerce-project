@@ -16,7 +16,7 @@
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Product Name</label>
                                     <input type="text" placeholder="Type here" name="productName"
-                                        class="form-control border" id="product_name" required>
+                                        class="form-control border" id="product_name">
                                     <div id="productName-error" class="error-message"></div>
                                 </div>
 
@@ -36,28 +36,28 @@
                                 <div class="mb-4">
                                     <label for="specification_1" class="form-label">Specification 1</label>
                                     <input type="text" placeholder="Type here" name="specification1"
-                                        class="form-control border" id="specification_1" required>
+                                        class="form-control border" id="specification_1">
                                     <div id="specification1-error" class="error-message"></div>
                                 </div>
 
                                 <div class="mb-4">
                                     <label for="specification_2" class="form-label">Specification 2</label>
                                     <input type="text" placeholder="Type here" name="specification2"
-                                        class="form-control border" id="specification_2" required>
+                                        class="form-control border" id="specification_2">
                                     <div id="specification2-error" class="error-message"></div>
                                 </div>
 
                                 <div class="mb-4">
                                     <label for="specification_3" class="form-label">Specification 3</label>
                                     <input type="text" placeholder="Type here" name="specification3"
-                                        class="form-control border" id="specification_3" required>
+                                        class="form-control border" id="specification_3">
                                     <div id="specification3-error" class="error-message"></div>
                                 </div>
 
                                 <div class="mb-4">
                                     <label for="specification_4" class="form-label">Specification 4</label>
                                     <input type="text" placeholder="Type here" name="specification4"
-                                        class="form-control border" id="specification_4" required>
+                                        class="form-control border" id="specification_4">
                                     <div id="specification4-error" class="error-message"></div>
                                 </div>
 
@@ -127,7 +127,7 @@
                                                     onchange="viewImage1(event), viewImage(event, 1)">
                                                 <div class="image-cropper d-flex align-items-center"
                                                     style="display:none; width: 300px; height: 300px; margin-top: 10px;">
-                                                        <img src="" id="croppedImg1" alt="" class="img-cropped">
+                                                    <img src="" id="croppedImg1" alt="" class="img-cropped">
                                                     <button type="button" id="saveButton1"
                                                         class="btn-sm btn-primary">Save</button>
                                                 </div>
@@ -141,7 +141,7 @@
                                                     onchange="viewImage2(event), viewImage(event, 2)">
                                                 <div class="image-cropper d-flex align-items-center"
                                                     style="display:none; width: 300px; height: 300px; margin-top: 10px;">
-                                                        <img src="" id="croppedImg2" alt="" class="img-cropped">
+                                                    <img src="" id="croppedImg2" alt="" class="img-cropped">
                                                     <button type="button" id="saveButton2"
                                                         class="btn-sm btn-primary">Save</button>
                                                 </div>
@@ -154,7 +154,7 @@
                                                     onchange="viewImage3(event), viewImage(event, 3)">
                                                 <div class="image-cropper d-flex align-items-center"
                                                     style="display:none; width: 300px; height: 300px; margin-top: 10px;">
-                                                        <img src="" id="croppedImg3" alt="" class="img-cropped">
+                                                    <img src="" id="croppedImg3" alt="" class="img-cropped">
                                                     <button type="button" id="saveButton3"
                                                         class="btn-sm btn-primary">Save</button>
                                                 </div>
@@ -167,7 +167,7 @@
                                                     onchange="viewImage4(event), viewImage(event, 4)">
                                                 <div class="image-cropper d-flex align-items-center"
                                                     style="display:none; width: 300px; height: 300px; margin-top: 10px;">
-                                                        <img src="" id="croppedImg4" alt="" class="img-cropped">
+                                                    <img src="" id="croppedImg4" alt="" class="img-cropped">
                                                     <button type="button" id="saveButton4"
                                                         class="btn-sm btn-primary">Save</button>
                                                 </div>
@@ -215,7 +215,7 @@
             let reader = new FileReader();
             reader.onload = function () {
                 let dataURL = reader.result;
-                let image = document.getElementById("imgView"+ index);
+                let image = document.getElementById("imgView" + index);
                 image.src = dataURL;
                 let cropper = new Cropper(image, {
                     aspectRatio: 1,
@@ -299,16 +299,18 @@
         function validateForm() {
             clearErrorMessages();
             const name = document.getElementsByName('productName')[0].value;
-            const specification1 = document.getElementsByName('specification1')[0].value;
-            const specification2 = document.getElementsByName('specification2')[0].value;
-            const specification3 = document.getElementsByName('specification3')[0].value;
-            const specification4 = document.getElementsByName('specification4')[0].value;
+            const specification1 = document.getElementsByName('specification1').value;
+            const specification2 = document.getElementsByName('specification2').value;
+            const specification3 = document.getElementsByName('specification3').value;
+            const specification4 = document.getElementsByName('specification4').value;
             const description = document.getElementById('descriptionid').value;
             const brand = document.getElementsByName('brand')[0].value;
             const price = document.getElementsByName('price')[0].value;
+            const color = document.getElementsByName('color')[0].value;
             const category = document.getElementsByName('category')[0].value;
             const images = document.getElementById('input1')
             const quantity = document.getElementsByName('quantity')
+
             let isValid = true
             if (name.trim() === "") {
                 displayErrorMessage('productName-error', 'Please enter a product name.');
@@ -355,20 +357,18 @@
                 isValid = false;
             }
 
-
-
-
-
-            if (parseInt(quantity) < 0) {
+            if (!/^[0-9]+$/.test(quantity) || parseInt(quantity) < 0) {
                 displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
                 isValid = false;
             }
 
+            if (!/^\d+(\.\d{1,2})?$/.test(price.trim()) || parseFloat(price) < 0) {
+                displayErrorMessage('price-error', 'Please enter a valid non-negative price.');
+                isValid = false;
+            }
 
-
-
-            if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
-                displayErrorMessage('Price-error', 'Please enter a valid non-negative price.');
+            if (!/^[a-zA-Z]+$/.test(color)) {
+                displayErrorMessage('color-error', 'Please enter a valid color name using only alphabets.');
                 isValid = false;
             }
 
@@ -381,21 +381,22 @@
 
 
         function displayErrorMessage(elementId, message) {
-            var errorElement = document.getElementById(elementId);
-            errorElement.innerText = message;
-            errorElement.style.display = "block";
-        }
+              var errorElement = document.getElementById(elementId);
+              errorElement.innerText = message;
+              errorElement.style.display = "block";
+          }
+  
+  
+          function clearErrorMessages() {
+              const errorElements = document.getElementsByClassName('error-message');
+              Array.from(errorElements).forEach(element => {
+                  element.innerText = '';
+              });
+              const errorMessage = document.getElementById('errorMessage');
+  
+  
+          }
 
-
-        function clearErrorMessages() {
-            const errorElements = document.getElementsByClassName('error-message');
-            Array.from(errorElements).forEach(element => {
-                element.innerText = '';
-            });
-            const errorMessage = document.getElementById('errorMessage');
-
-
-        }
 
 
 

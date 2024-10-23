@@ -26,9 +26,12 @@ const addProducts = async (req, res) => {
     console.log(req.files);
 
     const products = req.body;
-    const productExists = await Product.findOne({
-      productName: products.productName,
-    });
+
+    if (!products.category || !products.brand) {
+      return res.status(400).json({ message: "Both category and brand must be selected." });
+    }
+
+    const productExists = await Product.findOne({ productName: products.productName });
 
     if (!productExists) {
       const images = [];
@@ -38,12 +41,7 @@ const addProducts = async (req, res) => {
           const originalImagePath = req.files[i].path;
           console.log(`Original filename: ${req.files[i].filename}`);
 
-          const resizedImagePath = path.join(
-            "public",
-            "uploads",
-            "product-images",
-            req.files[i].filename
-          );
+          const resizedImagePath = path.join("public", "uploads", "product-images", req.files[i].filename);
           await sharp(originalImagePath)
             .resize({ width: 440, height: 440 })
             .toFile(resizedImagePath);
@@ -52,18 +50,23 @@ const addProducts = async (req, res) => {
       }
 
       const category = await Category.findOne({ name: products.category });
+      const brand = await Brand.findOne({ brandName: products.brand });
 
       if (!category) {
-        return res.status(400).join("Invalid category name");
+        return res.status(400).json({ message: "Invalid category name" });
       }
+      if (!brand) {
+        return res.status(400).json({ message: "Invalid brand name" });
+      }
+
       const newProduct = new Product({
         productName: products.productName,
         specification1: products.specification1,
         specification2: products.specification2,
         specification3: products.specification3,
         specification4: products.specification4,
-        brand: products.brand,
-        category: category._id,
+        brand: brand._id, // Using ObjectId from Brand
+        category: category._id, // Using ObjectId from Category
         price: products.price,
         createdOn: new Date(),
         quantity: products.quantity,
@@ -72,17 +75,19 @@ const addProducts = async (req, res) => {
         image: images,
         status: "Available",
       });
-      console.log("Product saved successfully");
+
       await newProduct.save();
-      return res.redirect("/admin/addProduct");
+      console.log("Product saved successfully");
+      return res.redirect("/admin/products");
     } else {
-      return res.status(400).json({ message: "Product already exists" });
+      return res.status(409).json({ message: "Product already exists" });
     }
   } catch (error) {
-    console.error("Error saving product ", error);
+    console.error("Error saving product: ", error);
     return res.redirect("/admin/pageerror");
   }
 };
+
 
 const getProductPage = async (req, res) => {
   try {
@@ -92,31 +97,25 @@ const getProductPage = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const productData = await Product.find({
-      $or: [
-        { productName: { $regex: new RegExp(".*" + search + ".*", "i") } },
-        { brand: { $regex: new RegExp(".*" + search + ".*", "i") } },
-      ],
+         productName: { $regex: new RegExp(".*" + search + ".*", "i")  }  
     })
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .populate("category")
+      .populate("brand")
       .exec();
 
     const count = await Product.find({
-      $or: [
-        { productName: { $regex: new RegExp(".*" + search + ".*") } },
-        { brand: { $regex: new RegExp(".*" + search + ".*", "i") } },
-      ],
+        productName: { $regex: new RegExp(".*" + search + ".*", )  },
     }).countDocuments();
 
-    const category = await Category.find({ isListed: true });
-    const brand = await Brand.find({ isBlocked: true });
+    category = await Category.find({isListed:true});
+    brand = await Brand.find({isBlocked : false});
 
     if (category && brand) {
       res.render("products", {
         data: productData,
         currentPage: page,
-        totalPages: page,
         totalPages: Math.ceil(count / limit),
         cat: category,
         brand: brand,
@@ -126,6 +125,7 @@ const getProductPage = async (req, res) => {
       res.render("page-404");
     }
   } catch (error) {
+    console.log("The error is :", error);
     res.redirect("/pageerror");
   }
 };

@@ -19,7 +19,6 @@ const login = async (req, res) => {
         const admin = await User.findOne({ email, isAdmin: true });
         
         if (admin) {
-            // Await the password comparison
             const passwordMatch = await bcrypt.compare(password, admin.password);
             if (passwordMatch) {
                 req.session.admin = true;
@@ -27,12 +26,10 @@ const login = async (req, res) => {
                 return res.redirect("/admin");
             } else {
                 console.log("Incorrect password for admin with email:", email);
-                // Optionally, you can send an error message to the client
                 return res.redirect("/admin/login");
             }
         } else {
             console.log("No admin found with email:", email);
-            // Optionally, you can send an error message to the client
             return res.redirect("/admin/login");
         }
     } catch (error) {

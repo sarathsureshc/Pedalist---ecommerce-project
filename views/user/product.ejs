@@ -2,83 +2,155 @@
 
     <div class="wrapper">
         <div class="sidebar">
-            <h3>
-                Search
-            </h3>
-            <input placeholder="Search products..." type="text" />
-            <button>
-                <i class="fas fa-search">
-                    Search
-                </i>
+            <h3>Search</h3>
+            <input id="search" placeholder="Search products..." type="text" onkeydown="handleKeyDown(event)" />
+            <button onclick="applyFilters()">
+                <i class="fas fa-search">Search</i>
             </button>
+
             <div class="price-filter">
-                <h3>
-                    Filter by price
-                </h3>
-                <input max="350" min="20" type="range" value="185" />
+                <h3>Filter by Price</h3>
+                <div id="priceSlider"></div>
                 <div>
-                    <span>
-                        $20
-                    </span>
-                    <span style="float: right;">
-                        $350
-                    </span>
+                    <span>Selected Price Range: ₹<span id="selectedPriceRange">20 - 100,000</span></span>
                 </div>
-                <button>
-                    APPLY
-                </button>
+                <button onclick="applyFilters()">APPLY</button>
             </div>
-            <div class="categories">
-                <h3>
-                    Filter by categories
-                </h3>
-                <ul>
-                    <li>
-                        <a href="#">
-                            Accessories (10)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            Bicycles (4)
-                        </a>
-                    </li>
-                </ul>
+
+            <div class="out-of-stock-filter">
+                <label>
+                    <input type="checkbox" id="showOutOfStock" onchange="applyFilters()" <% if (showOutOfStock==="true"
+                        ) { %> checked <% } %> >
+                        Show Out of Stock Products
+                </label>
+            </div>
+
+            <div class="category-filter">
+                <h3>Filter by Category:</h3>
+                <select id="category" onchange="applyFilters()">
+                    <option value="">All Categories</option>
+                    <% categories.forEach(category=> { %>
+                        <option value="<%= category._id %>">
+                            <%= category.name %>
+                        </option>
+                        <% }); %>
+                </select>
+            </div>
+
+            <div class="sorting-options">
+                <h3>Sort by:</h3>
+                <select id="sortBy" onchange="applyFilters()">
+                    <option value="">Select</option>
+                    <option value="popularity">Popularity</option>
+                    <option value="priceLowToHigh">Price: Low to High</option>
+                    <option value="priceHighToLow">Price: High to Low</option>
+                    <option value="averageRating">Average Ratings</option>
+                    <option value="featured">Featured</option>
+                    <option value="newArrivals">New Arrivals</option>
+                    <option value="aToZ">A - Z</option>
+                    <option value="zToA">Z - A</option>
+                </select>
             </div>
         </div>
+
         <div class="content-product">
             <div class="breadcrumbs">
-                <a href="/">
-                    Home
-                </a>
-                <span>
-                    /
-                </span>
-                <a href="#">
-                    Products
-                </a>
+                <a href="/">Home</a>
+                <span>/</span>
+                <a href="#">Products</a>
             </div>
-            <h1>
-                Products
-            </h1>
-            <p>
-                Showing all 4 results
-            </p>
+            <h1>Products</h1>
+            <p>Showing all <%= count %> results</p>
             <div class="products">
-                <% products.forEach(product => { %> 
+                <% products.forEach(product=> { %>
                     <a href="/product-detail?id=<%= product._id %>">
-                    <div class="product">
-                        <img alt="<%= product.productName %>" height="300" src="uploads/product-images/<%= product.image[0] %>" width="300" /> 
-                        <h3><%= product.productName %></h3>
-                        <h6><%= product.brand %></h6>
-                        <p><%= product.category.name %></p> 
-                        <p>₹<%= product.price.toFixed(2) %></p> 
-                    </div>
-                </a>
-                <% }); %>
+                        <div class="product">
+                            <img alt="<%= product.productName %>" height="300"
+                                src="uploads/product-images/<%= product.image[0] %>" width="300" />
+                            <h3>
+                                <%= product.productName %>
+                            </h3>
+                            <h6>
+                                <%= product.brand.name %>
+                            </h6>
+                            <p>
+                                <%= product.category.name %>
+                            </p>
+                            <p>₹<%= product.price.toFixed(2) %>
+                            </p>
+                            <p>Rating: <span class="stars">
+                                    <%= '★' .repeat(Math.round(product.rating)) %>
+                                </span> (<%= product.rating.toFixed(1) %>)</p>
+                            <p>Status: <%= product.quantity> 0 ? 'Available' : 'Out of Stock' %></p>
+                        </div>
+                    </a>
+                    <% }); %>
             </div>
-            
         </div>
     </div>
-    
+
     <%- include('../partials/user/footer.ejs') %>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.js"></script>
+        <script>
+
+            // Initialize the price slider
+            const priceSlider = document.getElementById('priceSlider');
+            const selectedPriceRange = document.getElementById('selectedPriceRange');
+
+            // Set default values or use values from the server
+            const minPrice = <%= minPrice %>; // Retrieved from the backend
+            const maxPrice = <%= maxPrice %>; // Retrieved from the backend
+
+            noUiSlider.create(priceSlider, {
+                start: [minPrice, maxPrice],
+                connect: true,
+                range: {
+                    'min': 20,
+                    'max': 100000
+                }
+            });
+
+            // Update displayed price range
+            priceSlider.noUiSlider.on('update', function (values) {
+                selectedPriceRange.innerHTML = Math.round(values[0]) + ' - ' + Math.round(values[1]);
+            });
+
+            // Set the slider values when the page loads
+            priceSlider.noUiSlider.set([minPrice, maxPrice]);
+            selectedPriceRange.innerHTML = minPrice + ' - ' + maxPrice; // Update displayed range
+            function handleKeyDown(event) {
+                if (event.key === 'Enter') {
+                    applyFilters();
+                }
+            }
+
+            function applyFilters() {
+                const searchQuery = document.getElementById("search").value;
+                const sortBy = document.getElementById("sortBy").value;
+                const showOutOfStock = document.getElementById("showOutOfStock").checked;
+                const category = document.getElementById("category").value;
+
+                // Get price range from the slider
+                const priceValues = priceSlider.noUiSlider.get();
+                const minPrice = Math.round(priceValues[0]);
+                const maxPrice = Math.round(priceValues[1]);
+
+                // Construct the query string based on selected filters
+                const queryParams = new URLSearchParams();
+                if (searchQuery) queryParams.append("search", searchQuery);
+                if (sortBy) queryParams.append("sortBy", sortBy);
+                if (showOutOfStock) {
+                    queryParams.append("showOutOfStock", "true"); // Add as a string "true"
+                } else {
+                    queryParams.append("showOutOfStock", "false"); // Add as a string "false"
+                }
+                if (category) queryParams.append("category", category);
+                // Add price range filters
+                queryParams.append("minPrice", minPrice);
+                queryParams.append("maxPrice", maxPrice);
+
+                // Redirect to the filtered product page
+                window.location.href = `/products?${queryParams.toString()}`;
+            }
+        </script>

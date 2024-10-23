@@ -11,7 +11,7 @@
                 <div>
                     <a href="/admin">Home</a> &gt; <span>Products</span>
                 </div>
-                <a class="btn btn-info" href="/admin/addProduct" style="margin-left: auto;">Add Product</a>
+                <a class="btn btn-info" href="/admin/add-product" style="margin-left: auto;">Add Product</a>
             </nav>
 
             <form method="GET" action="/admin/products" class="mb-3">
@@ -54,7 +54,7 @@
                                             <%= product.productName %>
                                         </td>
                                         <td class="text-start"> <!-- Added Brand data here -->
-                                            <%= product.brand %>
+                                            <%= product.brand.brandName%>
                                         </td>
                                         <td class="text-start">
                                             <%= product.price %>
@@ -77,12 +77,12 @@
                                             </div>
                                         </td>
                                         <td class="text-start">
-                                            <%= product.category.name %>
+                                            <%= product.category.name%>
                                         </td>
                                         <td class="text-start">
                                             <button class="btn <%= product.isListed ? 'btn-danger' : 'btn-success' %>"
                                                 style="width: 70px" <% if (product.isDeleted) { %> disabled <% } %>>
-                                                <a href="/admin/<%= product.isListed ? 'unlist' : 'list' %>Product?id=<%= product._id %>"
+                                                <a href="/admin/<%= product.isListed ? 'unlist' : 'list' %>-product?id=<%= product._id %>"
                                                    class="text-white" style="text-decoration: none;">
                                                     <%= product.isListed ? 'Unlist' : 'List' %>
                                                 </a>
@@ -93,13 +93,13 @@
                                         <td class="text-start">
                                             <button class="btn btn-info text-white" <% if (product.isDeleted) { %>
                                                 disabled <% } %>>
-                                                    <a href="/admin/editProduct?id=<%= product._id %>"
+                                                    <a href="/admin/edit-product?id=<%= product._id %>"
                                                         class="text-white">Edit</a>
                                             </button>
                                         </td>
                                         <td class="text-start">
                                             <span
-                                                class="badge rounded-pill <%= product.status === 'Available' ? 'bg-success' : (product.status === 'Out of Stock' ? 'bg-warning' : 'bg-danger') %>"
+                                                class="badge rounded-pill <%= product.status === 'Available' ? 'bg-success' : (product.status === 'out of Stock' ? 'bg-warning' : 'bg-danger') %>"
                                                 style="width: 100px">
                                                 <%= product.status %>
                                             </span>
@@ -152,7 +152,7 @@
                 if (!confirmation) return;
 
                 try {
-                    const response = await fetch("/admin/deleteProduct", {
+                    const response = await fetch("/admin/delete-product", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ productId }),
@@ -171,7 +171,7 @@
 
             async function restoreProduct(productId) {
                 try {
-                    const response = await fetch("/admin/restoreProduct", {
+                    const response = await fetch("/admin/restore-product", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ productId }),

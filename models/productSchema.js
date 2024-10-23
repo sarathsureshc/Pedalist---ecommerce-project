@@ -12,7 +12,8 @@ const productSchema =  new Schema({
         required: true
     },
     brand : {
-        type: String,
+        type : Schema.Types.ObjectId,
+        ref : 'Brand',
         required: true
     },
     specification1 : {
@@ -69,10 +70,16 @@ const productSchema =  new Schema({
     },
     status:{
         type:String,
-        enum:["Available","out of stock","Discountinued"],
+        enum:["Available","Out of Stock","Discontinued"],
         required:true,
         default:"Available"
     },
+    rating: {
+        type: Number,
+        default: 0,
+        min: 0,
+        max: 5
+    }
 })
 
 const Product = Mongoose.model("Product",productSchema)

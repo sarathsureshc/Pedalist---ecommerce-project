@@ -94,30 +94,23 @@ const editBrand = async (req, res) => {
         const id = req.params.id;
         const { brandName } = req.body;
 
-        // Check if an image is uploaded
         let brandImage = req.file ? req.file.filename : undefined;
 
-        // Find the existing brand to check its current image
         const existingBrand = await Brand.findById(id);
 
-        // Check if a brand with the same name already exists, excluding the current one
         const duplicateBrand = await Brand.findOne({
             brandName: { $regex: new RegExp(`^${brandName}$`, 'i') },
             _id: { $ne: id }
         });
-
-        // If a duplicate exists, render the edit form with an error
         if (duplicateBrand) {
             return res.render('edit-brand', { brand: existingBrand, error: "Brand already exists" });
         }
 
-        // Prepare the update data
         const updateData = {
             brandName: brandName,
-            brandImage: brandImage || existingBrand.brandImage // Retain old image if no new image is uploaded
+            brandImage: brandImage || existingBrand.brandImage 
         };
 
-        // Update the brand in the database
         const updatedBrand = await Brand.findByIdAndUpdate(id, updateData, { new: true });
 
         if (updatedBrand) {
@@ -126,7 +119,7 @@ const editBrand = async (req, res) => {
             return res.render('edit-brand', { brand: existingBrand, error: "Brand not found" });
         }
     } catch (error) {
-        console.error(error); // Log error for debugging
+        console.error(error);
         const brand = await Brand.findById(req.params.id);
         res.render('edit-brand', { brand, error: "Internal Server Error" });
     }
@@ -150,7 +143,7 @@ const deleteBrand = async(req, res) => {
         }
         res.status(200).json({ status:true, message: "Brand deleted successfully"});
     } catch (error) {
-        console.error("Error deleting brand:", error); // Log the error for debugging
+        console.error("Error deleting brand:", error);
         res.status(500).json({ status: false, message: "Failed to delete brand" });
         
     }

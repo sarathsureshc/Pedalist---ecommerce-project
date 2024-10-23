@@ -1,105 +1,160 @@
 <%- include('../partials/admin/header.ejs') %>
-<div class="wrapper">
-    <div class="user-main-content">
-        <header class="dashboard-header">
-            <h1>User Management</h1>
-            <a href="/admin/logout" class="dashboard-logout-button btn btn-danger">Logout</a>
-        </header>
+    <div class="wrapper">
+        <div class="user-main-content">
+            <header class="dashboard-header">
+                <h1>User Management</h1>
+                <a href="/admin/logout" class="dashboard-logout-button btn btn-danger">Logout</a>
+            </header>
 
-        <!-- Breadcrumbs -->
-        <nav class="dashboard-breadcrumbs">
-            <a href="/admin">Home</a> &gt; <span>User Management</span>
-        </nav>
+            <!-- Breadcrumbs -->
+            <nav class="dashboard-breadcrumbs">
+                <a href="/admin">Home</a> &gt; <span>User Management</span>
+            </nav>
 
-        <div class="dashboard-content">
-            <div class="user-management-card">
-                <h3>User List</h3>
+            <div class="dashboard-content">
+                <div class="user-management-card">
+                    <h3>User List</h3>
 
-                <!-- Search Bar -->
-                <form method="GET" action="/admin/users" class="mb-3">
-                    <div class="input-group">
-                        <input type="text" name="search" class="form-control" placeholder="Search Users"
-                            value="<%= search %>" />
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="submit">Search</button>
+                    <!-- Search Bar -->
+                    <form method="GET" action="/admin/users" class="mb-3">
+                        <div class="input-group">
+                            <input type="text" name="search" class="form-control" placeholder="Search Users"
+                                value="<%= search %>" />
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="submit">Search</button>
+                            </div>
                         </div>
-                    </div>
-                </form>
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>User ID</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Mobile Number</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Sample User Data -->
-                            <% for(let i=0 ; i<data.length ; i++){ %>
+                    </form>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
                                 <tr>
-                                    <td>
-                                        <%= data[i].id %>
-                                    </td>
-                                    <td>
-                                        <%= data[i].firstName %>
-                                    </td>
-                                    <td>
-                                        <%= data[i].email %>
-                                    </td>
-                                    <td>
-                                        <%= data[i].mobileNumber %>
-                                    </td>
-                                    <td>
-                                        <% if(data[i].isBlocked===false) { %>
-                                            <span class="badge bg-success">Active</span>
-                                            <% } else { %>
-                                                <span class="badge bg-danger">Blocked</span>
-                                                <% } %>
-                                    </td>
-                                    <td>
-                                        <% if(data[i].isBlocked===false) { %>
-                                            <button class="btn btn-danger">
-                                                <a href="/admin/blockCustomer?id=<%= data[i]._id %>"
-                                                    style="color: white; text-decoration: none;">Block</a>
-                                            </button>
-                                            <% } else { %>
-                                                <button class="btn btn-success">
-                                                    <a href="/admin/unblockCustomer?id=<%= data[i]._id %>"
-                                                        style="color: white; text-decoration: none;">Unblock</a>
-                                                </button>
-                                                <% } %>
-                                    </td>
+                                    <th>User ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Mobile Number</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
                                 </tr>
-                                <% } %>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                <!-- Sample User Data -->
+                                <% for(let i=0 ; i<data.length ; i++){ %>
+                                    <tr>
+                                        <td>
+                                            <%= data[i].id %>
+                                        </td>
+                                        <td>
+                                            <%= data[i].firstName %>
+                                                <%= data[i].lastName %>
+                                        </td>
+                                        <td>
+                                            <%= data[i].email %>
+                                        </td>
+                                        <td>
+                                            <%= data[i].mobileNumber %>
+                                        </td>
+                                        <td>
+                                            <% if(data[i].isBlocked===false) { %>
+                                                <span class="badge bg-success">Active</span>
+                                                <% } else { %>
+                                                    <span class="badge bg-danger">Blocked</span>
+                                                    <% } %>
+                                        </td>
+                                        <td>
+                                            <% if(data[i].isBlocked===false) { %>
+                                                <button class="btn btn-danger"
+                                                    onclick="blockCustomer('<%= data[i]._id %>')">Block
+                                                </button>
+                                                <% } else { %>
+                                                    <button class="btn btn-success text-white"
+                                                        onclick="unblockCustomer('<%= data[i]._id %>')">Unblock
+                                                        <% } %>
+                                        </td>
+                                    </tr>
+                                    <% } %>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+                <!-- Pagination -->
+                <div class="pagination-container">
+                    <% if (currentPage> 1) { %>
+                        <a href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+                        <% } %>
+                            <% for (let i=1; i <=totalPages; i++) { %>
+                                <% if (i===currentPage) { %>
+                                    <span class="current-page">
+                                        <%= i %>
+                                    </span>
+                                    <% } else { %>
+                                        <a href="?page=<%= i %>">
+                                            <%= i %>
+                                        </a>
+                                        <% } %>
+                                            <% } %>
+                                                <% if (currentPage < totalPages) { %>
+                                                    <a href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+                                                    <% } %>
+                </div>
+
             </div>
-            
         </div>
     </div>
-    </div>
 
-    
+
     </div>
 
     <%- include('../partials/admin/footer.ejs') %>
 
 
         <script>
-            function blockUser(userId) {
-                // Implement block user functionality here
-                alert("User " + userId + " has been blocked.");
-                // Optionally, make an AJAX call to block the user on the server
+
+            async function blockCustomer(userId) {
+                const confirmation = confirm("Are you sure you want to block this User")
+                if(!confirmation) return;
+              
+                    try {
+                        const response = await fetch("/admin/blockCustomer", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ userId }),
+                        });
+
+                        const data = await response.json();
+                        if (response.ok && data.status) {
+                            Swal.fire('Blocked!', 'User has been blocked successfully.', 'success').then(() => location.reload());
+                        } else {
+                            Swal.fire('Failed', data.message || 'Blocking User failed', 'error');
+                        }
+                    } catch (error) {
+                        console.log(error)
+                        Swal.fire('Error', 'Failed to block User', 'error');
+                    }
+                }
+            
+
+
+            async function unblockCustomer(userId) {
+                const confirmation = confirm("Are you sure you want to unblock this User?");
+                if (!confirmation) return;
+
+                try {
+                    const response = await fetch("/admin/unblockCustomer", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ userId }),
+                    });
+
+                    const data = await response.json();
+                    if (response.ok && data.status) {
+                        Swal.fire('User unblocked', 'User has been unblocked successfully', 'success').then(() => location.reload());
+                    } else {
+                        Swal.fire("Failed", data.message || "unblocking User failed", "error");
+                    }
+                } catch (error) {
+                    Swal.fire('Error', 'Failed to unblock User', 'error');
+                }
             }
 
-            function unblockUser(userId) {
-                // Implement unblock user functionality here
-                alert("User " + userId + " has been unblocked.");
-                // Optionally, make an AJAX call to unblock the user on the server
-            }
         </script>

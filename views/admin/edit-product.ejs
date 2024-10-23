@@ -37,7 +37,7 @@ position: relative;
 
 
                         <div class="card-body">
-                            <form method="post" action="/admin/editProduct/<%= product._id %>"
+                            <form method="post" action="/admin/edit-product/<%= product._id %>"
                                 enctype="multipart/form-data" onsubmit="return validateForm()">
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Product Name</label>
@@ -333,7 +333,7 @@ position: relative;
 
 
 
-            if (parseInt(quantity) < 0) {
+            if (parseInt(quantity) < 0 || quantity.trim()==="") {
                 displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
                 isValid = false;
             }
@@ -341,7 +341,7 @@ position: relative;
 
 
 
-            if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
+            if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0 || price.trim ==="") {
                 displayErrorMessage('Price-error', 'Please enter a valid non-negative price.');
                 isValid = false;
             }
@@ -469,7 +469,7 @@ position: relative;
 
         function deleteSingleImage(imageId, productId) {
             $.ajax({
-                url: '/admin/deleteImage',
+                url: '/admin/delete-image',
                 method: 'POST',
                 data: { imageNameToServer: imageId, productIdToServer: productId },
                 success: ((response)=> {

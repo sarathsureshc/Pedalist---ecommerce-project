@@ -44,8 +44,8 @@ const userSchema = new Schema({
         ref : 'Cart'
     }],
     wallet : {
-        type : Number,
-        default : 0
+        type : Schema.Types.ObjectId,
+        ref : 'Wallet',
     },
     wishlist : [{
         type : Schema.Types.ObjectId,
@@ -68,16 +68,6 @@ const userSchema = new Schema({
     redeemedUsers : [{
         type : Schema.Types.ObjectId,
         ref :  'User'
-    }],
-    searchHistory : [{
-        category : {
-            type : Schema.Types.ObjectId,
-            ref : 'Category'
-        },
-        searchOn : {
-            type : Date,
-            default : Date.now
-        }
     }]
 })
 

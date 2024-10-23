@@ -16,11 +16,11 @@ const loadHomepage = async (req, res) => {
   try {
     const user = req.session.user || req.user;
     const newArrivals = await Product.find().sort({ createdAt: -1 }).limit(4);
-    if(user){
-      const userData = await User.findOne({_id:user._id});
-      res.render("home", { user: userData ,newArrivals});
-    } else{
-      return res.render("home",{newArrivals});
+    if (user) {
+      const userData = await User.findOne({ _id: user._id });
+      res.render("home", { user: userData, newArrivals });
+    } else {
+      return res.render("home", { newArrivals });
     }
   } catch (error) {
     console.log("Home page not found");
@@ -109,10 +109,17 @@ const signup = async (req, res) => {
       });
     }
     const otp = generateOtp();
+
+    const otpExpiry = Date.now() + 10 * 60 * 1000;
+    req.session.otpExpiry = otpExpiry;
+
     const emailSent = await sendVerificationEmail(email, otp);
     if (!emailSent) {
       return res.json("email-error");
     }
+
+    const passwordHash = await securePassword(password);
+    console.log("Hashed password : ", passwordHash);
 
     req.session.userOtp = otp;
     req.session.userData = {
@@ -120,8 +127,10 @@ const signup = async (req, res) => {
       lastName,
       mobileNumber,
       email,
-      password,
+      passwordHash,
     };
+
+    // console.log(req.session.userData);
 
     res.render("verify-otp");
     console.log("OTP sent", otp);
@@ -143,22 +152,37 @@ const verifyOtp = async (req, res) => {
   try {
     const { otp } = req.body;
 
-    console.log(otp);
+    // console.log("Entered OTP : ",otp);
+
+    if (Date.now() > req.session.otpExpiry) {
+      console.log("OTP expired");
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "OTP has expired. Please request a new one.",
+        });
+    }
 
     if (otp === req.session.userOtp) {
       const user = req.session.userData;
-      const passwordHash = await securePassword(user.password);
 
       const saveUserData = new User({
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
         mobileNumber: user.mobileNumber,
-        password: passwordHash,
+        password: user.passwordHash,
       });
+
+      // console.log("Saved data : ", saveUserData);
 
       await saveUserData.save();
       // req.session.user = saveUserData._id;
+
+      req.session.userOtp = null;
+      req.session.otpExpiry = null;
+
       res.json({ success: true, redirectUrl: "/login" });
     } else {
       res
@@ -181,7 +205,10 @@ const resendOtp = async (req, res) => {
     }
 
     const otp = generateOtp();
+    const otpExpiry = Date.now() + 10 * 60 * 1000;
+
     req.session.userOtp = otp;
+    req.session.otpExpiry = otpExpiry;
 
     const emailSent = await sendVerificationEmail(email, otp);
     if (emailSent) {
@@ -204,6 +231,88 @@ const resendOtp = async (req, res) => {
   }
 };
 
+// const loadForgotPassword = async (req, res) => {
+//   try {
+//     const user = req.session.user || req.user;
+//     if (!user) {
+//       return res.render("forgot-password");
+//     } else {
+//       res.redirect("/");
+//     }
+    
+//   } catch (error) {
+//     console.log("Forgot password page not found");
+//     res.render("pageNotFound");
+    
+//   }
+// }
+
+// const forgotPassword = async (req, res) => {
+//   try {
+//     const user = req.session.user || req.user;
+//     if (!user) {
+
+//         const email = req.body;
+//         const user = await User.findOne({ email: email });
+//         if (!user) {
+//           return res.render("forgot-password", { message: "User not found" });
+//         }
+//         const otp = generateOtp();
+//         const otpExpiry = Date.now() + 10 * 60 * 1000;
+//         req.session.userOtp = otp;
+//         req.session.otpExpiry = otpExpiry;
+//         const emailSent = await sendVerificationEmail(email, otp);
+//         if (emailSent) {
+//           console.log("Forgot Password OTP:", otp);
+//           res.render("forgot-password-verify-otp");
+//         } else {
+//           res.render("forgot-password", {
+//             message: "Failed to send OTP. Please try again",
+//           });
+//         }
+//     } else {
+//       res.redirect("/");
+//     }
+
+    
+//   } catch (error) {
+//     console.error("Forgot password error", error);
+//     res.render("pageNotFound");
+//   }
+// }
+
+// const verifyPasswordResetOtp = async (req, res) => {
+//   try {
+//     const { otp } = req.body;
+
+//     if (Date.now() > req.session.otpExpiry) {
+//       console.log("OTP expired");
+//       return res
+//         .status(400)
+//         .json({
+//           success: false,
+//           message: "OTP has expired. Please request a new one.",
+//         });
+//     }
+
+//     if (otp === req.session.userOtp) {
+//       const user = await User.findOne({email:email})
+
+//       req.session.userOtp = null;
+//       req.session.otpExpiry = null;
+
+//       res.json({ success: true, redirectUrl: "/login" });
+//     } else {
+//       res
+//         .status(400)
+//         .json({ success: false, message: "Invalid OTP, Please try again" });
+//     }
+//   } catch (error) {
+//     console.error("Error verifying OTP", error);
+//     res.status(500).json({ success: false, message: "An error occurred" });
+//   }
+// };
+
 const loadLoginpage = async (req, res) => {
   try {
     if (!req.session.user) {
@@ -220,16 +329,14 @@ const loadLoginpage = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    // console.log("Received email:", email); // Log the incoming email
 
     const findUser = await User.findOne({ isAdmin: 0, email: email });
- 
 
     if (!findUser) {
       console.log("User not found");
       return res.render("login", { message: "User not found" });
     }
-    
+
     if (findUser.isBlocked) {
       return res.render("login", {
         message: "Your account is blocked by admin",
@@ -237,16 +344,15 @@ const login = async (req, res) => {
     }
 
     const passwordMatch = await bcrypt.compare(password, findUser.password);
-    console.log("Password match:", passwordMatch); // Log password match status
+    console.log("Password match:", passwordMatch);
 
     if (!passwordMatch) {
       console.log("Invalid password");
       return res.render("login", { message: "Invalid password" });
     }
 
-    // Store the entire user object
-    req.session.user = findUser; 
-    console.log("User logged In")
+    req.session.user = findUser;
+    console.log("User logged In");
     res.redirect("/");
   } catch (error) {
     console.error("Login error", error);
@@ -254,69 +360,89 @@ const login = async (req, res) => {
   }
 };
 
-const logout = async (req,res)=>{
+const logout = async (req, res) => {
   try {
-
-    req.session.destroy((err)=>{
-      if(err){
-        console.log("Session destruction error",err.message);
+    req.session.destroy((err) => {
+      if (err) {
+        console.log("Session destruction error", err.message);
         return res.redirect("/pageNotFound");
       }
       return res.redirect("/login");
-    })
-
+    });
   } catch (error) {
-
-    console.log("Logout error",error);
+    console.log("Logout error", error);
     res.redirect("/pageNotFound");
-    
-  }
-
-}
-
-const loadProductpage = async (req, res) => {
-  try {
-    
-    const products = await Product.find({isListed : true}).populate('category');
-    const user = req.session.user || req.user;
-    if(user){
-      const userData = await User.findOne({_id:user._id});
-    return res.render("product", { products , user: userData });
-    }  else{
-      return res.render("product", { products});
-    }
-    
-  } catch (error) {
-    console.log("Product page not found");
-    res.render("pageNotFound");
-    res.status(500).send({ message: "Server error" });
   }
 };
 
-const loadProductDetailPage = async (req, res) => { 
-  try {
-    const id = req.query.id;
-    if (!id) {
-      return res.status(400).send({ message: "Product ID is required" });
-    }
-    const product = await Product.findById(id).populate('category');
-    const newArrivals = await Product.find({ _id: { $ne: id } }).sort({ createdAt: -1 }).limit(4);
-    if (!product) {
-      return res.status(404).render("pageNotFound", { message: "Product not found" });
-    }
-    const user = req.session.user || req.user;
-    if(user){
-      const userData = await User.findOne({_id:user._id});
-    return res.render("product-detail", { product , user : userData ,newArrivals});
-    } else{
-      return res.render("product-detail", { product,newArrivals });
-    }
-  } catch (error) {
-    console.error("Error loading product detail page:", error);
-    res.status(500).render("pageNotFound", { message: "Server error" });
-  } 
-};
+// const loadProductpage = async (req, res) => {
+//   try {
+//     const products = await Product.find({ isListed: true })
+//       .populate({
+//         path: "brand",
+//         match: { isBlocked: false }, 
+//         select: "name", 
+//       })
+//       .populate({
+//         path: "category",
+//         match: { isListed: true }, 
+//         select: "name", 
+//       })
+//       .exec();
 
+    
+//     const filteredProducts = products.filter(
+//       (product) => product.brand !== null && product.category !== null
+//     );
+
+//     const count = filteredProducts.length;
+//     const user = req.session.user || req.user;
+
+//     if (user) {
+//       const userData = await User.findOne({ _id: user._id });
+//       return res.render("product", { products: filteredProducts, user: userData, count });
+//     } else {
+//       return res.render("product", { products: filteredProducts, count });
+//     }
+//   } catch (error) {
+//     console.log("Product page not found");
+//     res.render("pageNotFound");
+//     res.status(500).send({ message: "Server error" });
+//   }
+// };
+
+
+// const loadProductDetailPage = async (req, res) => {
+//   try {
+//     const id = req.query.id;
+//     if (!id) {
+//       return res.status(400).send({ message: "Product ID is required" });
+//     }
+//     const product = await Product.findById(id).populate("category").populate("brand");
+//     const newArrivals = await Product.find({ _id: { $ne: id } })
+//       .sort({ createdAt: -1 })
+//       .limit(4);
+//     if (!product) {
+//       return res
+//         .status(404)
+//         .render("pageNotFound", { message: "Product not found" });
+//     }
+//     const user = req.session.user || req.user;
+//     if (user) {
+//       const userData = await User.findOne({ _id: user._id });
+//       return res.render("product-detail", {
+//         product,
+//         user: userData,
+//         newArrivals,
+//       });
+//     } else {
+//       return res.render("product-detail", { product, newArrivals });
+//     }
+//   } catch (error) {
+//     console.error("Error loading product detail page:", error);
+//     res.status(500).render("pageNotFound", { message: "Server error" });
+//   }
+// };
 
 module.exports = {
   loadHomepage,
@@ -328,6 +454,6 @@ module.exports = {
   verifyOtp,
   resendOtp,
   logout,
-  loadProductpage,
-  loadProductDetailPage
+  // loadProductpage,
+  // loadProductDetailPage,
 };

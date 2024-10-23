@@ -1,0 +1,95 @@
+<%- include('../partials/user/header.ejs') %>
+    <link rel="stylesheet" href="profile-styles.css">
+
+    <div class="wrapper">
+        <div class="user-profile-container">
+            <div class="user-details">
+                <h1>Edit Profile</h1>
+                <form method="post" action="/edit-profile" onsubmit="return validateForm(event)">
+
+                    <div class="input-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" name="firstName" value="<%= user.firstName %>" required>
+                        <div class="error-message" id="firstNameError"></div>
+                    </div>
+                    <div class="input-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" name="lastName" value="<%= user.lastName %>" required>
+                        <div class="error-message" id="lastNameError"></div>
+                    </div>
+                    <div class="input-group">
+                        <label for="mobileNumber">Mobile Number</label>
+                        <input type="text" id="mobileNumber" name="mobileNumber" value="<%= user.mobileNumber %>"
+                            required>
+                        <div class="error-message" id="mobileNumberError"></div>
+                    </div>
+                    <button type="submit" class="btn btn-success">Save Changes</button>
+                    <button type="button" class="btn btn-danger"
+                        onclick="window.location.href='/profile'">Cancel</button>
+                </form>
+            </div>
+
+            <div class="right-sidebar">
+                <h3>Profile Navigation</h3>
+                <ul>
+                    <li class="selected">View Profile</li>
+                    <li><a href="/wishlist">Wishlist</a></li>
+                    <li><a href="/profile/orders">Order History</a></li>
+                    <li><a href="/profile/settings">Account Settings</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/user/footer.ejs') %>
+
+        <script>
+            function validateForm(event) {
+
+                console.log("Validation started");
+
+                const nameRegex = /^[A-Za-z\s]+$/;
+                const mobileRegex = /^[1-9][0-9]*$/;
+
+                const firstName = document.getElementById('firstName').value.trim();
+                const lastName = document.getElementById('lastName').value.trim();
+                const mobileNumber = document.getElementById('mobileNumber').value.trim();
+
+                const firstNameError = document.getElementById('firstNameError');
+                const lastNameError = document.getElementById('lastNameError');
+                const mobileNumberError = document.getElementById('mobileNumberError');
+
+                firstNameError.textContent = '';
+                lastNameError.textContent = '';
+                mobileNumberError.textContent = '';
+
+                let isValid = true;
+
+        
+                if (!nameRegex.test(firstName)) {
+                    firstNameError.textContent = 'First name can only contain letters and spaces.';
+                    firstNameError.style.display = 'block'
+                    isValid = false;
+                }
+
+                if (!nameRegex.test(lastName)) {
+                    lastNameError.textContent = 'Last name can only contain letters and spaces.';
+                    lastNameError.style.display = 'block'
+                    isValid = false;
+                }
+
+                if (!mobileRegex.test(mobileNumber)) {
+                    mobileNumberError.textContent = 'Mobile number should only contain numbers and cannot be all zeros.';
+                    mobileNumberError.style.display = 'block'
+                    isValid = false;
+                }
+
+        
+                if (!isValid) {
+                    event.preventDefault();
+                }
+
+                return isValid;
+            }
+        </script>

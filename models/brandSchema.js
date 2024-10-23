@@ -12,6 +12,10 @@ const brandSchema = new Schema({
         type : String,
         required : true
     },
+    brandOffer : {
+        type : Schema.Types.ObjectId,
+        ref : 'Offer'
+    },
     isBlocked : {
         type : Boolean,
         default : false

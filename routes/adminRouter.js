@@ -18,37 +18,37 @@ router.get("/",adminAuth,adminController.loadDashboard)
 router.get("/logout",adminController.logout)
 
 router.get("/users",adminAuth,customerController.customerInfo);
-router.get("/blockCustomer", adminAuth,customerController.customerBlocked);
-router.get("/unblockCustomer", adminAuth,customerController.customerUnBlocked);
+router.post("/blockCustomer", adminAuth,customerController.customerBlocked);
+router.post("/unblockCustomer", adminAuth,customerController.customerUnBlocked);
 
 router.get("/category",adminAuth,categoryController.categoryInfo);
-router.post("/addCategory",adminAuth,categoryController.addCategory);
-router.post("/addCategoryOffer",adminAuth,categoryController.addCategoryOffer);
-router.post("/removeCategoryOffer",adminAuth,categoryController.removeCategoryOffer);
-router.get("/listCategory",adminAuth,categoryController.getListCategory);
-router.get("/unlistCategory",adminAuth,categoryController.getUnlistCategory);
-router.get("/editCategory",adminAuth,categoryController.getEditCategory);
-router.post("/editCategory/:id",adminAuth,categoryController.editCategory);
-router.post('/deleteCategory',adminAuth,categoryController.deleteCategory);
-router.post('/restoreCategory',adminAuth,categoryController.restoreCategory);
+router.post("/add-category",adminAuth,categoryController.addCategory);
+router.post("/add-category-offer",adminAuth,categoryController.addCategoryOffer);
+router.post("/remove-category-offer",adminAuth,categoryController.removeCategoryOffer);
+router.get("/list-category",adminAuth,categoryController.getListCategory);
+router.get("/unlist-category",adminAuth,categoryController.getUnlistCategory);
+router.get("/edit-category",adminAuth,categoryController.getEditCategory);
+router.post("/edit-category/:id",adminAuth,categoryController.editCategory);
+router.post('/delete-category',adminAuth,categoryController.deleteCategory);
+router.post('/restore-category',adminAuth,categoryController.restoreCategory);
 
 router.get('/brands',adminAuth,brandController.getBrandPage);
-router.post("/addBrand",adminAuth,uploads.single("image"),brandController.addBrand);
-router.get("/unblockBrand",adminAuth,brandController.getUnblockBrand);
-router.get("/blockBrand",adminAuth,brandController.getBlockBrand);
-router.get("/editBrand",adminAuth,brandController.getEditBrand);
-router.post("/editBrand/:id",adminAuth,uploads.single('image'),brandController.editBrand);
-router.post('/deleteBrand',adminAuth,brandController.deleteBrand);
-router.post('/restoreBrand',adminAuth,brandController.restoreBrand);
+router.post("/add-brand",adminAuth,uploads.single("image"),brandController.addBrand);
+router.get("/unblock-brand",adminAuth,brandController.getUnblockBrand);
+router.get("/block-brand",adminAuth,brandController.getBlockBrand);
+router.get("/edit-brand",adminAuth,brandController.getEditBrand);
+router.post("/edit-brand/:id",adminAuth,uploads.single('image'),brandController.editBrand);
+router.post('/delete-brand',adminAuth,brandController.deleteBrand);
+router.post('/restore-brand',adminAuth,brandController.restoreBrand);
 
 router.get("/products",adminAuth,productController.getProductPage)
-router.get("/addProduct",adminAuth, productController.getProductAddPage);
-router.post("/addProduct",adminAuth,uploads.array("images",4), productController.addProducts);
-router.get("/listProduct",adminAuth,productController.getListProduct);
-router.get("/unlistProduct",adminAuth,productController.getUnlistProduct);
-router.get("/editProduct",adminAuth,productController.getEditProduct);
-router.post("/editProduct/:id",adminAuth,uploads.array("images",4), productController.editProduct);
-router.post("/deleteImage",adminAuth,productController.deleteSingleImage);
+router.get("/add-product",adminAuth, productController.getProductAddPage);
+router.post("/add-product",adminAuth,uploads.array("images",4), productController.addProducts);
+router.get("/list-product",adminAuth,productController.getListProduct);
+router.get("/unlist-product",adminAuth,productController.getUnlistProduct);
+router.get("/edit-product",adminAuth,productController.getEditProduct);
+router.post("/edit-product/:id",adminAuth,uploads.array("images",4), productController.editProduct);
+router.post("/delete-image",adminAuth,productController.deleteSingleImage);
 router.post('/deleteProduct',adminAuth,productController.deleteProduct);
 router.post('/restoreProduct',adminAuth,productController.restoreProduct);
 

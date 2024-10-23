@@ -6,7 +6,7 @@
             <% if (typeof error !== 'undefined') { %>
                 <div class="alert alert-danger"><%= error %></div>
               <% } %>
-            <form method="post" action="/admin/editCategory/<%=category._id %>">
+            <form method="post" action="/admin/edit-category/<%=category._id %>">
                 <div class="d-flex justify-content-end mt-30">
                     <div class="me-2"> <!-- Add margin to the right for spacing -->
                         <button class="btn btn-primary" type="submit">Update category</button>

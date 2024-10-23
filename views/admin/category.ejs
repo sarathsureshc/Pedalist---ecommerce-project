@@ -15,7 +15,7 @@
                 <div class="user-management-card">
 
                     <!-- Category Addition Form -->
-                    <form method="post" action="/admin/addCategory" onsubmit="return handleFormSubmit(event)">
+                    <form method="post" action="/admin/add-category" onsubmit="return handleFormSubmit(event)">
                         <div class="mb-4">
                             <label for="product_name" class="form-label">Name</label>
                             <input type="text" name="name" placeholder="Type here" class="form-control"
@@ -90,7 +90,7 @@
                                             <button class="btn <%= category.isListed ? 'btn-danger' : 'btn-success' %>"
                                                 style="width: 70px" <% if (category.isDeleted) { %> disabled <% } %>
                                                     >
-                                                    <a href="/admin/<%= category.isListed ? 'unlist' : 'list' %>Category?id=<%= category._id %>"
+                                                    <a href="/admin/<%= category.isListed ? 'unlist' : 'list' %>-category?id=<%= category._id %>"
                                                         class="text-white">
                                                         <%= category.isListed ? 'Unlist' : 'List' %>
                                                     </a>
@@ -99,7 +99,7 @@
                                         <td class="text-start">
                                             <button class="btn btn-info text-white" <% if (category.isDeleted) { %>
                                                 disabled <% } %>>
-                                                    <a href="/admin/editCategory?id=<%= category._id %>">
+                                                    <a href="/admin/edit-category?id=<%= category._id %>">
                                                         Edit</a></button>
                                         </td>
                                         <td class="text-start">
@@ -157,7 +157,7 @@
                 const name = document.getElementsByName("name")[0].value;
                 const description = document.getElementById("descriptionId").value;
 
-                fetch('/admin/addCategory', {
+                fetch('/admin/add-category', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, description })
@@ -224,7 +224,7 @@
 
                 if (amount) {
                     try {
-                        const response = await fetch("/admin/addCategoryOffer", {
+                        const response = await fetch("/admin/add-category-offer", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({ categoryId, percentage: amount }),
@@ -243,7 +243,7 @@
 
             async function removeOffer(categoryId) {
                 try {
-                    const response = await fetch("/admin/removeCategoryOffer", {
+                    const response = await fetch("/admin/remove-category-offer", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ categoryId }),
@@ -264,7 +264,7 @@
                 if (!confirmation) return;
 
                 try {
-                    const response = await fetch("/admin/deleteCategory", {
+                    const response = await fetch("/admin/delete-category", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ categoryId: categoryId }),
@@ -285,7 +285,7 @@
 
             async function restoreCategory(categoryId) {
                 try {
-                    const response = await fetch("/admin/restoreCategory", {
+                    const response = await fetch("/admin/restore-category", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ categoryId }),

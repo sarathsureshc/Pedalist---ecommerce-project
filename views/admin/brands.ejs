@@ -15,7 +15,7 @@
                 <div class="user-management-card">
 
                     <!-- Brand Addition Form -->
-                    <form method="post" action="/admin/addBrand" enctype="multipart/form-data"
+                    <form method="post" action="/admin/add-brand" enctype="multipart/form-data"
                         onsubmit="return handleBrandFormSubmit(event)"
                         style="box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2); padding: 20px; border-radius: 8px;">
 
@@ -80,7 +80,7 @@
                                         <td class="text-start">
                                             <button class="btn <%= brand.isBlocked ? 'btn-success' : 'btn-danger' %>"
                                                 style="width: 70px" <% if (brand.isDeleted) { %> disabled <% } %>>
-                                                    <a a href="/admin/<%= brand.isBlocked ? 'unblock' : 'block' %>Brand?id=<%= brand._id %>"
+                                                    <a a href="/admin/<%= brand.isBlocked ? 'unblock' : 'block' %>-brand?id=<%= brand._id %>"
                                                         class="text-white">
                                                         <%= brand.isBlocked ? 'Unblock' : 'Block' %>
                                             </button>
@@ -89,7 +89,7 @@
                                         <td class="text-start">
                                             <button class="btn btn-info text-white" <% if (brand.isDeleted) { %>
                                                 disabled <% } %>>
-                                                    <a href="/admin/editBrand?id=<%= brand._id %>"
+                                                    <a href="/admin/edit-brand?id=<%= brand._id %>"
                                                         class="text-white">Edit</a>
                                             </button>
                                         </td>
@@ -210,7 +210,7 @@
                 if (!confirmation) return;
 
                 try {
-                    const response = await fetch("/admin/deleteBrand", {
+                    const response = await fetch("/admin/delete-brand", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ brandId }),
@@ -228,7 +228,7 @@
 
             async function restoreBrand(brandId) {
                 try {
-                    const response = await fetch("/admin/restoreBrand", {
+                    const response = await fetch("/admin/restore-brand", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ brandId }),

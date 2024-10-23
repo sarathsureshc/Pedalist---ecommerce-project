@@ -32,7 +32,7 @@
 
         <div class="col-md-6 pedalist-product-info">
             <h2><%=product.productName%></h2>
-            <h4>Brand: <%= product.brand %></h4>
+            <h4>Brand: <%= product.brand.brandName %></h4>
             <p class="text-muted"><%= product.category.name %></p>
             <p class="price">&#8377;<%= product.price %></p>
             <p> <ul class="specification-list">
@@ -40,7 +40,9 @@
                     <li><i class="bi bi-bullseye" style="color: red;"></i> <%= product[`specification${i}`] %></li>
                 <% } %>
             </ul></p>
-            <p><strong>In Stock</strong></p>
+            <p class="availability">
+                <strong class="<%= product.status === 'Available' ? 'available' : product.status === 'Out of Stock' ? 'out-of-stock' : product.status === 'Discontinued' ? 'discontinued' : '' %>">
+                <%= product.status %></strong></p>
             <div class="pedalist-purchase-options">
                 
                 <div class="form-group">
@@ -58,7 +60,7 @@
         </div>
     </div>
 </div>
-<p class="product-description"><%= product.description %></strong>. Crafted with precision, this bicycle features a lightweight aluminum frame and cutting-edge technology to ensure a smooth and comfortable ride. Whether you're commuting through the city or exploring rugged trails, this bike is designed to handle it all with ease.
+<p class="product-description"><%= product.description %>
 </p>
 
 <section class="new-arrivals">
