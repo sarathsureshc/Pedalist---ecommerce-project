@@ -1,7 +1,7 @@
 .wrapper {
     display: flex;
     padding: 20px;
-    height: 60vh;
+    min-height: 60vh;
 }
 
 .user-profile-container {
@@ -97,4 +97,15 @@ width: fit-content;
     color: red;
     font-size: 0.9em;
     margin-top: 5px;
+}
+
+.address-card{
+    padding: 20px;
+    margin: 10px;
+    box-shadow: 0   0 10px rgba(0,0,0,0.5);
+    max-width: 20rem;
+}
+.address-list{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }

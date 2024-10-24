@@ -5,12 +5,15 @@ const {v4:uuidv4} = require('uuid');
 const orderSchema = new Schema({
     orderId : {
         type:String,
-        
         default:()=>uuidv4(),
         unique:true
     },
     items:[{
-
+        itemOrderId: {
+            type:String,
+            default:()=>uuidv4(),
+            unique:true
+        },
         product:{
             type:Schema.Types.ObjectId,
             ref:'Product',
@@ -20,9 +23,13 @@ const orderSchema = new Schema({
             type:Number,
             required:true
         },
-        price:{
-            type:Number,
-            default:0
+        cancelReason : {
+            type: String,
+            default:null
+        },
+        returnReason : {
+            type: String,
+            default:null
         }
 
     }],
@@ -44,7 +51,8 @@ const orderSchema = new Schema({
         required:true
     },
     invoiceDate:{
-        type:Date
+        type:Date,
+        default:Date.now()
     },
     status:{
         type:String,
@@ -67,7 +75,19 @@ const orderSchema = new Schema({
     userId : {
         type: Schema.Types.ObjectId,
         ref: 'User'
+    },
+    paymentMethod:{
+        type:String,
+        required:true,
+        enum:['Cash On Delivery','Card Payment','Wallet'],
+        default : 'Cash On Delivery'
+    },
+    paymentStatus:{
+        type:String,
+        required:true,
+        enum:['Pending','Completed','Failed','Refunded']
     }
+
 })
 
 const Order = mongoose.model("Order",orderSchema);

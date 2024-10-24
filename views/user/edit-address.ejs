@@ -1,0 +1,126 @@
+<%- include('../partials/user/header.ejs') %>
+<link rel="stylesheet" href="/profile-styles.css">
+<div class="wrapper">
+    <div class="user-profile-container">
+        <div class="user-details">
+            <h1>Edit Address</h1>
+            <form id="addressForm" action="/edit-address/<%= address._id %>" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" name="name" id="name" value="<%= address.name %>">
+                    <small id="nameError" style="color: red; display: none;">Name is required and cannot be empty.</small>
+                </div>
+                <div class="form-group">
+                    <label for="houseName">House Name:</label>
+                    <input type="text" name="houseName" id="houseName" value="<%= address.houseName %>">
+                    <small id="houseNameError" style="color: red; display: none;">House name is required and cannot be empty.</small>
+                </div>
+                <div class="form-group">
+                    <label for="streetName">Street Name:</label>
+                    <input type="text" name="streetName" id="streetName" value="<%= address.streetName %>">
+                    <small id="streetNameError" style="color: red; display: none;">Street name is required and cannot be empty.</small>
+                </div>
+                <div class="form-group">
+                    <label for="landmark">Landmark:</label>
+                    <input type="text" name="landmark" id="landmark" value="<%= address.landmark %>">
+                    <small id="landmarkError" style="color: red; display: none;">Landmark is required and cannot be empty.</small>
+                </div>
+                <div class="form-group">
+                    <label for="locality">Locality:</label>
+                    <input type="text" name="locality" id="locality" value="<%= address.locality %>">
+                    <small id="localityError" style="color: red; display: none;">Locality is required and cannot be empty.</small>
+                </div>
+                <div class="form-group">
+                    <label for="city">City:</label>
+                    <input type="text" name="city" id="city" value="<%= address.city %>">
+                    <small id="cityError" style="color: red; display: none;">City is required and cannot be empty.</small>
+                </div>
+                <div class="form-group">
+                    <label for="state">State:</label>
+                    <input type="text" name="state" id="state" value="<%= address.state %>">
+                    <small id="stateError" style="color: red; display: none;">State is required and cannot be empty.</small>
+                </div>
+                <div class="form-group">
+                    <label for="pin">Pin Code:</label>
+                    <input type="text" name="pin" id="pin" value="<%= address.pin %>" maxlength="6">
+                    <small id="pinError" style="color: red; display: none;">Pin code must be exactly 6 digits and consist only of numbers.</small>
+                </div>
+                <div class="form-group">
+                    <label for="contactNo">Contact Number:</label>
+                    <input type="text" name="contactNo" id="contactNo" value="<%= address.contactNo %>" maxlength="10">
+                    <small id="contactNoError" style="color: red; display: none;">Contact number must be 10 digits and cannot be all zeros.</small>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-warning">Update Address</button>
+                    <button type="button" class="btn btn-secondary" onclick="window.history.back();">Cancel</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="right-sidebar">
+            <h3>Profile Navigation</h3>
+            <ul>
+                <li><a href="/profile">View Profile</a></li>
+                <li class="selected">Manage Address</li>
+                <li><a href="/wishlist">Wishlist</a></li>
+                <li><a href="/orders">Orders</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<%- include('../partials/user/footer.ejs') %>
+
+<script>
+function validateForm() {
+    const fields = [
+        { id: 'name', errorId: 'nameError' },
+        { id: 'houseName', errorId: 'houseNameError' },
+        { id: 'streetName', errorId: 'streetNameError' },
+        { id: 'landmark', errorId: 'landmarkError' },
+        { id: 'locality', errorId: 'localityError' },
+        { id: 'city', errorId: 'cityError' },
+        { id: 'state', errorId: 'stateError' },
+        { id: 'pin', errorId: 'pinError' },
+        { id: 'contactNo', errorId: 'contactNoError' },
+    ];
+
+    let isValid = true;
+
+    // Reset all error messages
+    fields.forEach(field => {
+        document.getElementById(field.errorId).style.display = 'none';
+    });
+
+    // Validate each field to ensure they are not empty
+    fields.forEach(field => {
+        const value = document.getElementById(field.id).value.trim();
+        if (value === '') {
+            document.getElementById(field.errorId).style.display = 'block';
+            isValid = false;
+        }
+    });
+
+    // Validate pin code specifically
+    const pin = document.getElementById('pin').value;
+    const pinError = document.getElementById('pinError');
+
+    // Check if pin code is exactly 6 digits
+    if (!/^\d{6}$/.test(pin)) {
+        pinError.style.display = 'block';
+        isValid = false; // Prevent form submission
+    }
+
+    // Validate contact number specifically
+    const contactNo = document.getElementById('contactNo').value;
+    const contactNoError = document.getElementById('contactNoError');
+
+    // Check if contact number is exactly 10 digits and not all zeros
+    if (!/^\d{10}$/.test(contactNo) || contactNo === '0000000000') {
+        contactNoError.style.display = 'block';
+        isValid = false; // Prevent form submission
+    }
+
+    return isValid; // Return true to allow form submission if all validations pass
+}
+</script>

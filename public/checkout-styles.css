@@ -1,0 +1,122 @@
+/* Checkout Page Styles */
+.checkout-container {
+    max-width: 800px;
+    margin: 130px auto;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    min-height: 60vh;
+}
+
+h3 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.address-selection, .order-summary {
+    margin-bottom: 30px;
+    margin-top: 200px;
+}
+
+.address-option {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    background-color: #fff;
+}
+
+.address-option input[type="radio"] {
+    margin-right: 10px;
+}
+
+.address-option label {
+    display: block;
+    cursor: pointer;
+}
+
+.order-item {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+    margin-bottom: 10px;
+}
+
+.order-item h5 {
+    margin: 0;
+    font-size: 16px;
+    color: #555;
+}
+
+.order-item p {
+    margin: 4px 0;
+    color: #777;
+    font-size: 14px;
+}
+
+#orderBill h4, #orderBill p {
+    margin: 8px 0;
+    font-weight: normal;
+    color: #444;
+}
+
+#orderBill h4 {
+    font-size: 18px;
+}
+
+.payment-options {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.payment-options .btn {
+    margin: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    border: none;
+    transition: background-color 0.3s;
+}
+
+.payment-options .btn-success {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.payment-options .btn-success:hover {
+    background-color: #218838;
+}
+
+.payment-options .btn-primary {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.payment-options .btn-primary:hover {
+    background-color: #0069d9;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .checkout-container {
+        padding: 15px;
+    }
+
+    .order-item h5 {
+        font-size: 14px;
+    }
+
+    .order-item p {
+        font-size: 12px;
+    }
+
+    #orderBill h4 {
+        font-size: 16px;
+    }
+
+    .payment-options .btn {
+        font-size: 14px;
+    }
+}

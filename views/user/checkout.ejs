@@ -1,0 +1,118 @@
+<%- include('../partials/user/header.ejs') %>
+<link rel="stylesheet" href="checkout-styles.css">
+
+<div class="checkout-container">
+    <div class="address-selection">
+        <h3>Select Address</h3>
+        <% if (addresses.length === 0) { %>
+            <p>No addresses found. Please add an address.</p>
+        <% } else { %>
+            <% addresses.forEach((address, index) => { %>
+                <div class="address-option">
+                    <input type="radio" name="selectedAddress" value="<%= address._id %>" 
+                           <%= index === 0 ? 'checked' : '' %> />
+                    <label>
+                        <ul>
+                            <li><strong>Name:       </strong> <%= address.name %></li>
+                            <li><strong>House Name: </strong> <%= address.houseName %></li>
+                            <li><strong>Street Name:</strong> <%= address.streetName %></li>
+                            <li><strong>Landmark:   </strong> <%= address.landmark %></li>
+                            <li><strong>Locality:   </strong> <%= address.locality %></li>
+                            <li><strong>City:       </strong> <%= address.city %></li>
+                            <li><strong>State:      </strong> <%= address.state %></li>
+                            <li><strong>PIN:        </strong> <%= address.pin %></li>
+                            <li><strong>Contact No: </strong> <%= address.contactNo %></li>
+                        </ul>
+                    </label>
+                </div>
+            <% }) %>
+        <% } %>
+    </div>
+    
+    <div class="order-summary">
+        <h3>Order Summary</h3>
+        <% if (orderItems.length === 0) { %>
+            <p>Your cart is empty.</p>
+        <% } else { %>
+            <div id="orderItems">
+                <% orderItems.forEach(item => { %>
+                    <div class="order-item">
+                        <h5><%= item.productName %></h5>
+                        <p>Quantity: <%= item.quantity %></p>
+                        <p>Price: &#8377;<%= item.price.toFixed(2) %></p>
+                        <p>Subtotal: &#8377;<%= (item.price * item.quantity).toFixed(2) %></p>
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
+        
+        <div id="orderBill" class="mt-3">
+            <h4>Subtotal: &#8377;<%= subtotal.toFixed(2) %></h4>
+            <p>Discount: &#8377;<%= discount.toFixed(2) %></p>
+            <p>Delivery Charge: &#8377;<%= deliveryCharge.toFixed(2) %></p>
+            <h4>Total Price: &#8377;<%= totalPrice.toFixed(2) %></h4>
+        </div>
+    </div>
+        
+    <h3>Payment Options</h3>
+    <div class="payment-options">
+        <div>
+            <input type="radio" id="payNow" name="paymentMethod" value="payNow">
+            <label for="payNow">Pay Now</label>
+        </div>
+        <div>
+            <input type="radio" id="cashOnDelivery" name="paymentMethod" value="Cash On Delivery">
+            <label for="cashOnDelivery">Cash on Delivery</label>
+        </div>
+    </div>
+    
+    <div class="order-actions mt-3">
+        <button class="btn btn-success" onclick="placeOrder()">Place Order</button>
+        <button class="btn btn-danger" onclick="cancelOrder()">Cancel</button>
+    </div>
+</div>
+
+<%- include('../partials/user/footer.ejs') %>
+
+<script>
+    function placeOrder() {
+        const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked').value;
+        const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+        if (!selectedAddress) {
+            alert("Please select an address.");
+            return;
+        }
+
+        const orderData = {
+            address: selectedAddress,
+            paymentMethod: selectedPaymentMethod
+        };
+
+        fetch('/place-order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(orderData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Order placed successfully!");
+                window.location.href = '/order-placed'; // Redirect to success page or order confirmation page
+            } else {
+                alert("Failed to place the order. Please try again.");
+            }
+        })
+        .catch(error => {
+            console.error("Error placing the order:", error);
+            alert("An error occurred. Please try again.");
+        });
+    }
+
+    function cancelOrder() {
+        // Logic to cancel the order or navigate back
+        window.location.href = '/cart'; // Redirect to cart or previous page
+    }
+</script>

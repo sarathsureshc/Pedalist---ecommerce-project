@@ -1,0 +1,63 @@
+<%- include('../partials/user/header.ejs') %>
+<link rel="stylesheet" href="profile-styles.css">
+<div class="wrapper">
+    <div class="address-form-container">
+        <div class="user-details">
+            <h1>Add New Address</h1>
+            <form action="/add-address" method="POST">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" name="name" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="houseName">House Name:</label>
+                    <input type="text" name="houseName" id="houseName" required>
+                </div>
+                <div class="form-group">
+                    <label for="streetName">Street Name:</label>
+                    <input type="text" name="streetName" id="streetName" required>
+                </div>
+                <div class="form-group">
+                    <label for="landmark">Landmark:</label>
+                    <input type="text" name="landmark" id="landmark" required>
+                </div>
+                <div class="form-group">
+                    <label for="locality">Locality:</label>
+                    <input type="text" name="locality" id="locality" required>
+                </div>
+                <div class="form-group">
+                    <label for="city">City:</label>
+                    <input type="text" name="city" id="city" required>
+                </div>
+                <div class="form-group">
+                    <label for="state">State:</label>
+                    <input type="text" name="state" id="state" required>
+                </div>
+                <div class="form-group">
+                    <label for="pin">Pin Code:</label>
+                    <input type="text" name="pin" id="pin" required>
+                </div>
+                <div class="form-group">
+                    <label for="contactNo">Contact Number:</label>
+                    <input type="text" name="contactNo" id="contactNo" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success">Add Address</button>
+                    <button type="button" class="btn btn-secondary" onclick="window.history.back();">Cancel</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="right-sidebar">
+            <h3>Profile Navigation</h3>
+            <ul>
+                <li><a href="/profile">View Profile</a></li>
+                <li class="selected">Manage Address</li>
+                <li><a href="/wishlist">Wishlist</a></li>
+                <li><a href="/orders">Orders</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<%- include('../partials/user/footer.ejs') %>

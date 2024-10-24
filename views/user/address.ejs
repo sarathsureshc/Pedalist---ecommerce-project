@@ -1,0 +1,53 @@
+<%- include('../partials/user/header.ejs') %>
+    <link rel="stylesheet" href="profile-styles.css">
+    <div class="wrapper">
+        <div class="user-profile-container">
+            <div class="user-details">
+                <h1>Manage Addresses</h1>
+                <div class="add-new-address">
+                    <button class="btn btn-success" style="margin-right: 5px;"><a href="/add-address">Add New Address</a></button>
+                </div>
+                <div class="address-list">
+                    <% if (addresses.length> 0) { %>
+                        <% addresses.forEach((address, index)=> { %>
+                            <div class="address-card">
+                                <p><strong>Address <%= index + 1 %>:</strong></p>
+                                <ul>
+                                    <li><strong>Name:</strong> <%= address.name %></li>
+                                    <li><strong>House Name:</strong> <%= address.houseName %></li>
+                                    <li><strong>Street Name:</strong> <%= address.streetName %></li>
+                                    <li><strong>Landmark:</strong> <%= address.landmark %></li>
+                                    <li><strong>Locality:</strong> <%= address.locality %></li>
+                                    <li><strong>City:</strong> <%= address.city %></li>
+                                    <li><strong>State:</strong> <%= address.state %></li>
+                                    <li><strong>PIN:</strong> <%= address.pin %></li>
+                                    <li><strong>Contact No:</strong> <%= address.contactNo %></li>
+                                </ul>
+                                <div class="address-actions">
+                                    <button class="btn btn-warning"><a href="/edit-address?id=<%= address._id %>">Edit
+                                            Address</a></button>
+                                    <button class="btn btn-danger"><a href="/remove-address/<%= address._id %>"
+                                            onclick="return confirm('Are you sure you want to remove this address?');">Remove
+                                            Address</a></button>
+                                </div>
+                            </div>
+                            <% }) %>
+                                <% } else { %>
+                                    <p>No addresses found. Please add a new address.</p>
+                                    <% } %>
+                </div>
+            </div>
+
+            <div class="right-sidebar">
+                <h3>Profile Navigation</h3>
+                <ul>
+                    <li><a href="/profile">View Profile</a></li>
+                    <li class="selected">Manage Address</li>
+                    <li><a href="/wishlist">Wishlist</a></li>
+                    <li><a href="/orders">Orders</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <%- include('../partials/user/footer.ejs') %>

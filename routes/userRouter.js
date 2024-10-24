@@ -6,6 +6,8 @@ const {userAuth} = require("../middlewares/auth");
 const profileController = require('../controllers/user/profileController');
 const productsController = require('../controllers/user/productsController');
 const cartController = require('../controllers/user/cartController');
+const addressController = require('../controllers/user/addressController');
+const checkoutController = require('../controllers/user/checkoutController');
 // const wishlistController = require('../controllers/user/wishlistController');
 
 router.get("/pageNotFound", userController.pageNotFound);
@@ -38,13 +40,24 @@ router.post("/edit-profile",userAuth,profileController.profileEdit);
 router.get("/edit-password",userAuth,profileController.loadPasswordChangePage);
 router.post("/edit-password",userAuth,profileController.passwordChange)
 
+router.get('/address', addressController.loadAddressPage);
+router.get('/add-address', addressController.loadAddAddressPage);
+router.post('/add-address', addressController.addAddress);
+router.get('/edit-address', addressController.editAddress);
+router.post('/edit-address/:id', addressController.updateAddress);
+router.get('/remove-address/:id', addressController.removeAddress);
+
 router.post("/add-to-cart",userAuth,cartController.addToCart);
 router.get("/cart",userAuth,cartController.getCart);
 router.put('/cart/:id',userAuth,cartController.updateCart);
 router.delete('/cart/:id',userAuth,cartController.removeFromCart);
 // router.post("/add-to-wishlist",userAuth,wishlistController.addToWishlist)
 
-// router.post("checkout",userAuth,checkoutController.checkout)
+router.get('/checkout',userAuth,checkoutController.getCheckoutPage);
+router.get('/buyNow/:productId',userAuth, checkoutController.buyNow);
+router.post('/place-order',userAuth, checkoutController.placeOrder);
+// router.get('/checkout/payNow',userAuth, checkoutController.payNow);
+// router.get('/checkout/cashOnDelivery', userAuth,checkoutController.cashOnDelivery);
 
 
 
