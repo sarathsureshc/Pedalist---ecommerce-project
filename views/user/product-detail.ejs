@@ -12,7 +12,6 @@
     </nav>
 </div>
 
-
 <div class="container pedalist-product-detail mt-4">
     <div class="row">
 
@@ -26,72 +25,152 @@
                 <% }); %>
             </div>
         </div>
-        
-        
-        
 
         <div class="col-md-6 pedalist-product-info">
-            <h2><%=product.productName%></h2>
+            <h2><%= product.productName %></h2>
             <h4>Brand: <%= product.brand.brandName %></h4>
             <p class="text-muted"><%= product.category.name %></p>
             <p class="price">&#8377;<%= product.price %></p>
-            <p> <ul class="specification-list">
-                <% for (let i = 1; i <= 4; i++) { %>
-                    <li><i class="bi bi-bullseye" style="color: red;"></i> <%= product[`specification${i}`] %></li>
-                <% } %>
-            </ul></p>
+            
+            <!-- Product Rating Display -->
+            <div class="product-rating">
+                <span class="stars">
+                    <% for (let i = 1; i <= 5; i++) { %>
+                        <i class="bi <%= i <= product.rating ? 'bi-star-fill' : 'bi-star' %>"></i>
+                    <% } %>
+                </span>
+                <span class="rating-number"><%= product.rating %> / 5</span>
+            </div>
+
+            <p> 
+                <ul class="specification-list">
+                    <% for (let i = 1; i <= 4; i++) { %>
+                        <li><i class="bi bi-bullseye" style="color: red;"></i> <%= product[`specification${i}`] %></li>
+                    <% } %>
+                </ul>
+            </p>
             <p class="availability">
                 <strong class="<%= product.status === 'Available' ? 'available' : product.status === 'Out of Stock' ? 'out-of-stock' : product.status === 'Discontinued' ? 'discontinued' : '' %>">
-                <%= product.status %></strong></p>
+                <%= product.status %></strong>
+            </p>
+            
             <div class="pedalist-purchase-options">
-                
                 <div class="form-group">
                     <label for="quantity">Quantity</label>
                     <input type="number" id="quantity" class="form-control" min="1" value="1">
                 </div>
-                <div style="display: flex; gap: 10px; ">
-                    <button class="btn btn-warning pedalist-add-to-cart">Add to Cart</button>
-                    <button class="btn btn-warning pedalist-add-to-cart">Buy Now</button>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-warning pedalist-add-to-cart" onclick="addToCart('<%= product._id %>')">Add to Cart</button>
+                    <button class="btn btn-warning pedalist-wishlist" onclick="addToWishlist('<%= product._id %>')">Add to Wishlist</button>
+                    <button class="btn btn-warning pedalist-buy-now" onclick="buyNow('<%= product._id %>')">Buy Now</button>
                 </div>
-                
-                
-                
             </div>
         </div>
     </div>
 </div>
-<p class="product-description"><%= product.description %>
-</p>
+<p class="product-description"><%= product.description %></p>
 
 <section class="new-arrivals">
     <div class="container">
         <h2 class="text-center my-4">New Arrivals</h2>
-        <div class="row d-none d-lg-flex"> <!-- For larger screens -->
-            <!-- Dynamic Content -->
+        <div class="row d-none d-lg-flex">
             <% newArrivals.forEach((product) => { %>
                 <div class="col-md-3 mb-4">
                     <a href="/product-detail?id=<%= product._id %>">
-                    <div class="card">
-                        <img src="./uploads/product-images/<%= product.image[0] %>" class="card-img-top" alt="<%= product.productName %>">
-                        <div class="card-body">
-                            <h5 class="card-title"><%= product.productName %></h5>
-                            <p class="card-text">&#8377;<%= product.price %></p>
+                        <div class="card">
+                            <img src="./uploads/product-images/<%= product.image[0] %>" class="card-img-top" alt="<%= product.productName %>">
+                            <div class="card-body">
+                                <h5 class="card-title"><%= product.productName %></h5>
+                                <p class="card-text">&#8377;<%= product.price %></p>
+                            </div>
                         </div>
-                    </div>
-                </a>
+                    </a>
                 </div>
             <% }); %>
         </div>
-        </div>
-</div>
+    </div>
+</section>
 
 <%- include('../partials/user/footer.ejs') %>
 
 <script>
+    function changeImage(imagePath) {
+        const mainImage = document.getElementById("mainImage");
+        mainImage.src = "./uploads/product-images/" + imagePath;
+    }
 
-function changeImage(imagePath) {
-    const mainImage = document.getElementById("mainImage");
-    mainImage.src = "./uploads/product-images/" + imagePath;
+    async function addToCart(productId) {
+    try {
+        const quantity = parseInt(document.getElementById("quantity").value, 10);
+        if (!quantity || quantity < 1) {
+            throw new Error("Please enter a valid quantity.");
+        }
+
+        const response = await fetch('/add-to-cart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ productId, quantity })
+        });
+
+        const result = await response.json();
+        if (!response.ok) {
+            throw new Error(result.message || "Failed to add product to cart.");
+        }
+
+        showNotification('success', 'Product added to cart successfully!');
+    } catch (error) {
+        showNotification('error', error.message);
+    }
 }
 
+
+function showNotification(type, message) {
+    const notificationDiv = document.createElement('div');
+    notificationDiv.className = `notification ${type}`; // Add CSS classes for styling
+    notificationDiv.innerText = message;
+    
+    // Style for the notification
+    notificationDiv.style.position = 'fixed';
+    notificationDiv.style.bottom = '20px';
+    notificationDiv.style.right = '20px';
+    notificationDiv.style.padding = '10px';
+    notificationDiv.style.backgroundColor = type === 'success' ? '#4caf50' : '#f44336';
+    notificationDiv.style.color = 'white';
+    notificationDiv.style.borderRadius = '5px';
+    notificationDiv.style.zIndex = '1000';
+
+    document.body.appendChild(notificationDiv);
+
+    setTimeout(() => {
+        notificationDiv.remove();
+    }, 3000); // Remove notification after 3 seconds
+}
+
+
+    
+
+
+    function addToWishlist(productId) {
+        fetch('/add-to-wishlist', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ productId })
+        }).then(response => response.json())
+          .then(data => {
+            if (data.success) {
+                alert('Product added to wishlist successfully!');
+            } else {
+                alert('Failed to add product to wishlist.');
+            }
+        });
+    }
+
+    function buyNow(productId) {
+        const quantity = document.getElementById("quantity").value;
+        window.location.href = `/checkout?productId=${productId}&quantity=${quantity}`;
+    }
 </script>

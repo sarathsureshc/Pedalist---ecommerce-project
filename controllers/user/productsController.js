@@ -111,7 +111,7 @@ const loadProductPage = async (req, res) => {
         count,
         showOutOfStock,
         minPrice: minPrice || 20,
-        maxPrice: maxPrice || 100000
+        maxPrice: maxPrice || 100000,
       });
     } else {
       return res.render("product", {

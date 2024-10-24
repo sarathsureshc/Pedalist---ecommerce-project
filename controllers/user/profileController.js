@@ -9,7 +9,7 @@ const loadProfilePage = async (req, res) => {
     const user = req.session.user || req.user;
     if (user) {
       const userData = await User.findOne({ _id: user._id });
-      res.render("user-profile", { user: userData });
+      res.render("user-profile", { user: userData,});
     } else {
       return res.redirect("/login");
     }
@@ -24,7 +24,7 @@ const loadProfileEditPage = async (req, res) => {
     const user = req.session.user || req.user;
     if (user) {
       const userData = await User.findOne({ _id: user._id });
-      res.render("edit-profile", { user: userData });
+      res.render("edit-profile", { user: userData,});
     } else {
       return res.redirect("/login");
     }
@@ -54,7 +54,8 @@ const loadPasswordChangePage = async (req, res) => {
   try {
     const user = req.session.user || req.user;
     if (user) {
-      res.render("edit-password");
+      const userData = await User.findOne({ _id: user._id });
+      res.render("edit-password",{user:userData,});
     } else {
       return res.redirect("/login");
     }

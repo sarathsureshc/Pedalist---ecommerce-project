@@ -1,0 +1,120 @@
+<%- include('../partials/user/header.ejs') %>
+<head>
+    <link rel="stylesheet" href="cart-style.css">
+</head>
+<div class="cart-container">
+    <h2>Your Cart</h2>
+    <div id="cartItems">
+        <% if (cart.length === 0) { %>
+            <p>Your cart is empty.</p>
+        <% } else { %>
+            <% cart.forEach(item => { %>
+                <div class="cart-item" data-product-id="<%= item.productId._id %>">
+                    <img src="./uploads/product-images/<%= item.productId.image[0] %>" alt="<%= item.productId.productName %>" class="img-thumbnail" style="width: 100px;">
+                    <div>
+                        <h5><%= item.productId.productName %></h5>
+                        <p>Brand: <%= item.productId.brandName %></p>
+                        <p>Price: &#8377;<span class="item-price"><%= item.productId.price.toFixed(2) %></span></p>
+                        <p>Quantity: 
+                            <input type="number" value="<%= item.quantity %>" min="1" 
+                                   onchange="updateQuantity('<%= item.productId._id %>', this.value)"
+                                   aria-label="Quantity for <%= item.productId.productName %>">
+                        </p>
+                        <p>Total: &#8377;<span class="item-total" id="total-<%= item.productId._id %>"><%= (item.productId.price * item.quantity).toFixed(2) %></span></p>
+                        <button class="btn btn-danger" onclick="removeFromCart('<%= item.productId._id %>')"
+                                aria-label="Remove <%= item.productId.productName %> from cart">Remove</button>
+                    </div>
+                </div>
+            <% }) %>
+        <% } %>
+    </div>
+    <div id="cartSummary" class="mt-3">
+        <h4>Total Price: &#8377;<span id="cart-total"><%= totalPrice.toFixed(2) %></span></h4>
+        <% if (offer) { %>
+            <p>Offer: <%= offer %></p>
+        <% } %>
+    </div>
+    <button class="btn btn-success" onclick="proceedToCheckout()">Proceed to Checkout</button>
+</div>
+
+<%- include('../partials/user/footer.ejs') %>
+
+<script>
+    function proceedToCheckout() {
+        window.location.href = '/checkout';
+    }
+
+    async function updateQuantity(productId, quantity) {
+        const cartItem = document.querySelector(`[data-product-id="${productId}"]`);
+        const itemPriceElement = cartItem.querySelector('.item-price');
+        const itemTotalElement = cartItem.querySelector('.item-total');
+        const price = parseFloat(itemPriceElement.textContent);
+
+        if (isNaN(price)) {
+            console.error("Price not found for the item.");
+            return;
+        }
+
+        const itemTotal = (price * parseInt(quantity)).toFixed(2);
+        itemTotalElement.textContent = itemTotal;
+
+        updateCartTotal();
+
+        try {
+            const response = await fetch(`/cart/${productId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ quantity: parseInt(quantity) }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to update quantity.");
+            }
+            showMessage('Quantity updated successfully', 'success');
+        } catch (error) {
+            console.error("Error updating quantity:", error);
+            showMessage('Failed to update quantity', 'error');
+        }
+    }
+
+    async function removeFromCart(productId) {
+        try {
+            const response = await fetch(`/cart/${productId}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            if (!response.ok) {
+                throw new Error("Failed to remove item.");
+            }
+            const cartItem = document.querySelector(`[data-product-id="${productId}"]`);
+            cartItem.remove();
+            updateCartTotal();
+            showMessage('Item removed from cart', 'success');
+        } catch (error) {
+            console.error(error);
+            showMessage('Failed to remove item', 'error');
+        }
+    }
+
+    function updateCartTotal() {
+        const cartItems = document.querySelectorAll('.item-total');
+        let totalPrice = 0;
+        cartItems.forEach(item => {
+            const itemValue = parseFloat(item.textContent);
+            if (!isNaN(itemValue)) {
+                totalPrice += itemValue;
+            }
+        });
+        document.getElementById('cart-total').textContent = totalPrice.toFixed(2);
+    }
+
+    function showMessage(message, type) {
+        const messageDiv = document.createElement('div');
+        messageDiv.textContent = message;
+        messageDiv.className = `alert alert-${type}`;
+        document.querySelector('.cart-container').prepend(messageDiv);
+        setTimeout(() => messageDiv.remove(), 3000);
+    }
+</script>
