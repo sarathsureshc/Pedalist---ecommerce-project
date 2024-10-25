@@ -52,6 +52,7 @@
             <p class="availability">
                 <strong class="<%= product.status === 'Available' ? 'available' : product.status === 'Out of Stock' ? 'out-of-stock' : product.status === 'Discontinued' ? 'discontinued' : '' %>">
                 <%= product.status %></strong>
+                <strong>Stock left : </strong> <%= product.quantity %>
             </p>
             
             <div class="pedalist-purchase-options">
@@ -62,7 +63,7 @@
                 <div style="display: flex; gap: 10px;">
                     <button class="btn btn-warning pedalist-add-to-cart" onclick="addToCart('<%= product._id %>')">Add to Cart</button>
                     <button class="btn btn-warning pedalist-wishlist" onclick="addToWishlist('<%= product._id %>')">Add to Wishlist</button>
-                    <button class="btn btn-warning pedalist-buy-now" onclick="buyNow('<%= product._id %>')">Buy Now</button>
+                    <!-- <button class="btn btn-warning pedalist-buy-now" onclick="buyNow('<%= product._id %>')">Buy Now</button> -->
                 </div>
             </div>
         </div>

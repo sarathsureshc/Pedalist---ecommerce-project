@@ -9,7 +9,7 @@ const loadAddressPage = async (req, res) => {
         }
         else{
         const userData = await User.findOne({ _id: user._id })
-        const addresses = await Address.find({userId: userData._id }).sort({ createdAt: 1 }); 
+        const addresses = await Address.find({userId: userData._id, isDeleted: false }).sort({ createdAt: 1 }); 
 
         res.render('address', { addresses, user:userData });
         }
@@ -90,7 +90,7 @@ const removeAddress = async (req, res) => {
     const { id } = req.params;
 
     try {
-        await Address.findByIdAndDelete(id);
+        await Address.findByIdAndUpdate(id, { isDeleted: true });
         res.redirect('/address');
     } catch (error) {
         console.error("Error removing address:", error);

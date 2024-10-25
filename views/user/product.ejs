@@ -82,6 +82,7 @@
                                     <%= '★' .repeat(Math.round(product.rating)) %>
                                 </span> (<%= product.rating.toFixed(1) %>)</p>
                             <p>Status: <%= product.quantity> 0 ? 'Available' : 'Out of Stock' %></p>
+                            <strong>Stock left : </strong> <%= product.quantity %>
                         </div>
                     </a>
                     <% }); %>

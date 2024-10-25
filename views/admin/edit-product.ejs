@@ -51,13 +51,13 @@ position: relative;
                                     <label class="form-label">Brand</label>
                                     <select class="form-select border" name="brand">
                                         <option value="" disabled>Select the Brand</option>
-                                        <% brand.forEach(brand=> { %>
-                                            <option value="<%= brand.brandName %>" <%=brand.brandName===product.brand
-                                                ? 'selected' : '' %>>
-                                                <%= brand.brandName %>
+                                        <% brand.forEach(b => { %>
+                                            <option value="<%= b.brandName %>" <%= b.brandName === product.brand.brandName ? 'selected' : '' %>>
+                                                <%= b.brandName %>
                                             </option>
-                                            <% }); %>
+                                        <% }); %>
                                     </select>
+                                    
                                     <div id="brand-error" class="error-message"></div>
                                 </div>
 
