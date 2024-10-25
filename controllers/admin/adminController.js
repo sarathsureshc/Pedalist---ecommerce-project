@@ -26,11 +26,11 @@ const login = async (req, res) => {
                 return res.redirect("/admin");
             } else {
                 console.log("Incorrect password for admin with email:", email);
-                return res.redirect("/admin/login");
+                res.render("admin-login",{message:'Incorrect password'});
             }
         } else {
             console.log("No admin found with email:", email);
-            return res.redirect("/admin/login");
+            res.render("admin-login",{message : 'Wrong credentials'});
         }
     } catch (error) {
         console.error("Login Error:", error);

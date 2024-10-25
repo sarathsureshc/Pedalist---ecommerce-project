@@ -32,7 +32,7 @@
             <p class="text-muted"><%= product.category.name %></p>
             <p class="price">&#8377;<%= product.price %></p>
             
-            <!-- Product Rating Display -->
+            
             <div class="product-rating">
                 <span class="stars">
                     <% for (let i = 1; i <= 5; i++) { %>
@@ -57,7 +57,7 @@
             <div class="pedalist-purchase-options">
                 <div class="form-group">
                     <label for="quantity">Quantity</label>
-                    <input type="number" id="quantity" class="form-control" min="1" value="1">
+                    <input type="number" id="quantity" class="form-control" min="1" max="<%= product.quantity <= 10 ? 1 : 5 %>" value="1">
                 </div>
                 <div style="display: flex; gap: 10px;">
                     <button class="btn btn-warning pedalist-add-to-cart" onclick="addToCart('<%= product._id %>')">Add to Cart</button>
@@ -105,6 +105,7 @@
         if (!quantity || quantity < 1) {
             throw new Error("Please enter a valid quantity.");
         }
+        
 
         const response = await fetch('/add-to-cart', {
             method: 'POST',
@@ -131,7 +132,7 @@ function showNotification(type, message) {
     notificationDiv.className = `notification ${type}`; // Add CSS classes for styling
     notificationDiv.innerText = message;
     
-    // Style for the notification
+    
     notificationDiv.style.position = 'fixed';
     notificationDiv.style.bottom = '20px';
     notificationDiv.style.right = '20px';

@@ -1,0 +1,73 @@
+<%- include('../partials/user/header.ejs') %>
+<link rel="stylesheet" href="profile-styles.css">
+<div class="wrapper">
+    <div class="user-profile-container">
+        <div class="user-details">
+            <h1>Your Orders</h1>
+            <div class="order-info">
+                <% if (orders.length > 0) { %>
+                    <% orders.forEach(order => { %>
+                        <div class="order-card">
+                            <h2>Order ID: <%= order.orderId %></h2>
+                            <p><strong>Total Price:</strong> ₹<%= order.totalPrice %></p>
+                            <p><strong>Address </strong></p>
+                            <p><ul>
+                                <li><strong>Name:</strong> <%= order.address[0].name %></li>
+                                <li><strong>House Name:</strong> <%= order.address[0].houseName %></li>
+                                <li><strong>Street Name:</strong> <%= order.address[0].streetName %></li>
+                                <li><strong>Landmark:</strong> <%= order.address[0].landmark %></li>
+                                <li><strong>Locality:</strong> <%= order.address[0].locality %></li>
+                                <li><strong>City:</strong> <%= order.address[0].city %></li>
+                                <li><strong>State:</strong> <%= order.address[0].state %></li>
+                                <li><strong>PIN:</strong> <%= order.address[0].pin %></li>
+                                <li><strong>Contact No:</strong> <%=order.address[0].contactNo %></li>
+                            </ul></p>
+                            <p><strong>Invoice Date:</strong> <%= order.invoiceDate.toLocaleDateString() %></p>
+                            <ul>
+                                <% order.items.forEach(item => { %>
+                                    <li>
+                                        <strong>Product Name:</strong> <%= item.product.productName %></li><li>
+                                        <strong>Quantity:</strong> <%= item.quantity %></li><li> 
+                                        <strong>Status:</strong> <%= item.status %></li>
+                                        <% if (item.status === 'Pending') { %>
+                                            <form action="/cancel-order" method="POST" style="display:inline;">
+                                                <input type="hidden" name="orderId" value="<%= order._id %>">
+                                                <input type="hidden" name="itemId" value="<%= item._id %>">
+                                                <input type="hidden" name="quantity" value="<%= item.quantity %>">
+                                                <input type="text" name="reason" placeholder="Cancel reason" required>
+                                                <button type="submit" class="btn btn-danger">Cancel</button>
+                                            </form>
+                                        <% } %>
+                                        <% if (item.status === 'Delivered') { %>
+                                            <form action="/return-order" method="POST" style="display:inline;">
+                                                <input type="hidden" name="orderId" value="<%= order._id %>">
+                                                <input type="hidden" name="itemId" value="<%= item._id %>">
+                                                <input type="hidden" name="quantity" value="<%= item.quantity %>">
+                                                <input type="text" name="reason" placeholder="Return reason" required>
+                                                <button type="submit" class="btn btn-warning">Request Return</button>
+                                            </form>
+                                        <% } %>
+                                    </li>
+                                <% }); %>
+                            </ul>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <p>No orders found.</p>
+                <% } %>
+            </div>
+        </div>
+
+        <div class="right-sidebar">
+            <h3>Profile Navigation</h3>
+            <ul>
+                <li><a href="/profile">View Profile</a></li>
+                <li><a href="/address">Manage Address</a></li>
+                <li><a href="/wishlist">Wishlist</a></li>
+                <li class="selected">Orders</li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<%- include('../partials/user/footer.ejs') %>

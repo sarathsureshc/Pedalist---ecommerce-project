@@ -1,0 +1,76 @@
+<%- include('../partials/admin/header.ejs') %>
+<div class="wrapper">
+    <div class="order-details-content">
+        <header class="dashboard-header">
+            <h1>Order Details</h1>
+            <a href="/admin/orders" class=" btn btn-warning">Back To Orders</a>
+            <a href="/admin/logout" class="dashboard-logout-button btn btn-danger">Logout</a>
+        </header>
+
+        <div class="dashboard-content">
+            <div class="order-details-card">
+                <li><h3>Order ID: <%= order._id %></h3></li>
+                <li><p><strong>User ID:</strong> <%= order.userId._id %></p></li>
+                <li><p><strong>User Name:</strong> <%= order.userId.firstName %></p></li>
+                <li><p><strong>Total Amount:</strong> <%= order.totalPrice %></p></li>
+                <li><p><strong>Payment Status:</strong> <%= order.paymentStatus %></p></li>
+                <li><p><strong>Ordered On:</strong> <%= new Date(order.createdOn).toLocaleString() %></p></li>
+                
+                <h4>Products:</h4>
+                <ul>
+                    <% if (order.items && order.items.length) { %>
+                        <% order.items.forEach(item => { %>
+                            <ul class="order-product-card"> 
+                            <li>
+                               <strong>Product Name:</strong> <%= item.product.productName %> </li>
+                                <li></li><strong>Quantity:</strong> <%= item.quantity %> </li>
+                                <li> <strong>Unit Price:</strong> <%= item.product.price %></li>
+                                    <li><strong>Total Price:</strong> <%= item.product.price * item.quantity %></li>
+                                </ul>
+                                        <li><% if (item.status === 'Return Request') { %>
+                                    <h4>Return Request:</h4>
+                                    <p><strong>Status:</strong> <%= item.status %></p>
+                                    <button class="btn btn-success" onclick="changeStatus('<%= order._id %>', '<%= item.product._id %>', 'Approved')">Approve Return</button>
+                                    <button class="btn btn-danger" onclick="changeStatus('<%= order._id %>', '<%= item.product._id %>', 'Declined')">Decline Return</button>
+                                
+                                <% }else{ %>
+                                    <p><strong>Status:</strong> <%= item.status %></p>
+                                    <% } %>
+                            </li>
+                        <% }); %>
+                    <% } else { %>
+                        <li>No products found for this order.</li>
+                    <% } %>
+               
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/admin/footer.ejs') %>
+
+<script>
+
+function changeStatus(orderId, productId, action) {
+  fetch('/admin/change-return-status', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ orderId, productId, action }),
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.message) {
+        alert(data.message);
+        // Optionally, refresh the page or update the UI to reflect the change
+        location.reload(); // Reloads the page to see the changes
+      }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+
+</script>

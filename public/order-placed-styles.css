@@ -1,0 +1,39 @@
+.order-confirmation-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.order-details, .order-items, .delivery-address {
+    background-color: #f9f9f9;
+    margin: 20px 0;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: left;
+}
+
+.order-items .item {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+}
+
+.order-actions {
+    margin-top: 20px;
+}
+
+.order-actions .btn {
+    margin: 5px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #fff;
+}
+
+.order-actions .btn-primary {
+    background-color: #28a745;
+}
+
+.order-actions .btn-secondary {
+    background-color: #007bff;
+}

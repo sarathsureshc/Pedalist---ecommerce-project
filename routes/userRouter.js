@@ -8,6 +8,7 @@ const productsController = require('../controllers/user/productsController');
 const cartController = require('../controllers/user/cartController');
 const addressController = require('../controllers/user/addressController');
 const checkoutController = require('../controllers/user/checkoutController');
+const orderController = require('../controllers/user/orderController');
 // const wishlistController = require('../controllers/user/wishlistController');
 
 router.get("/pageNotFound", userController.pageNotFound);
@@ -40,12 +41,16 @@ router.post("/edit-profile",userAuth,profileController.profileEdit);
 router.get("/edit-password",userAuth,profileController.loadPasswordChangePage);
 router.post("/edit-password",userAuth,profileController.passwordChange)
 
-router.get('/address', addressController.loadAddressPage);
-router.get('/add-address', addressController.loadAddAddressPage);
-router.post('/add-address', addressController.addAddress);
-router.get('/edit-address', addressController.editAddress);
-router.post('/edit-address/:id', addressController.updateAddress);
-router.get('/remove-address/:id', addressController.removeAddress);
+router.get('/address', userAuth, addressController.loadAddressPage);
+router.get('/add-address', userAuth, addressController.loadAddAddressPage);
+router.post('/add-address', userAuth, addressController.addAddress);
+router.get('/edit-address', userAuth, addressController.editAddress);
+router.post('/edit-address/:id', userAuth, addressController.updateAddress);
+router.get('/remove-address/:id', userAuth, addressController.removeAddress);
+
+router.get('/orders', userAuth, orderController.getUserOrders);
+router.post('/cancel-order',userAuth, orderController.cancelOrderItem);
+router.post('/return-order',userAuth, orderController.requestReturn)
 
 router.post("/add-to-cart",userAuth,cartController.addToCart);
 router.get("/cart",userAuth,cartController.getCart);
@@ -55,7 +60,9 @@ router.delete('/cart/:id',userAuth,cartController.removeFromCart);
 
 router.get('/checkout',userAuth,checkoutController.getCheckoutPage);
 router.get('/buyNow/:productId',userAuth, checkoutController.buyNow);
-router.post('/place-order',userAuth, checkoutController.placeOrder);
+
+router.post('/place-order',userAuth, orderController.placeOrder);
+router.get('/order-placed',userAuth, orderController.loadOrderPlaced);
 // router.get('/checkout/payNow',userAuth, checkoutController.payNow);
 // router.get('/checkout/cashOnDelivery', userAuth,checkoutController.cashOnDelivery);
 

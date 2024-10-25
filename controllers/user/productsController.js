@@ -61,7 +61,6 @@ const loadProductPage = async (req, res) => {
       (product) => product.brand !== null && product.category !== null
     );
 
-    // Sorting Logic
     switch (sortBy) {
       case "popularity":
         filteredProducts.sort((a, b) => b.popularity - a.popularity);

@@ -100,7 +100,7 @@
         .then(data => {
             if (data.success) {
                 alert("Order placed successfully!");
-                window.location.href = '/order-placed'; // Redirect to success page or order confirmation page
+                window.location.href = `/order-placed?id=${data.orderId}`; // Redirect to success page or order confirmation page
             } else {
                 alert("Failed to place the order. Please try again.");
             }

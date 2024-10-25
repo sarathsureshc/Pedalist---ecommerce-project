@@ -109,3 +109,19 @@ width: fit-content;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
+
+.order-card{
+    padding: 20px;
+    margin: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.alert {
+    background-color: #f8d7da;      
+    color: #721c24; 
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #f5c6cb; 
+    border-radius: 4px; 
+}
+

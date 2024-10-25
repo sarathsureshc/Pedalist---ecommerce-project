@@ -376,74 +376,6 @@ const logout = async (req, res) => {
   }
 };
 
-// const loadProductpage = async (req, res) => {
-//   try {
-//     const products = await Product.find({ isListed: true })
-//       .populate({
-//         path: "brand",
-//         match: { isBlocked: false }, 
-//         select: "name", 
-//       })
-//       .populate({
-//         path: "category",
-//         match: { isListed: true }, 
-//         select: "name", 
-//       })
-//       .exec();
-
-    
-//     const filteredProducts = products.filter(
-//       (product) => product.brand !== null && product.category !== null
-//     );
-
-//     const count = filteredProducts.length;
-//     const user = req.session.user || req.user;
-
-//     if (user) {
-//       const userData = await User.findOne({ _id: user._id });
-//       return res.render("product", { products: filteredProducts, user: userData, count });
-//     } else {
-//       return res.render("product", { products: filteredProducts, count });
-//     }
-//   } catch (error) {
-//     console.log("Product page not found");
-//     res.render("pageNotFound");
-//     res.status(500).send({ message: "Server error" });
-//   }
-// };
-
-
-// const loadProductDetailPage = async (req, res) => {
-//   try {
-//     const id = req.query.id;
-//     if (!id) {
-//       return res.status(400).send({ message: "Product ID is required" });
-//     }
-//     const product = await Product.findById(id).populate("category").populate("brand");
-//     const newArrivals = await Product.find({ _id: { $ne: id } })
-//       .sort({ createdAt: -1 })
-//       .limit(4);
-//     if (!product) {
-//       return res
-//         .status(404)
-//         .render("pageNotFound", { message: "Product not found" });
-//     }
-//     const user = req.session.user || req.user;
-//     if (user) {
-//       const userData = await User.findOne({ _id: user._id });
-//       return res.render("product-detail", {
-//         product,
-//         user: userData,
-//         newArrivals,
-//       });
-//     } else {
-//       return res.render("product-detail", { product, newArrivals });
-//     }
-//   } catch (error) {
-//     console.error("Error loading product detail page:", error);
-//     res.status(500).render("pageNotFound", { message: "Server error" });
-//   }
-// };
 
 module.exports = {
   loadHomepage,
@@ -455,6 +387,5 @@ module.exports = {
   verifyOtp,
   resendOtp,
   logout,
-  // loadProductpage,
-  // loadProductDetailPage,
+
 };

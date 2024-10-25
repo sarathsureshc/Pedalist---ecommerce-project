@@ -9,7 +9,7 @@ const loadAddressPage = async (req, res) => {
         }
         else{
         const userData = await User.findOne({ _id: user._id })
-        const addresses = await Address.find({userId: userData._id }).sort({ createdAt: 1 }); // Fetch addresses sorted by creation date
+        const addresses = await Address.find({userId: userData._id }).sort({ createdAt: 1 }); 
 
         res.render('address', { addresses, user:userData });
         }
@@ -43,7 +43,7 @@ const addAddress = async (req, res) => {
     try {
         const newAddress = new Address({ userId:user._id, name, houseName, streetName, landmark, locality, city, state, pin,contactNo });
         await newAddress.save();
-        res.redirect('/address'); // Redirect to address management page
+        res.redirect('/address');
     } catch (error) {
         console.error("Error adding address:", error);
         res.status(500).send('Server Error');

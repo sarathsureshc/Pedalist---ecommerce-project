@@ -1,0 +1,93 @@
+<%- include('../partials/admin/header.ejs') %>
+<div class="wrapper">
+    <div class="order-main-content">
+        <header class="dashboard-header">
+            <h1>Order Management</h1>
+            <a href="/admin/logout" class="dashboard-logout-button btn btn-danger">Logout</a>
+        </header>
+
+        <!-- Breadcrumbs -->
+        <nav class="dashboard-breadcrumbs">
+            <a href="/admin">Home</a> &gt; <span>Order Management</span>
+        </nav>
+
+        <div class="dashboard-content">
+            <div class="order-management-card">
+                <h3>Order List</h3>
+
+                <!-- Search Bar -->
+                <form method="GET" action="/admin/orders" class="mb-3">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control" placeholder="Search Orders"
+                            value="<%= search %>" />
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="submit">Search</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>User Name</th>
+                                <th>Total Amount</th>
+                                <th>Payment Status</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for(let i=0; i < orders.length; i++) { %>
+                                <tr>
+                                    <td>
+                                        <a href="/admin/order?id=<%= orders[i]._id %>"><%= orders[i]._id %></a>
+                                    </td>
+                                    <td>
+                                        <%= orders[i].userId.firstName %>
+                                    </td>
+                                    <td>
+                                        <%= orders[i].totalPrice %>
+                                    </td>
+                                    <td>
+                                        <%= orders[i].paymentStatus %>
+                                    </td>
+                                    <td>
+                                        <%= new Date(orders[i].createdOn).toLocaleDateString() %>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-info" onclick="viewOrder('<%= orders[i]._id %>')">View</button>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Pagination -->
+            <div class="pagination-container">
+                <% if (currentPage > 1) { %>
+                    <a href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+                <% } %>
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                    <% if (i === currentPage) { %>
+                        <span class="current-page"><%= i %></span>
+                    <% } else { %>
+                        <a href="?page=<%= i %>"><%= i %></a>
+                    <% } %>
+                <% } %>
+                <% if (currentPage < totalPages) { %>
+                    <a href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/admin/footer.ejs') %>
+
+<script>
+    function viewOrder(orderId) {
+        window.location.href = `/admin/order?id=${orderId}`;
+    }
+</script>
