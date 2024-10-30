@@ -74,6 +74,7 @@
 
 <%- include('../partials/user/footer.ejs') %>
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
     function placeOrder() {
         const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked').value;
@@ -97,10 +98,25 @@
             body: JSON.stringify(orderData)
         })
         .then(response => response.json())
-        .then(data => {
+        .then(data => { 
+            console.log(data);
             if (data.success) {
-                alert("Order placed successfully!");
-                window.location.href = `/order-placed?id=${data.orderId}`; // Redirect to success page or order confirmation page
+                if (selectedPaymentMethod === "payNow") {
+                    const options = {
+                        "key": data.keyId,
+                        "amount": data.amount * 100,
+                        "currency": data.currency,
+                        "order_id": data.razorpayOrderId,
+                        "handler": function (response) {
+                            verifyPayment(response, data.orderId);
+                        }
+                    };
+                    const rzp1 = new Razorpay(options);
+                    rzp1.open();
+                } else {
+                    alert("Order placed successfully!");
+                    window.location.href = `/order-placed?id=${data.orderId}`;
+                }
             } else {
                 alert("Failed to place the order. Please try again.");
             }
@@ -111,8 +127,36 @@
         });
     }
 
+    function verifyPayment(response, orderId) {
+        console.log(response)
+        fetch('/verify-payment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                orderId: orderId,
+                razorpayOrderId: response.razorpay_order_id,
+                paymentId: response.razorpay_payment_id,
+                signature: response.razorpay_signature
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Payment successful! Order placed.");
+                window.location.href = `/order-placed?id=${orderId}`;
+            } else {
+                alert("Payment verification failed.");
+            }
+        })
+        .catch(error => {
+            console.error("Error verifying payment:", error);
+            alert("An error occurred during payment verification. Please try again.");
+        });
+    }
+
     function cancelOrder() {
-        // Logic to cancel the order or navigate back
-        window.location.href = '/cart'; // Redirect to cart or previous page
+        window.location.href = '/cart';
     }
 </script>

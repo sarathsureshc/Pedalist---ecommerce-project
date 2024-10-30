@@ -11,7 +11,7 @@
                 <div class="col-lg-10">
                     <div class="card mb-4">
                         <div class="card-body">
-                            <form method="post" action="/admin/addProduct" enctype="multipart/form-data"
+                            <form method="post" action="/admin/add-product" enctype="multipart/form-data"
                                 onsubmit="return validateForm()">
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Product Name</label>
@@ -188,12 +188,14 @@
         </section>
     </div>
 
-    <!-- Cropper js script -->
+    
     <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
 
     <script>
         function validateAndSubmit() {
+
             if (validateForm()) {
+                console.log("validated")
                 document.forms[0].submit();
             }
         }
@@ -297,19 +299,20 @@
 
 
         function validateForm() {
+            console.log("validation running")
             clearErrorMessages();
             const name = document.getElementsByName('productName')[0].value;
-            const specification1 = document.getElementsByName('specification1').value;
-            const specification2 = document.getElementsByName('specification2').value;
-            const specification3 = document.getElementsByName('specification3').value;
-            const specification4 = document.getElementsByName('specification4').value;
+            const specification1 = document.getElementsByName('specification1')[0].value;
+                const specification2 = document.getElementsByName('specification2')[0].value;
+                const specification3 = document.getElementsByName('specification3')[0].value;
+                const specification4 = document.getElementsByName('specification4')[0].value;
             const description = document.getElementById('descriptionid').value;
             const brand = document.getElementsByName('brand')[0].value;
             const price = document.getElementsByName('price')[0].value;
             const color = document.getElementsByName('color')[0].value;
             const category = document.getElementsByName('category')[0].value;
             const images = document.getElementById('input1')
-            const quantity = document.getElementsByName('quantity')
+            const quantity = document.getElementsByName('quantity')[0].value;
 
             let isValid = true
             if (name.trim() === "") {
@@ -357,20 +360,23 @@
                 isValid = false;
             }
 
-            if (!/^[0-9]+$/.test(quantity) || parseInt(quantity) < 0) {
+            if (parseInt(quantity.trim()) < 0 || quantity.trim() === "" || isNaN(quantity.trim())) {
                 displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
                 isValid = false;
             }
 
-            if (!/^\d+(\.\d{1,2})?$/.test(price.trim()) || parseFloat(price) < 0) {
+            if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price.trim()) < 0 || price.trim() === "") {
                 displayErrorMessage('price-error', 'Please enter a valid non-negative price.');
                 isValid = false;
             }
 
-            if (!/^[a-zA-Z]+$/.test(color)) {
-                displayErrorMessage('color-error', 'Please enter a valid color name using only alphabets.');
-                isValid = false;
-            }
+            if (color.trim() === "") {
+                    displayErrorMessage('color-error', 'Please enter a color.');
+                    isValid = false;
+                } else if (!/^[a-zA-Z\s]+$/.test(color.trim())) {
+                    displayErrorMessage('color-error', 'Color should contain only alphabets.');
+                    isValid = false;
+                }
 
             if (images.files.length === 0) {
                 displayErrorMessage("images-error", 'Please select an image.');

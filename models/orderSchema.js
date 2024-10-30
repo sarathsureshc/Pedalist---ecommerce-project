@@ -79,8 +79,12 @@ const orderSchema = new Schema({
     paymentMethod:{
         type:String,
         required:true,
-        enum:['Cash On Delivery','Card Payment','Wallet'],
+        enum:['Cash On Delivery','Card Payment','Wallet','Pending'],
         default : 'Cash On Delivery'
+    },
+    transactionId:{
+        type:String,
+        default:null
     },
     paymentStatus:{
         type:String,

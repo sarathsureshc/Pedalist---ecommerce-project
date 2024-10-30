@@ -10,6 +10,7 @@
                         <div class="order-card">
                             <h2>Order ID: <%= order.orderId %></h2>
                             <p><strong>Total Price:</strong> ₹<%= order.totalPrice %></p>
+                            <p><strong>Payment Status:</strong> <%= order.paymentStatus %></p>
                             <p><strong>Address </strong></p>
                             <p><ul>
                                 <li><strong>Name:</strong> <%= order.address[0].name %></li>

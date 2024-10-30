@@ -200,10 +200,10 @@ const restoreProduct = async (req, res) => {
 const getEditProduct = async (req, res) => {
   try {
     const id = req.query.id;
-    const product = await Product.findOne({_id:id});
+    const product = await Product.findOne({_id: id}).populate('brand').populate('category');
     const category = await Category.find({});
     const brand = await Brand.find({});
-    console.log(product);
+    // console.log(product);
     res.render("edit-Product", { 
       product : product,
       cat: category,
@@ -217,25 +217,39 @@ const getEditProduct = async (req, res) => {
 
 const editProduct = async (req, res) => {
   try {
-    const id = req.body._id;
+    const id = req.params.id;
+    console.log(id);
     const product  = await  Product.findOne({_id: id});
     const data = req.body;
     const existingProduct = await Product.findOne({
       productName: data.productName,
       _id: { $ne: id },
-    })
+    });
+    console.log(existingProduct);
+    console.log(product);
 
     if (existingProduct) {
       return res.status(400).json({ error:"Product with this name already exists. Please try another name."});
     }
     
-    const images = [];
+   var images = [];
 
-    if(req.files && req.files.length > 0) {
-      for(let i=0; i<req.files.length; i++){
+    // Handle file uploads
+    if (req.files && req.files.length > 0) {
+      for (let i = 0; i < req.files.length; i++) {
+        const originalImagePath = req.files[i].path;
+        console.log(`Original filename: ${req.files[i].filename}`);
+
+        const resizedImagePath = path.join("public", "uploads", "product-images", req.files[i].filename);
+
+        // Resize the image
+        await sharp(originalImagePath)
+          .resize({ width: 440, height: 440 })
+          .toFile(resizedImagePath);
+
         images.push(req.files[i].filename);
+      }
     }
-  }
 
   const updateFields = {
     productName: data.productName,
@@ -251,11 +265,12 @@ const editProduct = async (req, res) => {
     color: data.color,
   }
 
-  if(req.files.length > 0) {
-    updateFields.$push = {image:{$each:images}};
-  }
+  if (images.length > 0) {
+    updateFields.$push = { image: { $each: images } };
+}
 
   await Product.findByIdAndUpdate(id,updateFields,{new:true});
+  console.log("updated successfully")
   res.redirect('/admin/products');
 
 
@@ -271,8 +286,10 @@ const deleteSingleImage = async (req, res) => {
   try {
 
     const {imageNameToServer,productIdToServer} = req.body;
-    const product = await Product.findByIdAndUpdate(productIdToServer,{$pull: {images: imageNameToServer}});
-    const imagePath = path.join("public","uploads","product-images",imageNameToServer,productIdToServer);
+    console.log(imageNameToServer,productIdToServer);
+    const product = await Product.findByIdAndUpdate(productIdToServer,{$pull: {image: imageNameToServer}});
+    console.log(product)
+    const imagePath = path.join("public","uploads","product-images",imageNameToServer);
     if(fs.existsSync(imagePath)){
       await fs.unlinkSync(imagePath);
       console.log(`Image ${imageNameToServer} deleted successfully`);

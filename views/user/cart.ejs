@@ -34,7 +34,9 @@
             <p>Offer: <%= offer %></p>
         <% } %>
     </div>
+    <% if(cart.length>0){ %>
     <button class="btn btn-success" onclick="proceedToCheckout()">Proceed to Checkout</button>
+    <% } %>
 </div>
 
 <%- include('../partials/user/footer.ejs') %>

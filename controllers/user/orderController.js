@@ -3,6 +3,14 @@ const Product = require("../../models/productSchema");
 const Address = require("../../models/addressSchema");
 const Order = require("../../models/orderSchema");
 const Cart = require("../../models/cartSchema");
+const Razorpay = require('razorpay');
+const crypto = require("crypto");
+const env = require("dotenv").config();
+
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_ID_KEY,
+  key_secret: process.env.RAZORPAY_SECRET_KEY
+});
 
 const placeOrder = async (req, res) => {
   try {
@@ -15,13 +23,9 @@ const placeOrder = async (req, res) => {
         .json({ success: false, message: "User not authenticated." });
     }
 
-    const cart = await Cart.findOne({ userId: user._id }).populate(
-      "items.productId"
-    );
+    const cart = await Cart.findOne({ userId: user._id }).populate("items.productId");
     if (!cart || cart.items.length === 0) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Your cart is empty." });
+      return res.status(400).json({ success: false, message: "Your cart is empty." });
     }
 
     const subtotal = cart.items.reduce(
@@ -32,6 +36,10 @@ const placeOrder = async (req, res) => {
     const deliveryCharge = 50;
     const totalPrice = subtotal - discount + deliveryCharge;
 
+    console.log("Razorpay Key ID:", process.env.RAZORPAY_ID_KEY);
+console.log("Razorpay Key Secret:", process.env.RAZORPAY_SECRET_KEY);
+
+
     const newOrder = new Order({
       userId: user._id,
       items: cart.items.map((item) => ({
@@ -40,38 +48,94 @@ const placeOrder = async (req, res) => {
         status: "Pending",
       })),
       address,
-      paymentMethod,
+      paymentMethod: paymentMethod === 'Cash On Delivery' ? 'Cash On Delivery' : 'Pending',
       totalPrice,
       finalAmount: totalPrice,
-      paymentStatus: "Pending",
+      paymentStatus: 'Pending'
     });
 
     await newOrder.save();
 
-    for (const item of cart.items) {
-      const product = item.productId;
-      product.quantity -= item.quantity;
+    if (paymentMethod === 'payNow') {
+      const options = {
+        amount: totalPrice * 100,
+        currency: "INR",
+        receipt: `order_rcptid_${newOrder._id}`,
+      };
 
-      if (product.quantity < 1) {
-        return res.status(400).json({
-          success: false,
-          message: `Not enough stock for ${product.name}.`,
-        });
+      const order = await razorpay.orders.create(options);
+      console.log(order);
+
+      return res.status(201).json({
+        success: true,
+        orderId: newOrder._id,
+        razorpayOrderId: order.id,
+        amount: totalPrice,
+        currency: "INR",
+        keyId: razorpay.key_id,
+      });
+    } else {
+
+      for (const item of cart.items) {
+        await Product.updateOne(
+          { _id: item.product },
+          { $inc: { quantity: -item.quantity } }
+        );
       }
 
-      await product.save();
+      cart.items = [];
+      await cart.save();
+      return res.status(201).json({
+        success: true,
+        orderId: newOrder._id,
+        message: "Order placed successfully!",
+      });
     }
-
-    cart.items = [];
-    await cart.save();
-
-    res.status(201).json({
-      success: true,
-      orderId: newOrder._id,
-      message: "Order placed successfully!",
-    });
   } catch (error) {
     console.error("Error placing order:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error." });
+  }
+};
+
+const verifyRazorpayPayment = async (req, res) => {
+  try {
+    const { razorpayOrderId, orderId, paymentId, signature } = req.body;
+    console.log(req.body);
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found." });
+    }
+
+      const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET_KEY);
+      hmac.update(`${razorpayOrderId}|${paymentId}`);
+      const expectedSignature = hmac.digest('hex');
+
+      console.log("Expected signature: ", expectedSignature);
+
+      console.log(expectedSignature === signature);
+
+    if (expectedSignature === signature) {
+      order.paymentStatus = "Completed";
+      order.paymentMethod = "Card Payment";
+      order.transactionId = paymentId;
+      await order.save();
+      for (const item of order.items) {
+        await Product.updateOne(
+          { _id: item.product },
+          { $inc: { quantity: -item.quantity } }
+        );
+      }
+
+      await Cart.updateOne({ userId: order.userId }, { $set: { items: [] } });
+      res.json({ success: true, message: "Payment verified and order placed successfully." });
+    } else {
+      order.paymentStatus = "Failed";
+      await order.save();
+      res.status(400).json({ success: false, message: "Payment verification failed." });
+    }
+  } catch (error) {
+    console.error("Error verifying payment:", error);
     res.status(500).json({ success: false, message: "Internal Server Error." });
   }
 };
@@ -192,6 +256,7 @@ const requestReturn = async (req, res) => {
 
 module.exports = {
   placeOrder,
+  verifyRazorpayPayment,
   loadOrderPlaced,
   getUserOrders,
   cancelOrderItem,
