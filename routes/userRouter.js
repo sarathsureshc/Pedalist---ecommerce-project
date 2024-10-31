@@ -59,13 +59,11 @@ router.delete('/cart/:id',userAuth,cartController.removeFromCart);
 // router.post("/add-to-wishlist",userAuth,wishlistController.addToWishlist)
 
 router.get('/checkout',userAuth,checkoutController.getCheckoutPage);
-router.get('/buyNow/:productId',userAuth, checkoutController.buyNow);
 
 router.post('/place-order',userAuth, orderController.placeOrder);
 router.get('/order-placed',userAuth, orderController.loadOrderPlaced);
 router.post('/verify-payment',userAuth, orderController.verifyRazorpayPayment);
-// router.get('/checkout/payNow',userAuth, checkoutController.payNow);
-// router.get('/checkout/cashOnDelivery', userAuth,checkoutController.cashOnDelivery);
+
 
 
 

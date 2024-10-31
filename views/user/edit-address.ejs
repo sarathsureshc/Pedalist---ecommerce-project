@@ -4,7 +4,8 @@
     <div class="user-profile-container">
         <div class="user-details">
             <h1>Edit Address</h1>
-            <form id="addressForm" action="/edit-address/<%= address._id %>" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+            <form id="addressForm" action="/edit-address/<%= address._id %>" method="POST" onsubmit="return validateForm()">
+
                 <div class="form-group">
                     <label for="name">Name:</label>
                     <input type="text" name="name" id="name" value="<%= address.name %>">
@@ -87,12 +88,10 @@ function validateForm() {
 
     let isValid = true;
 
-    // Reset all error messages
     fields.forEach(field => {
         document.getElementById(field.errorId).style.display = 'none';
     });
 
-    // Validate each field to ensure they are not empty
     fields.forEach(field => {
         const value = document.getElementById(field.id).value.trim();
         if (value === '') {
@@ -101,26 +100,22 @@ function validateForm() {
         }
     });
 
-    // Validate pin code specifically
     const pin = document.getElementById('pin').value;
     const pinError = document.getElementById('pinError');
 
-    // Check if pin code is exactly 6 digits
     if (!/^\d{6}$/.test(pin)) {
         pinError.style.display = 'block';
-        isValid = false; // Prevent form submission
+        isValid = false; 
     }
 
-    // Validate contact number specifically
     const contactNo = document.getElementById('contactNo').value;
     const contactNoError = document.getElementById('contactNoError');
 
-    // Check if contact number is exactly 10 digits and not all zeros
     if (!/^\d{10}$/.test(contactNo) || contactNo === '0000000000') {
         contactNoError.style.display = 'block';
-        isValid = false; // Prevent form submission
+        isValid = false; 
     }
-
-    return isValid; // Return true to allow form submission if all validations pass
+    console.log("valid")
+    return isValid; 
 }
 </script>

@@ -74,89 +74,129 @@
 
 <%- include('../partials/user/footer.ejs') %>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 <script>
     function placeOrder() {
-        const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked').value;
-        const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+    const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked').value;
+    const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
 
-        if (!selectedAddress) {
-            alert("Please select an address.");
-            return;
-        }
+    if (!selectedAddress) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'No Address Selected',
+            text: 'Please select an address.',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
 
-        const orderData = {
-            address: selectedAddress,
-            paymentMethod: selectedPaymentMethod
-        };
+    const orderData = {
+        address: selectedAddress,
+        paymentMethod: selectedPaymentMethod
+    };
 
-        fetch('/place-order', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(orderData)
-        })
-        .then(response => response.json())
-        .then(data => { 
-            console.log(data);
-            if (data.success) {
-                if (selectedPaymentMethod === "payNow") {
-                    const options = {
-                        "key": data.keyId,
-                        "amount": data.amount * 100,
-                        "currency": data.currency,
-                        "order_id": data.razorpayOrderId,
-                        "handler": function (response) {
-                            verifyPayment(response, data.orderId);
-                        }
-                    };
-                    const rzp1 = new Razorpay(options);
-                    rzp1.open();
-                } else {
-                    alert("Order placed successfully!");
+    fetch('/place-order', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(orderData)
+    })
+    .then(response => response.json())
+    .then(data => { 
+        console.log(data);
+        if (data.success) {
+            if (selectedPaymentMethod === "payNow") {
+                const options = {
+                    "key": data.keyId,
+                    "amount": data.amount * 100,
+                    "currency": data.currency,
+                    "order_id": data.razorpayOrderId,
+                    "handler": function (response) {
+                        verifyPayment(response, data.orderId);
+                    }
+                };
+                const rzp1 = new Razorpay(options);
+                rzp1.open();
+            } else {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Order Placed',
+                    text: 'Order placed successfully!',
+                    confirmButtonText: 'OK'
+                }).then(() => {
                     window.location.href = `/order-placed?id=${data.orderId}`;
-                }
-            } else {
-                alert("Failed to place the order. Please try again.");
+                });
             }
-        })
-        .catch(error => {
-            console.error("Error placing the order:", error);
-            alert("An error occurred. Please try again.");
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Order Failed',
+                text: 'Failed to place the order. Please try again.',
+                confirmButtonText: 'OK'
+            });
+        }
+    })
+    .catch(error => {
+        console.error("Error placing the order:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred. Please try again.',
+            confirmButtonText: 'OK'
         });
-    }
+    });
+}
 
-    function verifyPayment(response, orderId) {
-        console.log(response)
-        fetch('/verify-payment', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                orderId: orderId,
-                razorpayOrderId: response.razorpay_order_id,
-                paymentId: response.razorpay_payment_id,
-                signature: response.razorpay_signature
-            })
+function verifyPayment(response, orderId) {
+    console.log(response);
+    fetch('/verify-payment', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            orderId: orderId,
+            razorpayOrderId: response.razorpay_order_id,
+            paymentId: response.razorpay_payment_id,
+            signature: response.razorpay_signature
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert("Payment successful! Order placed.");
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Payment Successful',
+                text: 'Order placed.',
+                confirmButtonText: 'OK'
+            }).then(() => {
                 window.location.href = `/order-placed?id=${orderId}`;
-            } else {
-                alert("Payment verification failed.");
-            }
-        })
-        .catch(error => {
-            console.error("Error verifying payment:", error);
-            alert("An error occurred during payment verification. Please try again.");
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Verification Failed',
+                text: 'Payment verification failed.',
+                confirmButtonText: 'OK'
+            });
+        }
+    })
+    .catch(error => {
+        console.error("Error verifying payment:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred during payment verification. Please try again.',
+            confirmButtonText: 'OK'
         });
-    }
+    });
+}
 
-    function cancelOrder() {
-        window.location.href = '/cart';
-    }
+function cancelOrder() {
+    window.location.href = '/cart';
+}
+
 </script>

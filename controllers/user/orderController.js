@@ -3,13 +3,13 @@ const Product = require("../../models/productSchema");
 const Address = require("../../models/addressSchema");
 const Order = require("../../models/orderSchema");
 const Cart = require("../../models/cartSchema");
-const Razorpay = require('razorpay');
+const Razorpay = require("razorpay");
 const crypto = require("crypto");
 const env = require("dotenv").config();
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_ID_KEY,
-  key_secret: process.env.RAZORPAY_SECRET_KEY
+  key_secret: process.env.RAZORPAY_SECRET_KEY,
 });
 
 const placeOrder = async (req, res) => {
@@ -23,9 +23,22 @@ const placeOrder = async (req, res) => {
         .json({ success: false, message: "User not authenticated." });
     }
 
-    const cart = await Cart.findOne({ userId: user._id }).populate("items.productId");
+    const cart = await Cart.findOne({ userId: user._id }).populate(
+      "items.productId"
+    );
     if (!cart || cart.items.length === 0) {
-      return res.status(400).json({ success: false, message: "Your cart is empty." });
+      return res
+        .status(400)
+        .json({ success: false, message: "Your cart is empty." });
+    }
+
+    for (const item of cart.items) {
+      if (item.productId.quantity < item.quantity) {
+        return res.status(400).json({
+          success: false,
+          message: `Insufficient stock for product: ${item.productId.name}. Only ${item.productId.quantity} left in stock.`,
+        });
+      }
     }
 
     const subtotal = cart.items.reduce(
@@ -37,26 +50,26 @@ const placeOrder = async (req, res) => {
     const totalPrice = subtotal - discount + deliveryCharge;
 
     console.log("Razorpay Key ID:", process.env.RAZORPAY_ID_KEY);
-console.log("Razorpay Key Secret:", process.env.RAZORPAY_SECRET_KEY);
-
+    console.log("Razorpay Key Secret:", process.env.RAZORPAY_SECRET_KEY);
 
     const newOrder = new Order({
       userId: user._id,
       items: cart.items.map((item) => ({
         product: item.productId._id,
         quantity: item.quantity,
-        status: "Pending",
+        status: paymentMethod === "Cash On Delivery" ? "Placed" : "Pending",
       })),
       address,
-      paymentMethod: paymentMethod === 'Cash On Delivery' ? 'Cash On Delivery' : 'Pending',
+      paymentMethod:
+        paymentMethod === "Cash On Delivery" ? "Cash On Delivery" : "Pending",
       totalPrice,
       finalAmount: totalPrice,
-      paymentStatus: 'Pending'
+      paymentStatus: "Pending",
     });
 
     await newOrder.save();
 
-    if (paymentMethod === 'payNow') {
+    if (paymentMethod === "payNow") {
       const options = {
         amount: totalPrice * 100,
         currency: "INR",
@@ -75,7 +88,6 @@ console.log("Razorpay Key Secret:", process.env.RAZORPAY_SECRET_KEY);
         keyId: razorpay.key_id,
       });
     } else {
-
       for (const item of cart.items) {
         await Product.updateOne(
           { _id: item.product },
@@ -104,21 +116,26 @@ const verifyRazorpayPayment = async (req, res) => {
     const order = await Order.findById(orderId);
 
     if (!order) {
-      return res.status(404).json({ success: false, message: "Order not found." });
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found." });
     }
 
-      const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET_KEY);
-      hmac.update(`${razorpayOrderId}|${paymentId}`);
-      const expectedSignature = hmac.digest('hex');
+    const hmac = crypto.createHmac("sha256", process.env.RAZORPAY_SECRET_KEY);
+    hmac.update(`${razorpayOrderId}|${paymentId}`);
+    const expectedSignature = hmac.digest("hex");
 
-      console.log("Expected signature: ", expectedSignature);
+    console.log("Expected signature: ", expectedSignature);
 
-      console.log(expectedSignature === signature);
+    console.log(expectedSignature === signature);
 
     if (expectedSignature === signature) {
       order.paymentStatus = "Completed";
       order.paymentMethod = "Card Payment";
       order.transactionId = paymentId;
+      order.items.forEach((item) => {
+        item.status = "Placed";
+      });
       await order.save();
       for (const item of order.items) {
         await Product.updateOne(
@@ -128,11 +145,16 @@ const verifyRazorpayPayment = async (req, res) => {
       }
 
       await Cart.updateOne({ userId: order.userId }, { $set: { items: [] } });
-      res.json({ success: true, message: "Payment verified and order placed successfully." });
+      res.json({
+        success: true,
+        message: "Payment verified and order placed successfully.",
+      });
     } else {
       order.paymentStatus = "Failed";
       await order.save();
-      res.status(400).json({ success: false, message: "Payment verification failed." });
+      res
+        .status(400)
+        .json({ success: false, message: "Payment verification failed." });
     }
   } catch (error) {
     console.error("Error verifying payment:", error);
@@ -144,7 +166,6 @@ const loadOrderPlaced = async (req, res) => {
   try {
     const user = req.session.user || req.user;
     const orderId = req.query.id;
-
     if (!user) {
       return res.redirect("/login");
     }
@@ -168,6 +189,7 @@ const loadOrderPlaced = async (req, res) => {
 const getUserOrders = async (req, res) => {
   try {
     const user = req.session.user || req.user;
+    let cartCount = 0;
     if (user) {
       const userId = user._id;
       const userData = await User.findById(userId);
@@ -175,7 +197,16 @@ const getUserOrders = async (req, res) => {
         .populate("items.product")
         .populate("address");
 
-      res.render("view-orders", { orders, user: userData });
+      const cart = await Cart.findOne({ userId: user._id });
+
+      if (cart) {
+        cartCount = cart.items.reduce(
+          (total, item) => total + item.quantity,
+          0
+        );
+      }
+
+      res.render("view-orders", { orders, user: userData, cartCount });
     } else {
       return res.redirect("/login");
     }
@@ -197,6 +228,7 @@ const cancelOrderItem = async (req, res) => {
       if (
         item &&
         (item.status === "Pending" ||
+          item.status === "Placed" ||
           item.status === "Processing" ||
           item.status === "Shipped")
       ) {
@@ -233,7 +265,7 @@ const requestReturn = async (req, res) => {
       const item = order.items.id(itemId);
 
       if (item && item.status === "Delivered") {
-        item.status = 'Return Request';
+        item.status = "Return Request";
         item.returnReason = reason;
         await order.save();
 

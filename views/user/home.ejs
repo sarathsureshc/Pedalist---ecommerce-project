@@ -62,13 +62,15 @@
                 
           </li>
         </ul>
-        <ul class="navbar-nav ms-auto"> <!-- Ensures the cart is aligned to the right -->
+        <ul class="navbar-nav ms-auto">
+          <% if(locals.user){ %>
           <li class="nav-item">
             <a href="/cart" class="nav-link cart-link">
               <i class="bi bi-cart-fill"></i>
-              <span class="cart-badge">3</span>
+              <span class="cart-badge"><%= cartCount %></span>
             </a>
           </li>
+          <% } %>
         </ul>
       </div>
     </div>

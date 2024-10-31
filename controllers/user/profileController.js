@@ -1,5 +1,6 @@
 const User = require("../../models/userSchema");
 const Product = require("../../models/productSchema");
+const Cart = require("../../models/cartSchema");
 const env = require("dotenv").config();
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
@@ -7,9 +8,15 @@ const nodemailer = require("nodemailer");
 const loadProfilePage = async (req, res) => {
   try {
     const user = req.session.user || req.user;
+    let cartCount = 0;
     if (user) {
       const userData = await User.findOne({ _id: user._id });
-      res.render("user-profile", { user: userData,});
+      const cart = await Cart.findOne({ userId: user._id });
+      
+      if (cart) {
+        cartCount = cart.items.reduce((total, item) => total + item.quantity, 0);
+      }
+      res.render("user-profile", { user: userData,cartCount});
     } else {
       return res.redirect("/login");
     }
@@ -53,9 +60,15 @@ const profileEdit = async (req, res) => {
 const loadPasswordChangePage = async (req, res) => {
   try {
     const user = req.session.user || req.user;
+    let cartCount = 0 ;
     if (user) {
       const userData = await User.findOne({ _id: user._id });
-      res.render("edit-password",{user:userData,});
+      const cart = await Cart.findOne({ userId: user._id });
+      
+      if (cart) {
+        cartCount = cart.items.reduce((total, item) => total + item.quantity, 0);
+      }
+      res.render("edit-password",{user:userData,cartCount});
     } else {
       return res.redirect("/login");
     }

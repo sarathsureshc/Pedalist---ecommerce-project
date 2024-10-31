@@ -71,6 +71,7 @@ const addToCart = async (req, res) => {
 const getCart = async (req, res) => {
   try {
     const user = req.session.user || req.user;
+    let cartCount = 0 ;
     if (!user) {
       return res.redirect("/login");
     }
@@ -83,7 +84,7 @@ const getCart = async (req, res) => {
         .status(404)
         .render("cart", { cart: [], totalPrice: 0, offer: "No offer" });
     }
-
+    cartCount = cart.items.reduce((total, item) => total + item.quantity, 0);
     let totalPrice = 0;
     const offer = "No offer"; 
     cart.items.forEach((item) => {
@@ -97,6 +98,7 @@ const getCart = async (req, res) => {
       cart: cart.items,
       totalPrice,
       offer,
+      cartCount,
     });
   } catch (error) {
     console.error("Error fetching cart:", error);

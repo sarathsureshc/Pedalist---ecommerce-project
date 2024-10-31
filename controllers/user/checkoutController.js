@@ -7,6 +7,7 @@ const Cart = require('../../models/cartSchema');
 const getCheckoutPage = async (req, res) => {
     try {
         const user = req.session.user || req.user;
+        let cartCount = 0;
         if (!user) {
             return res.redirect("/login");
         }
@@ -14,6 +15,7 @@ const getCheckoutPage = async (req, res) => {
         const userData = await User.findById(user);
 
         const cart = await Cart.findOne({ userId: user._id }).populate("items.productId");
+        cartCount = cart.items.reduce((total, item) => total + item.quantity, 0);
 
         const orderItems = cart && cart.items.length > 0 ? cart.items.map(item => {
             return {
@@ -42,7 +44,8 @@ const getCheckoutPage = async (req, res) => {
             discount,
             deliveryCharge,
             totalPrice,
-            user : userData
+            user : userData,
+            cartCount,
         });
     } catch (error) {
         console.error("Error displaying checkout page:", error);
@@ -54,41 +57,9 @@ const getCheckoutPage = async (req, res) => {
 
 
 
-const buyNow = async (req, res) => {
-    try {
-        const productId = req.params.productId;
-        const product = await Product.findById(productId);
 
-        if (!product) {
-            return res.status(404).send('Product not found.');
-        }
-
-        req.session.orderItems = [{
-            productId: product._id,
-            productName: product.productName,
-            price: product.price,
-            quantity: 1
-        }];
-        console.log(req.session.orderItems);
-        console.log(product)
-
-        
-        res.render('buyNow', {
-            product: {
-                productId : product._id,
-                productName: product.productName,
-                price: product.price,
-                quantity: 1
-            }
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('An error occurred while processing your request.');
-    }
-};
 
 
 module.exports = {
     getCheckoutPage,
-    buyNow
 }

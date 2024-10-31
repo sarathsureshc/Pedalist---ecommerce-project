@@ -1,17 +1,24 @@
 const User = require("../../models/userSchema");
 const Address = require("../../models/addressSchema");
+const Cart = require("../../models/cartSchema");
 
 const loadAddressPage = async (req, res) => {
     try {
        const user = req.session.user || req.user;
-        if (!user) {
+    //    let cartCount = 0;
+               if (!user) {
             return res.redirect('/login');
         }
         else{
         const userData = await User.findOne({ _id: user._id })
         const addresses = await Address.find({userId: userData._id, isDeleted: false }).sort({ createdAt: 1 }); 
 
-        res.render('address', { addresses, user:userData });
+        // const cart = await Cart.findOne({ userId: user._id });
+        // if (cart) {
+        //     cartCount = cart.items.reduce((total, item) => total + item.quantity, 0);
+        //   }
+
+        res.render('address', { addresses, user:userData ,});
         }
     } catch (error) {
         console.error("Error loading addresses:", error);
@@ -22,12 +29,17 @@ const loadAddressPage = async (req, res) => {
 const loadAddAddressPage = async (req, res) => {
     try {
         const user = req.session.user || req.user;
+        let cartCount = 0;
         if (!user) {
             return res.redirect('/login');
         }
         else{
         const userData = await User.findOne({ _id: user._id });
-        res.render('add-address', {user : userData});
+        const cart = await Cart.findOne({ userId: user._id });
+        if (cart) {
+            cartCount = cart.items.reduce((total, item) => total + item.quantity, 0);
+          }
+        res.render('add-address', {user : userData,cartCount});
     }
     } catch (error) {
         console.error("Error loading add address page:", error);
@@ -53,6 +65,7 @@ const addAddress = async (req, res) => {
 const editAddress = async (req, res) => {
     const id = req.query.id;
     const user = req.session.user || req.user;
+    let cartCount = 0;
   
     try {
         if (!user) {
@@ -60,12 +73,16 @@ const editAddress = async (req, res) => {
         }else{
             const userData = await User.findOne({ _id: user._id });
             const address = await Address.findById(id);
+            const cart = await Cart.findOne({ userId: user._id });
             
         if (!address) {
             req.flash('error', 'No address found');
             return res.redirect('/address');
         }
-        res.render('edit-address', { address,user:userData }); 
+        if (cart) {
+            cartCount = cart.items.reduce((total, item) => total + item.quantity, 0);
+          }
+        res.render('edit-address', { address,user:userData,cartCount }); 
         }
     } catch (error) {
         console.error("Error fetching address for edit:", error);
@@ -75,10 +92,10 @@ const editAddress = async (req, res) => {
 
 const updateAddress = async (req, res) => {
     const { id } = req.params;
-    const { line1, city, state, zip } = req.body;
-
+    const { name, houseName, streetName, landmark, locality, city, state, pin,contactNo } = req.body;
+    console.log(req.body);
     try {
-        await Address.findByIdAndUpdate(id, { line1, city, state, zip });
+        await Address.findByIdAndUpdate(id, { name, houseName, streetName, landmark, locality, city, state, pin,contactNo }, { new: true });
         res.redirect('/address');
     } catch (error) {
         console.error("Error updating address:", error);

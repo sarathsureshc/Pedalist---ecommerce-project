@@ -2,6 +2,7 @@ const User = require("../../models/userSchema");
 const Product = require("../../models/productSchema");
 const Category = require("../../models/categorySchema");
 const Brand = require("../../models/brandSchema");
+const Cart = require("../../models/cartSchema");
 
 const loadProductPage = async (req, res) => {
   try {
@@ -100,9 +101,16 @@ const loadProductPage = async (req, res) => {
     const user = req.session.user || req.user;
 
     const categories = await Category.find({ isListed: true });
-
+    let cartCount = 0;
+    
     if (user) {
       const userData = await User.findOne({ _id: user._id });
+      const cart = await Cart.findOne({ userId: user._id });
+      
+
+      if (cart) {
+        cartCount = cart.items.reduce((total, item) => total + item.quantity, 0);
+      }
       return res.render("product", {
         products: filteredProducts,
         categories,
@@ -111,6 +119,7 @@ const loadProductPage = async (req, res) => {
         showOutOfStock,
         minPrice: minPrice || 20,
         maxPrice: maxPrice || 100000,
+        cartCount
       });
     } else {
       return res.render("product", {
@@ -123,10 +132,9 @@ const loadProductPage = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log("Product page not found");
-    res.render("pageNotFound");
-    res.status(500).send({ message: error.message });
-  }
+    console.log("Product page not found", error);
+    return res.status(500).render("pageNotFound", { message: error.message });
+  }  
 };
 
 const loadProductDetailPage = async (req, res) => {
@@ -147,12 +155,19 @@ const loadProductDetailPage = async (req, res) => {
         .render("pageNotFound", { message: "Product not found" });
     }
     const user = req.session.user || req.user;
+    let cartCount = 0 ;
     if (user) {
       const userData = await User.findOne({ _id: user._id });
+      const cart = await Cart.findOne({ userId: user._id });
+      
+      if (cart) {
+        cartCount = cart.items.reduce((total, item) => total + item.quantity, 0);
+      }
       return res.render("product-detail", {
         product,
         user: userData,
         newArrivals,
+        cartCount
       });
     } else {
       return res.render("product-detail", { product, newArrivals });

@@ -1,4 +1,5 @@
 const express = require("express");
+const bodyParser = require('body-parser');
 const app = express();
 const env = require("dotenv").config();
 const session = require("express-session");
@@ -6,6 +7,7 @@ const passport = require("./config/passport");
 const db = require("./config/db");
 const userRouter = require("./routes/userRouter");
 const adminRouter = require("./routes/adminRouter.js");
+
 const path = require("path");
 const flash = require('connect-flash');
 db();
@@ -34,7 +36,6 @@ app.use((req, res, next) => {
 });
 
 app.use(flash());
-// Middleware to set flash message to response locals
 app.use((req, res, next) => {
     res.locals.errorMessage = req.flash('error');
     next();

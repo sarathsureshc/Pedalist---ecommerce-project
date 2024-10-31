@@ -19,7 +19,14 @@ const loadHomepage = async (req, res) => {
     const newArrivals = await Product.find().sort({ createdAt: -1 }).limit(4);
     if (user) {
       const userData = await User.findOne({ _id: user._id });
-      return res.render("home", { user: userData, newArrivals ,});
+      const cart = await Cart.findOne({ userId: user._id });
+      let cartCount = 0;
+
+      if (cart) {
+        cartCount = cart.items.reduce((total, item) => total + item.quantity, 0);
+      }
+
+      return res.render("home", { user: userData, newArrivals,cartCount });
     } else {
       return res.render("home", { newArrivals });
     }
