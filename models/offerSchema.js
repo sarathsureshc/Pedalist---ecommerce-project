@@ -19,15 +19,22 @@ const offerSchema =  new Schema({
         type: Date,
         required: true
     },
+    offerGroup:{
+        type : String,
+        required: true,
+        enum:['Global','Product','Category','Brand']
+    },    
     productsIncluded:{
         type:Array,
-        required:true,
         ref: 'Product'
     },
     categoriesIncluded:  {
         type:Array,
-        required:true,
         ref: 'Category'
+    },
+    brandsIncluded: {
+        type:Array,
+        ref: 'Brand'
     },
     minPurchaseAmount: {
         type: Number,
@@ -39,7 +46,8 @@ const offerSchema =  new Schema({
     },
     offerType: {
         type: String,
-        required: true
+        required: true,
+        enum:['Percentage','Flat']
     },
     offerValue: {
         type: Number,
@@ -56,6 +64,6 @@ const offerSchema =  new Schema({
     }
 })
 
-const Coupon = mongoose.model("Coupon",couponSchema);
+const Offer = Mongoose.model("Offer",offerSchema);
 
-module.exports = Coupon;
+module.exports = Offer;

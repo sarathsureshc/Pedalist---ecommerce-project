@@ -601,6 +601,7 @@ body {
   background-color: #161616;
   padding: 30px 0;
   margin-bottom: 0;
+  width: 100%;
 }
 
 .footer h5 {
@@ -1388,7 +1389,6 @@ input[type="range"]::-moz-range-thumb {
 .product-description {
   font-size: 1.1rem;
   color: #333;
-
   margin: 10px 0;
   line-height: 1.5;
   padding: 40px 200px;
@@ -1396,7 +1396,13 @@ input[type="range"]::-moz-range-thumb {
   background-color: #f8f9fa;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
   position: relative;
+  width: 100%;
 
 }
+.new-arrivals{
+  width: 100%;
+}
+
+
 
 /***** End Product detail page *****/

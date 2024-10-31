@@ -1,0 +1,303 @@
+<%- include('../partials/admin/header.ejs') %>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .wrapper {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #555;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        transition: border 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+
+    .radio-group, .checkbox-group {
+        margin-top: 10px;
+        display: grid;
+        gap: 10px;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .radio-group label{
+        margin: 0; 
+        cursor: pointer;
+        display: flex;
+        align-items: start; 
+    }
+
+    .checkbox-group label{
+        margin: 0; 
+        cursor: pointer;
+        display: flexbox;
+        align-items: start; 
+    }
+
+    .radio-group input[type="radio"], .checkbox-group input[type="checkbox"] {
+        margin-right: 1px;
+    }
+
+    .checkbox-group {
+        flex-direction: column; /* Ensure checkboxes stack vertically */
+    }
+
+    .error-message {
+        color: red;
+        font-size: 0.9em;
+        margin-top: 5px;
+    }
+
+    .btn {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 20px;
+        transition: background-color 0.3s;
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+<div class="wrapper">
+    <header class="dashboard-header">
+        <h1>Add Offer</h1>
+        <a href="/admin/logout" class="dashboard-logout-button btn btn-danger">Logout</a>
+    </header>
+
+    <form id="addOfferForm" method="POST" action="/admin/add-offer">
+        <div class="form-group">
+            <label for="offerName">Offer Name:</label>
+            <input type="text" id="offerName" name="offerName" class="form-control" />
+            <span class="error-message" id="offerNameError"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="discountDescription">Discount Description:</label>
+            <input type="text" id="discountDescription" name="discountDescription" class="form-control" />
+            <span class="error-message" id="discountDescriptionError"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="startDate">Start Date:</label>
+            <input type="date" id="startDate" name="startDate" class="form-control" />
+            <span class="error-message" id="startDateError"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="endDate">End Date:</label>
+            <input type="date" id="endDate" name="endDate" class="form-control" />
+            <span class="error-message" id="endDateError"></span>
+        </div>
+
+        <div class="form-group">
+            <label>Offer Group:</label>
+            <div class="radio-group">
+                <label> Global<input type="radio" name="offerGroup" value="Global" /></label>
+                <label> Product<input type="radio" name="offerGroup" value="Product" /></label>
+                <label> Category<input type="radio" name="offerGroup" value="Category" /></label>
+                <label> Brand<input type="radio" name="offerGroup" value="Brand" /></label>
+            </div>
+            <span class="error-message" id="offerGroupError"></span>
+        </div>
+
+        <!-- Product Checkboxes -->
+        <div class="form-group checkbox-group" id="productGroup">
+            <label>Products:</label>
+            <div>
+                <% products.forEach(product => { %>
+                    <label> <%= product.productName %><input type="checkbox" name="productsIncluded" value="<%= product._id %>" /></label>
+                <% }) %>
+            </div>
+            <span class="error-message" id="productsIncludedError"></span>
+        </div>
+
+        <!-- Category Checkboxes -->
+        <div class="form-group checkbox-group" id="categoryGroup">
+            <label>Categories:</label>
+            <div>
+                <% categories.forEach(category => { %>
+                    <label> <%= category.name %><input type="checkbox" name="categoriesIncluded" value="<%= category._id %>" /></label>
+                <% }) %>
+            </div>
+            <span class="error-message" id="categoriesIncludedError"></span>
+        </div>
+
+        <!-- Brand Checkboxes -->
+        <div class="form-group checkbox-group" id="brandGroup">
+            <label>Brands:</label>
+            <div>
+                <% brands.forEach(brand => { %>
+                    <label> <%= brand.brandName %><input type="checkbox" name="brandsIncluded" value="<%= brand._id %>" /></label>
+                <% }) %>
+            </div>
+            <span class="error-message" id="brandsIncludedError"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="minPurchaseAmount">Minimum Purchase Amount:</label>
+            <input type="number" id="minPurchaseAmount" name="minPurchaseAmount" class="form-control" />
+            <span class="error-message" id="minPurchaseAmountError"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="maxDiscountAmount">Maximum Discount Amount:</label>
+            <input type="number" id="maxDiscountAmount" name="maxDiscountAmount" class="form-control" />
+            <span class="error-message" id="maxDiscountAmountError"></span>
+        </div>
+
+        <div class="form-group">
+            <label>Offer Type:</label>
+            <div class="radio-group">
+                <label><input type="radio" name="offerType" value="Percentage" /> Percentage</label>
+                <label><input type="radio" name="offerType" value="Flat" /> Flat</label>
+            </div>
+            <span class="error-message" id="offerTypeError"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="offerValue">Offer Value:</label>
+            <input type="number" id="offerValue" name="offerValue" class="form-control" />
+            <span class="error-message" id="offerValueError"></span>
+        </div>
+
+        <button type="submit" class="btn">Add Offer</button>
+    </form>
+</div>
+
+<%- include('../partials/admin/footer.ejs') %>
+
+<script>
+document.getElementById('addOfferForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent form submission
+
+    // Clear previous error messages
+    document.querySelectorAll('.error-message').forEach(msg => msg.textContent = '');
+
+    // Get form values
+    const offerName = document.getElementById('offerName').value.trim();
+    const discountDescription = document.getElementById('discountDescription').value.trim();
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    const offerType = document.querySelector('input[name="offerType"]:checked');
+    const minPurchaseAmount = document.getElementById('minPurchaseAmount').value.trim();
+    const maxDiscountAmount = document.getElementById('maxDiscountAmount').value.trim();
+    const offerValue = document.getElementById('offerValue').value.trim();
+    const offerGroup = document.querySelector('input[name="offerGroup"]:checked');
+
+    let valid = true; // To track overall form validity
+
+    // Validate inputs
+    if (!offerName) {
+        document.getElementById('offerNameError').textContent = 'Offer Name is required.';
+        valid = false;
+    }
+    if (!discountDescription) {
+        document.getElementById('discountDescriptionError').textContent = 'Discount Description is required.';
+        valid = false;
+    }
+    if (!startDate) {
+        document.getElementById('startDateError').textContent = 'Start Date is required.';
+        valid = false;
+    }
+    if (!endDate) {
+        document.getElementById('endDateError').textContent = 'End Date is required.';
+        valid = false;
+    }
+    if (!offerType) {
+        document.getElementById('offerTypeError').textContent = 'Offer Type is required.';
+        valid = false;
+    }
+    if (!offerGroup) {
+        document.getElementById('offerGroupError').textContent = 'Offer Group is required.';
+        valid = false;
+    }
+    if (!minPurchaseAmount) {
+        document.getElementById('minPurchaseAmountError').textContent = 'Minimum Purchase Amount is required.';
+        valid = false;
+    }
+    if (!maxDiscountAmount) {
+        document.getElementById('maxDiscountAmountError').textContent = 'Maximum Discount Amount is required.';
+        valid = false;
+    }
+    if (!offerValue) {
+        document.getElementById('offerValueError').textContent = 'Offer Value is required.';
+        valid = false;
+    }
+
+    // Validate checkboxes based on selected offer group
+    if (offerGroup.value === 'Product' && !Array.from(document.querySelectorAll('input[name="productsIncluded"]:checked')).length) {
+        document.getElementById('productsIncludedError').textContent = 'At least one product must be selected.';
+        valid = false;
+    }
+    if (offerGroup.value === 'Category' && !Array.from(document.querySelectorAll('input[name="categoriesIncluded"]:checked')).length) {
+        document.getElementById('categoriesIncludedError').textContent = 'At least one category must be selected.';
+        valid = false;
+    }
+    if (offerGroup.value === 'Brand' && !Array.from(document.querySelectorAll('input[name="brandsIncluded"]:checked')).length) {
+        document.getElementById('brandsIncludedError').textContent = 'At least one brand must be selected.';
+        valid = false;
+    }
+
+    // If the form is valid, submit it
+    if (valid) {
+        this.submit(); // Submit the form if all validations pass
+    }
+});
+
+// Show and hide checkbox groups based on selected offer group
+document.querySelectorAll('input[name="offerGroup"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        document.querySelectorAll('.checkbox-group').forEach(group => group.style.display = 'none');
+        if (this.value === 'Product') {
+            document.getElementById('productGroup').style.display = 'block';
+        } else if (this.value === 'Category') {
+            document.getElementById('categoryGroup').style.display = 'block';
+        } else if (this.value === 'Brand') {
+            document.getElementById('brandGroup').style.display = 'block';
+        }
+    });
+});
+
+// Hide all checkbox groups initially
+document.querySelectorAll('.checkbox-group').forEach(group => group.style.display = 'none');
+</script>

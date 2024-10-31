@@ -30,7 +30,8 @@
                 <select id="category" onchange="applyFilters()">
                     <option value="">All Categories</option>
                     <% categories.forEach(category=> { %>
-                        <option value="<%= category._id %>">
+                        <option value="<%= category._id %>" <%=selectedCategory===category._id.toString() ? "selected"
+                            : "" %>>
                             <%= category.name %>
                         </option>
                         <% }); %>
@@ -40,15 +41,17 @@
             <div class="sorting-options">
                 <h3>Sort by:</h3>
                 <select id="sortBy" onchange="applyFilters()">
-                    <option value="">Select</option>
-                    <option value="popularity">Popularity</option>
-                    <option value="priceLowToHigh">Price: Low to High</option>
-                    <option value="priceHighToLow">Price: High to Low</option>
-                    <option value="averageRating">Average Ratings</option>
-                    <option value="featured">Featured</option>
-                    <option value="newArrivals">New Arrivals</option>
-                    <option value="aToZ">A - Z</option>
-                    <option value="zToA">Z - A</option>
+                    <option value="popularity" <%=sortBy==="popularity" ? "selected" : "" %>>Popularity</option>
+                    <option value="priceLowToHigh" <%=sortBy==="priceLowToHigh" ? "selected" : "" %>>Price: Low to High
+                    </option>
+                    <option value="priceHighToLow" <%=sortBy==="priceHighToLow" ? "selected" : "" %>>Price: High to Low
+                    </option>
+                    <option value="averageRating" <%=sortBy==="averageRating" ? "selected" : "" %>>Average Ratings
+                    </option>
+                    <option value="featured" <%=sortBy==="featured" ? "selected" : "" %>>Featured</option>
+                    <option value="newArrivals" <%=sortBy==="newArrivals" ? "selected" : "" %>>New Arrivals</option>
+                    <option value="aToZ" <%=sortBy==="aToZ" ? "selected" : "" %>>A - Z</option>
+                    <option value="zToA" <%=sortBy==="zToA" ? "selected" : "" %>>Z - A</option>
                 </select>
             </div>
         </div>
@@ -71,7 +74,7 @@
                                 <%= product.productName %>
                             </h3>
                             <h6>
-                                <%= product.brand.name %>
+                                <%= product.brand.brandName %>
                             </h6>
                             <p>
                                 <%= product.category.name %>
@@ -82,7 +85,8 @@
                                     <%= '★' .repeat(Math.round(product.rating)) %>
                                 </span> (<%= product.rating.toFixed(1) %>)</p>
                             <p>Status: <%= product.quantity> 0 ? 'Available' : 'Out of Stock' %></p>
-                            <strong>Stock left : </strong> <%= product.quantity %>
+                            <strong>Stock left : </strong>
+                            <%= product.quantity %>
                         </div>
                     </a>
                     <% }); %>
@@ -95,13 +99,11 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.js"></script>
         <script>
 
-            // Initialize the price slider
             const priceSlider = document.getElementById('priceSlider');
             const selectedPriceRange = document.getElementById('selectedPriceRange');
 
-            // Set default values or use values from the server
-            const minPrice = <%= minPrice %>; // Retrieved from the backend
-            const maxPrice = <%= maxPrice %>; // Retrieved from the backend
+            const minPrice = <%= minPrice %>;
+            const maxPrice = <%= maxPrice %>;
 
             noUiSlider.create(priceSlider, {
                 start: [minPrice, maxPrice],
@@ -112,14 +114,12 @@
                 }
             });
 
-            // Update displayed price range
             priceSlider.noUiSlider.on('update', function (values) {
                 selectedPriceRange.innerHTML = Math.round(values[0]) + ' - ' + Math.round(values[1]);
             });
 
-            // Set the slider values when the page loads
             priceSlider.noUiSlider.set([minPrice, maxPrice]);
-            selectedPriceRange.innerHTML = minPrice + ' - ' + maxPrice; // Update displayed range
+            selectedPriceRange.innerHTML = minPrice + ' - ' + maxPrice; 
             function handleKeyDown(event) {
                 if (event.key === 'Enter') {
                     applyFilters();
@@ -132,26 +132,23 @@
                 const showOutOfStock = document.getElementById("showOutOfStock").checked;
                 const category = document.getElementById("category").value;
 
-                // Get price range from the slider
                 const priceValues = priceSlider.noUiSlider.get();
                 const minPrice = Math.round(priceValues[0]);
                 const maxPrice = Math.round(priceValues[1]);
 
-                // Construct the query string based on selected filters
                 const queryParams = new URLSearchParams();
                 if (searchQuery) queryParams.append("search", searchQuery);
                 if (sortBy) queryParams.append("sortBy", sortBy);
                 if (showOutOfStock) {
-                    queryParams.append("showOutOfStock", "true"); // Add as a string "true"
+                    queryParams.append("showOutOfStock", "true");
                 } else {
-                    queryParams.append("showOutOfStock", "false"); // Add as a string "false"
+                    queryParams.append("showOutOfStock", "false");
                 }
                 if (category) queryParams.append("category", category);
-                // Add price range filters
+
                 queryParams.append("minPrice", minPrice);
                 queryParams.append("maxPrice", maxPrice);
 
-                // Redirect to the filtered product page
                 window.location.href = `/products?${queryParams.toString()}`;
             }
         </script>

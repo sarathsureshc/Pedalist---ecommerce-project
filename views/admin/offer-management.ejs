@@ -1,0 +1,127 @@
+<%- include('../partials/admin/header.ejs') %>
+<div class="wrapper">
+    <section class="offer-main-content">
+        <header class="dashboard-header">
+            <h1>Offer Management</h1>
+            <a href="/admin/logout" class="dashboard-logout-button btn btn-danger">Logout</a>
+        </header>
+
+        <!-- Breadcrumbs -->
+        <nav class="dashboard-breadcrumbs" style="display: flex; align-items: center;">
+            <div>
+                <a href="/admin">Home</a> &gt; <span>Offers</span>
+            </div>
+            <a class="btn btn-info" href="/admin/add-offer" style="margin-left: auto;">Add Offer</a>
+        </nav>
+
+        <form method="GET" action="/admin/offers" class="mb-3">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Search offer"
+                    value="<%= search %>" />
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="dashboard-content">
+            <div class="offer-management-card">
+                <!-- Offers Table -->
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-center">#</th>
+                                <th>Offer Name</th>
+                                <th>Discount</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Min Purchase</th>
+                                <th>Max Discount</th>
+                                <th>Offer Type</th>
+                                <th>Status</th>
+                                <th>Edit</th>
+                                <th>Activate/Deactivate</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% data.reverse().forEach((offer, index) => { %>
+                                <tr style="<%= offer.isDeleted ? 'opacity: 0.5;' : '' %>">
+                                    <td class="text-center">
+                                        <%= index + 1 + (currentPage - 1) * 4 %>
+                                    </td>
+                                    <td class="text-start">
+                                        <%= offer.offerName %>
+                                    </td>
+                                    <td class="text-start">
+                                        <%= offer.discountDescription %>
+                                    </td>
+                                    <td class="text-start">
+                                        <%= offer.startDate.toDateString() %>
+                                    </td>
+                                    <td class="text-start">
+                                        <%= offer.endDate.toDateString() %>
+                                    </td>
+                                    <td class="text-start">
+                                        <%= offer.minPurchaseAmount %>
+                                    </td>
+                                    <td class="text-start">
+                                        <%= offer.maxDiscountAmount %>
+                                    </td>
+                                    <td class="text-start">
+                                        <%= offer.offerType %> - <%= offer.offerValue %><%= offer.offerType === 'Percentage' ? '%' : '' %>
+                                    </td>
+                                    <td class="text-start">
+                                        <span class="badge rounded-pill <%= offer.isActive ? 'bg-success' : 'bg-danger' %>" style="width: 100px">
+                                            <%= offer.isActive ? 'Active' : 'Inactive' %>
+                                        </span>
+                                    </td>
+                                    <td class="text-start">
+                                        <button class="btn btn-info text-white" <% if (offer.isDeleted) { %> disabled <% } %>>
+                                            <a href="/admin/edit-offer?id=<%= offer._id %>" class="text-white">Edit</a>
+                                        </button>
+                                    </td>
+                                    <td class="text-start">
+                                        <button class="btn <%= offer.isActive ? 'btn-danger' : 'btn-success' %>"
+                                            style="width: 100px" <% if (offer.isDeleted) { %> disabled <% } %>>
+                                            <a href="/admin/<%= offer.isActive ? 'deactivate' : 'activate' %>-offer?id=<%= offer._id %>" class="text-white" style="text-decoration: none;">
+                                                <%= offer.isActive ? 'Deactivate' : 'Activate' %>
+                                            </a>
+                                        </button>
+                                    </td>
+                                    <td class="text-start">
+                                        <% if (offer.isDeleted) { %>
+                                            <button class="btn btn-success text-white" onclick="restoreOffer('<%= offer._id %>')">Restore</button>
+                                        <% } else { %>
+                                            <button class="btn btn-danger text-white" onclick="deleteOffer('<%= offer._id %>')">Delete</button>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination-container">
+                    <% if (currentPage > 1) { %>
+                        <a href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+                    <% } %>
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <% if (i === currentPage) { %>
+                            <span class="current-page"><%= i %></span>
+                        <% } else { %>
+                            <a href="?page=<%= i %>"><%= i %></a>
+                        <% } %>
+                    <% } %>
+                    <% if (currentPage < totalPages) { %>
+                        <a href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<%- include('../partials/admin/footer.ejs') %>

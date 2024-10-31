@@ -49,7 +49,7 @@ const loadProductPage = async (req, res) => {
       .populate({
         path: "brand",
         match: { isBlocked: false },
-        select: "name",
+        select: "brandName",
       })
       .populate({
         path: "category",
@@ -119,7 +119,9 @@ const loadProductPage = async (req, res) => {
         showOutOfStock,
         minPrice: minPrice || 20,
         maxPrice: maxPrice || 100000,
-        cartCount
+        cartCount,
+        sortBy,
+        selectedCategory: category 
       });
     } else {
       return res.render("product", {
@@ -128,7 +130,9 @@ const loadProductPage = async (req, res) => {
         count,
         showOutOfStock,
         minPrice: minPrice || 20,
-        maxPrice: maxPrice || 100000
+        maxPrice: maxPrice || 100000,
+        sortBy,
+        selectedCategory: category 
       });
     }
   } catch (error) {

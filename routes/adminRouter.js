@@ -6,6 +6,7 @@ const categoryController = require("../controllers/admin/categoryController");
 const brandController = require("../controllers/admin/brandController");
 const productController = require("../controllers/admin/productController");
 const ordersController = require("../controllers/admin/ordersController");
+const offersController = require("../controllers/admin/offerController");
 const {userAuth,adminAuth} = require("../middlewares/auth");
 const multer = require('multer');
 const storage = require("../helpers/multer");
@@ -56,5 +57,9 @@ router.post('/restoreProduct',adminAuth,productController.restoreProduct);
 router.get('/orders',adminAuth,ordersController.loadOrderPage);
 router.get('/order',adminAuth,ordersController.loadOrderDetail);
 router.post('/change-return-status',adminAuth,ordersController.changeReturnStatus);
+
+router.get('/offers',adminAuth,offersController.getOfferPage);
+router.get('/add-offer',adminAuth,offersController.getAddOfferPage);
+router.post('/add-offer',adminAuth,offersController.addOffer);
 
 module.exports = router;
