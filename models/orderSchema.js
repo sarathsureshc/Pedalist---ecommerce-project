@@ -51,7 +51,7 @@ const orderSchema = new Schema({
         required:true
     },
     address:{
-        type:Array,
+        type:Schema.Types.ObjectId,
         ref:'Address',
         required:true
     },
