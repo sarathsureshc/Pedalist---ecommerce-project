@@ -14,19 +14,21 @@
                 <li><p><strong>User Name:</strong> <%= order.userId.firstName %></p></li>
                 <li><p><strong>Total Amount:</strong> <%= order.totalPrice %></p></li>
                 <li><p><strong>Payment Status:</strong> <%= order.paymentStatus %></p></li>
+                <li><p><strong>Payment Method:</strong> <%= order.paymentMethod %></p></li>
+                <li><p><strong>Transaction Id:</strong> <%= order.transactionId %></p></li>
                 <li><p><strong>Ordered On:</strong> <%= new Date(order.createdOn).toLocaleString() %></p></li>
                 <li>
                     <p><ul>
                         <Li><strong>Order Address :</strong></Li>
-                        <li><strong>Name:</strong> <%= order.address[0].name %></li>
-                        <li><strong>House Name:</strong> <%= order.address[0].houseName %></li>
-                        <li><strong>Street Name:</strong> <%= order.address[0].streetName %></li>
-                        <li><strong>Landmark:</strong> <%= order.address[0].landmark %></li>
-                        <li><strong>Locality:</strong> <%= order.address[0].locality %></li>
-                        <li><strong>City:</strong> <%= order.address[0].city %></li>
-                        <li><strong>State:</strong> <%= order.address[0].state %></li>
-                        <li><strong>PIN:</strong> <%= order.address[0].pin %></li>
-                        <li><strong>Contact No:</strong> <%=order.address[0].contactNo %></li>
+                        <li><strong>Name:</strong> <%= order.address.name %></li>
+                        <li><strong>House Name:</strong> <%= order.address.houseName %></li>
+                        <li><strong>Street Name:</strong> <%= order.address.streetName %></li>
+                        <li><strong>Landmark:</strong> <%= order.address.landmark %></li>
+                        <li><strong>Locality:</strong> <%= order.address.locality %></li>
+                        <li><strong>City:</strong> <%= order.address.city %></li>
+                        <li><strong>State:</strong> <%= order.address.state %></li>
+                        <li><strong>PIN:</strong> <%= order.address.pin %></li>
+                        <li><strong>Contact No:</strong> <%=order.address.contactNo %></li>
                     </ul></p>
                 </li>
                 

@@ -5,7 +5,7 @@ const Cart = require("../../models/cartSchema");
 const loadAddressPage = async (req, res) => {
     try {
        const user = req.session.user || req.user;
-    //    let cartCount = 0;
+       let cartCount = 0;
                if (!user) {
             return res.redirect('/login');
         }
@@ -13,12 +13,12 @@ const loadAddressPage = async (req, res) => {
         const userData = await User.findOne({ _id: user._id })
         const addresses = await Address.find({userId: userData._id, isDeleted: false }).sort({ createdAt: 1 }); 
 
-        // const cart = await Cart.findOne({ userId: user._id });
-        // if (cart) {
-        //     cartCount = cart.items.reduce((total, item) => total + item.quantity, 0);
-        //   }
+        const cart = await Cart.findOne({ userId: user._id });
+        if (cart) {
+            cartCount = cart.items.reduce((total, item) => total + item.quantity, 0);
+          }
 
-        res.render('address', { addresses, user:userData ,});
+        res.render('address', { addresses, user:userData ,cartCount});
         }
     } catch (error) {
         console.error("Error loading addresses:", error);
