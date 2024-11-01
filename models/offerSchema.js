@@ -38,11 +38,9 @@ const offerSchema =  new Schema({
     },
     minPurchaseAmount: {
         type: Number,
-        required: true
     },
     maxDiscountAmount:{
         type:Number,
-        required:true
     },
     offerType: {
         type: String,
@@ -61,6 +59,11 @@ const offerSchema =  new Schema({
     userId: {
         type: Schema.Types.ObjectId,
         ref: 'User',
+    },
+    isDeleted:{
+        type:Boolean,
+        required: true,
+        default: false
     }
 })
 

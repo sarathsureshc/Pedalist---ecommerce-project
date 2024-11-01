@@ -20,10 +20,7 @@ const categorySchema = new Schema({
     default: false,
     required : true
   },
-  categoryOffer: {
-    type: Number,
-    default: 0,
-  },
+
   createdAt: {
     type: Date,
     default: Date.now,

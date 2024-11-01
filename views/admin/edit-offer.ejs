@@ -1,166 +1,175 @@
 <%- include('../partials/admin/header.ejs') %>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            margin: 0;
-            padding: 20px;
-        }
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 20px;
+    }
 
-        .wrapper {
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
+    .wrapper {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+    }
 
-        .form-group {
-            margin-bottom: 20px;
-            padding: 5px;
-        }
+    .form-group {
+        margin-bottom: 20px;
+        padding: 5px;
+    }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #555;
+    }
 
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            transition: border 0.3s;
-        }
-        .head{
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        .option{
-            margin-bottom: 10px;
-            padding-bottom: 3px;
-            display: flex;
-            align-items: center;
-        }
-        .option input{
-            width: 10px;
-            padding-right: 15px;
-        }
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        transition: border 0.3s;
+    }
+    .head{
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+    .option{
+        margin-bottom: 10px;
+        padding-bottom: 3px;
+        display: flex;
+        align-items: center;
+    }
+    .option input{
+        width: 10px;
+        padding-right: 15px;
+    }
 
-        .form-control:focus {
-            border-color: #007bff;
-            outline: none;
-        }
+    .form-control:focus {
+        border-color: #007bff;
+        outline: none;
+    }
 
-        .radio-group,
-        .checkbox-group {
-            margin-top: 10px;
-            display: grid;
-            gap: 10px;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        }
+    .radio-group,
+    .checkbox-group {
+        margin-top: 10px;
+        display: grid;
+        gap: 10px;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
 
-        .radio-group label {
-            margin: 0;
-            cursor: pointer;
-            display: flex;
-            align-items: start;
-        }
+    .radio-group label {
+        margin: 0;
+        cursor: pointer;
+        display: flex;
+        align-items: start;
+    }
 
-        .checkbox-group label {
-            margin: 0;
-            cursor: pointer;
-            display: flexbox;
-            align-items: start;
-        }
+    .checkbox-group label {
+        margin: 0;
+        cursor: pointer;
+        display: flexbox;
+        align-items: start;
+    }
 
-        .radio-group input[type="radio"],
-        .checkbox-group input[type="checkbox"] {
-            margin-right: 1px;
-        }
+    .radio-group input[type="radio"],
+    .checkbox-group input[type="checkbox"] {
+        margin-right: 1px;
+    }
 
-        .checkbox-group {
-            flex-direction: column;
-            /* Ensure checkboxes stack vertically */
-        }
+    .checkbox-group {
+        flex-direction: column;
+        /* Ensure checkboxes stack vertically */
+    }
 
-        .error-message {
-            color: red;
-            font-size: 0.9em;
-            margin-top: 5px;
-        }
+    .error-message {
+        color: red;
+        font-size: 0.9em;
+        margin-top: 5px;
+    }
 
-        .btn-success {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 20px;
-            transition: background-color 0.3s;
-        }
+    .btn-success {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 20px;
+        transition: background-color 0.3s;
+    }
 
-        .btn:hover {
-            background-color: #0056b3;
-        }
-    </style>
+    .btn:hover {
+        background-color: #0056b3;
+    }
+</style>
 
     <div class="wrapper">
         <header class="dashboard-header">
-            <h1>Add Offer</h1>
+            <h1>Edit Offer</h1>
             <a href="/admin/logout" class="dashboard-logout-button btn btn-danger">Logout</a>
         </header>
 
-        <form id="addOfferForm" method="POST" action="/admin/add-offer">
+        <form id="editOfferForm" method="POST" action="/admin/edit-offer/<%= offer._id %>">
             <div class="form-group">
                 <label for="offerName">Offer Name:</label>
-                <input type="text" id="offerName" name="offerName" class="form-control" />
+                <input type="text" id="offerName" name="offerName" class="form-control"
+                    value="<%= offer.offerName %>" />
                 <span class="error-message" id="offerNameError"></span>
             </div>
 
             <div class="form-group">
                 <label for="discountDescription">Discount Description:</label>
-                <input type="text" id="discountDescription" name="discountDescription" class="form-control" />
+                <input type="text" id="discountDescription" name="discountDescription" class="form-control"
+                    value="<%= offer.discountDescription %>" />
                 <span class="error-message" id="discountDescriptionError"></span>
             </div>
 
             <div class="form-group">
                 <label for="startDate">Start Date:</label>
-                <input type="date" id="startDate" name="startDate" class="form-control" />
+                <input type="date" id="startDate" name="startDate" class="form-control"
+                    value="<%= offer.startDate.toISOString().substring(0, 10) %>" />
                 <span class="error-message" id="startDateError"></span>
             </div>
 
             <div class="form-group">
                 <label for="endDate">End Date:</label>
-                <input type="date" id="endDate" name="endDate" class="form-control" />
+                <input type="date" id="endDate" name="endDate" class="form-control"
+                    value="<%= offer.endDate.toISOString().substring(0, 10) %>" />
                 <span class="error-message" id="endDateError"></span>
             </div>
 
             <div class="form-group">
                 <label>Offer Group:</label>
                 <div class="radio-group">
-                    <label> Global<input type="radio" name="offerGroup" value="Global" /></label>
-                    <label> Product<input type="radio" name="offerGroup" value="Product" /></label>
-                    <label> Category<input type="radio" name="offerGroup" value="Category" /></label>
-                    <label> Brand<input type="radio" name="offerGroup" value="Brand" /></label>
+                    <label> Global<input type="radio" name="offerGroup" value="Global" <%=offer.offerGroup==='Global'
+                            ? 'checked' : '' %> /></label>
+                    <label> Product<input type="radio" name="offerGroup" value="Product" <%=offer.offerGroup==='Product'
+                            ? 'checked' : '' %> /></label>
+                    <label> Category<input type="radio" name="offerGroup" value="Category"
+                            <%=offer.offerGroup==='Category' ? 'checked' : '' %> /></label>
+                    <label> Brand<input type="radio" name="offerGroup" value="Brand" <%=offer.offerGroup==='Brand'
+                            ? 'checked' : '' %> /></label>
                 </div>
                 <span class="error-message" id="offerGroupError"></span>
             </div>
 
             <!-- Product Checkboxes -->
             <div class="form-group checkbox-group" id="productGroup">
-                <label class="head">Products:</label>
+                <label>Products:</label>
                 <div>
                     <% products.forEach(product=> { %>
-                        <label class="option">
-                            <input type="checkbox" name="productsIncluded"
-                                    value="<%= product._id %>" /><%= product.productName %>
+                        <label>
+                            <%= product.productName %><input type="checkbox" name="productsIncluded"
+                                    value="<%= product._id %>" <%=offer.productsIncluded.includes(product._id)
+                                    ? 'checked' : '' %> />
                         </label>
                         <% }) %>
                 </div>
@@ -169,12 +178,13 @@
 
             <!-- Category Checkboxes -->
             <div class="form-group checkbox-group" id="categoryGroup">
-                <label class="head">Categories:</label>
+                <label>Categories:</label>
                 <div>
                     <% categories.forEach(category=> { %>
-                        <label class="option">
-                            <input type="checkbox" name="categoriesIncluded"
-                                    value="<%= category._id %>" /><%= category.name %>
+                        <label>
+                            <%= category.name %><input type="checkbox" name="categoriesIncluded"
+                                    value="<%= category._id %>" <%=offer.categoriesIncluded.includes(category._id)
+                                    ? 'checked' : '' %> />
                         </label>
                         <% }) %>
                 </div>
@@ -183,53 +193,58 @@
 
             <!-- Brand Checkboxes -->
             <div class="form-group checkbox-group" id="brandGroup">
-                <label class="head">Brands:</label>
+                <label>Brands:</label>
                 <div>
                     <% brands.forEach(brand=> { %>
-                        <label class="option">
-                            <input type="checkbox" name="brandsIncluded"
-                                    value="<%= brand._id %>" /><%= brand.brandName %>
+                        <label>
+                            <%= brand.brandName %><input type="checkbox" name="brandsIncluded" value="<%= brand._id %>"
+                                    <%=offer.brandsIncluded.includes(brand._id) ? 'checked' : '' %> />
                         </label>
                         <% }) %>
                 </div>
                 <span class="error-message" id="brandsIncludedError"></span>
             </div>
 
+
             <div class="form-group">
                 <label>Offer Type:</label>
                 <div class="radio-group">
-                    <label><input type="radio" name="offerType" value="Percentage" /> Percentage</label>
-                    <label><input type="radio" name="offerType" value="Flat" /> Flat</label>
+                    <label><input type="radio" name="offerType" value="Percentage" <%=offer.offerType==='Percentage'
+                            ? 'checked' : '' %> /> Percentage</label>
+                    <label><input type="radio" name="offerType" value="Flat" <%=offer.offerType==='Flat' ? 'checked'
+                            : '' %> /> Flat</label>
                 </div>
                 <span class="error-message" id="offerTypeError"></span>
             </div>
 
             <div class="form-group">
                 <label for="offerValue">Offer Value:</label>
-                <input type="number" id="offerValue" name="offerValue" class="form-control" />
+                <input type="number" id="offerValue" name="offerValue" class="form-control"
+                    value="<%= offer.offerValue %>" />
                 <span class="error-message" id="offerValueError"></span>
             </div>
             <div class="form-group" id="minPur">
                 <label for="minPurchaseAmount">Minimum Purchase Amount:</label>
-                <input type="number" id="minPurchaseAmount" name="minPurchaseAmount" class="form-control" />
+                <input type="number" id="minPurchaseAmount" name="minPurchaseAmount" class="form-control"
+                    value="<%= offer.minPurchaseAmount %>" />
                 <span class="error-message" id="minPurchaseAmountError"></span>
             </div>
 
             <div class="form-group" id="maxDis">
                 <label for="maxDiscountAmount">Maximum Discount Amount:</label>
-                <input type="number" id="maxDiscountAmount" name="maxDiscountAmount" class="form-control" />
+                <input type="number" id="maxDiscountAmount" name="maxDiscountAmount" class="form-control"
+                    value="<%= offer.maxDiscountAmount %>" />
                 <span class="error-message" id="maxDiscountAmountError"></span>
             </div>
 
-
-            <button type="submit" class="btn btn-success">Add Offer</button>
+            <button type="submit" class="btn btn-success">Update Offer</button>
         </form>
     </div>
 
     <%- include('../partials/admin/footer.ejs') %>
 
         <script>
-            document.getElementById('addOfferForm').addEventListener('submit', function (event) {
+            document.getElementById('editOfferForm').addEventListener('submit', function (event) {
                 event.preventDefault();
 
                 document.querySelectorAll('.error-message').forEach(msg => msg.textContent = '');
@@ -243,7 +258,7 @@
                 const maxDiscountAmount = document.getElementById('maxDiscountAmount').value.trim();
                 const offerValue = document.getElementById('offerValue').value.trim();
                 const offerGroup = document.querySelector('input[name="offerGroup"]:checked');
-                
+
 
                 let valid = true;
 
@@ -273,11 +288,11 @@
                     valid = false;
                 }
 
-                if (offerGroup.value==='Global' && !minPurchaseAmount || offerGroup.value==='Global' && minPurchaseAmount < 0) {
+                if (offerGroup.value === 'Global' && !minPurchaseAmount || offerGroup.value === 'Global' && minPurchaseAmount < 0) {
                     document.getElementById('minPurchaseAmountError').textContent = 'Minimum Purchase Amount is required and should be greater than zero.';
                     valid = false;
                 }
-                if (offerType.value==='Percentage' && !maxDiscountAmount || offerType.value==='Percentage' && maxDiscountAmount < 0) {
+                if (offerType.value === 'Percentage' && !maxDiscountAmount || offerType.value === 'Percentage' && maxDiscountAmount < 0) {
                     document.getElementById('maxDiscountAmountError').textContent = 'Maximum Discount Amount is required and should not be a negative number.';
                     valid = false;
                 }
@@ -314,8 +329,10 @@
                 }
 
 
+
                 if (valid) {
-                    fetch('/admin/add-offer', {
+                    console.log("fetching!!!")
+                    fetch(`/admin/edit-offer/<%= offer._id %>`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -337,18 +354,19 @@
                     })
                         .then(response => response.json())
                         .then(data => {
+                            console.log("Response Data:", data);
                             if (data.success) {
                                 Swal.fire({
                                     icon: 'success',
-                                    title: 'Offer Added Successfully',
+                                    title: 'Offer Edited Successfully',
                                     text: data.message,
                                 }).then(() => {
-                                window.location.href = '/admin/offers';
-                            });
-                        } else {
+                                    window.location.href = '/admin/offers';
+                                });
+                            } else {
                                 Swal.fire({
                                     icon: 'error',
-                                    title: 'Failed to Add Offer',
+                                    title: 'Failed to Edit Offer',
                                     text: data.message
                                 });
                             }
@@ -363,7 +381,6 @@
                 }
 
             });
-
 
             document.querySelectorAll('input[name="offerGroup"]').forEach(radio => {
                 radio.addEventListener('change', function () {

@@ -25,8 +25,6 @@ router.post("/unblockCustomer", adminAuth,customerController.customerUnBlocked);
 
 router.get("/category",adminAuth,categoryController.categoryInfo);
 router.post("/add-category",adminAuth,categoryController.addCategory);
-router.post("/add-category-offer",adminAuth,categoryController.addCategoryOffer);
-router.post("/remove-category-offer",adminAuth,categoryController.removeCategoryOffer);
 router.get("/list-category",adminAuth,categoryController.getListCategory);
 router.get("/unlist-category",adminAuth,categoryController.getUnlistCategory);
 router.get("/edit-category",adminAuth,categoryController.getEditCategory);
@@ -61,5 +59,11 @@ router.post('/change-return-status',adminAuth,ordersController.changeReturnStatu
 router.get('/offers',adminAuth,offersController.getOfferPage);
 router.get('/add-offer',adminAuth,offersController.getAddOfferPage);
 router.post('/add-offer',adminAuth,offersController.addOffer);
+router.get('/edit-offer/:id',adminAuth,offersController.getEditOffer);
+router.post('/edit-offer/:id',adminAuth,offersController.editOffer);
+router.get('/activate-offer',adminAuth, offersController.activateOffer);
+router.get('/deactivate-offer',adminAuth, offersController.deactivateOffer);
+router.get('/delete-offer',adminAuth, offersController.deleteOffer);
+router.get('/restore-offer',adminAuth, offersController.restoreOffer);
 
 module.exports = router;

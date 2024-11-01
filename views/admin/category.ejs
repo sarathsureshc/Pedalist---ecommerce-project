@@ -42,8 +42,6 @@
                                     <th class="text-center">#</th>
                                     <th>Name</th>
                                     <th>Description</th>
-                                    <th>Offer Price</th>
-                                    <th>Offer</th>
                                     <th>Status</th>
                                     <th>Actions</th>
                                     <th class="text-start">Edit</th>
@@ -61,24 +59,7 @@
                                         <td class="text-start">
                                             <%= category.description %>
                                         </td>
-                                        <td>
-                                            <%= category.categoryOffer ? category.categoryOffer + '%' : '0%' %>
-                                        </td>
-                                        <td class="text-start">
-                                            <% if (!category.categoryOffer || category.categoryOffer===0) { %>
-                                                <button class="btn btn-primary text-white" style="width: 100px"
-                                                    onclick="addOffer('<%= category._id %>')" <% if (category.isDeleted)
-                                                    { %> disabled <% } %>>
-                                                        Add Offer
-                                                </button>
-                                                <% } else { %>
-                                                    <button class="btn btn-danger text-white" style="width: 100px"
-                                                        onclick="removeOffer('<%= category._id %>')" <% if
-                                                        (category.isDeleted) { %> disabled <% } %>>
-                                                            Remove
-                                                    </button>
-                                                    <% } %>
-                                        </td>
+                                        
                                         <td class="text-start">
                                             <span
                                                 class="badge rounded-pill <%= category.isListed ? 'bg-success' : 'bg-danger' %>"

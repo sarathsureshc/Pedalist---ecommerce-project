@@ -292,11 +292,7 @@
                 const quantity = document.getElementsByName('quantity')[0].value;
                 const color = document.getElementsByName('color')[0].value;
                 imageDatas = document.getElementById("imageDatas")?.value;
-                // console.log("name:", name);
-                // console.log("quantity:", quantity);
-                // console.log("price:", price);
-                // console.log("imageDatas:", imageDatas);
-                // console.log("color", color);
+              
 
                 let isValid = true;
                 if (name.trim() === "") {
@@ -362,7 +358,7 @@
                     isValid = false;
                 }
 
-                if (imageDatas && images.files.length === 0) {
+                if (!imageDatas && images.files.length === 0) {
                     displayErrorMessage("images-error", 'Please select an image.');
                     isValid = false;
                 }

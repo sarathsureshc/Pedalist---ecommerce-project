@@ -26,7 +26,6 @@
 
         <div class="dashboard-content">
             <div class="offer-management-card">
-                <!-- Offers Table -->
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
@@ -79,7 +78,7 @@
                                     </td>
                                     <td class="text-start">
                                         <button class="btn btn-info text-white" <% if (offer.isDeleted) { %> disabled <% } %>>
-                                            <a href="/admin/edit-offer?id=<%= offer._id %>" class="text-white">Edit</a>
+                                            <a href="/admin/edit-offer/<%= offer._id %>" class="text-white">Edit</a>
                                         </button>
                                     </td>
                                     <td class="text-start">
@@ -123,5 +122,45 @@
         </div>
     </section>
 </div>
+
+<!-- Include SweetAlert CSS and JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+<script>
+    function deleteOffer(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to delete the offer
+                window.location.href = '/admin/delete-offer?id=' + id;
+            }
+        });
+    }
+
+    function restoreOffer(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to restore this offer?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, restore it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to restore the offer
+                window.location.href = '/admin/restore-offer?id=' + id;
+            }
+        });
+    }
+</script>
 
 <%- include('../partials/admin/footer.ejs') %>
