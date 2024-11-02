@@ -9,7 +9,7 @@ const cartController = require('../controllers/user/cartController');
 const addressController = require('../controllers/user/addressController');
 const checkoutController = require('../controllers/user/checkoutController');
 const orderController = require('../controllers/user/orderController');
-// const wishlistController = require('../controllers/user/wishlistController');
+const wishlistController = require('../controllers/user/wishlistController');
 
 router.get("/pageNotFound", userController.pageNotFound);
 router.get("/",userAuth,userController.loadHomepage);
@@ -56,7 +56,10 @@ router.post("/add-to-cart",userAuth,cartController.addToCart);
 router.get("/cart",userAuth,cartController.getCart);
 router.put('/cart/:id',userAuth,cartController.updateCart);
 router.delete('/cart/:id',userAuth,cartController.removeFromCart);
-// router.post("/add-to-wishlist",userAuth,wishlistController.addToWishlist)
+
+router.post("/add-to-wishlist",userAuth,wishlistController.addToWishlist)
+router.get("/wishlist",userAuth,wishlistController.loadWishlist);
+router.delete("/wishlist/:id",userAuth,wishlistController.removeFromWishlist);
 
 router.get('/checkout',userAuth,checkoutController.getCheckoutPage);
 

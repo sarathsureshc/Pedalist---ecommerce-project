@@ -92,7 +92,7 @@
 </section>
 
 <%- include('../partials/user/footer.ejs') %>
-
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script>
     function changeImage(imagePath) {
         const mainImage = document.getElementById("mainImage");
@@ -120,9 +120,9 @@
             throw new Error(result.message || "Failed to add product to cart.");
         }
 
-        showNotification('success', 'Product added to cart successfully!');
+        swal('success', 'Product added to cart successfully!');
     } catch (error) {
-        showNotification('error', error.message);
+        swal('error', error.message);
     }
 }
 
@@ -163,9 +163,9 @@ function showNotification(type, message) {
         }).then(response => response.json())
           .then(data => {
             if (data.success) {
-                alert('Product added to wishlist successfully!');
+                swal("Success",'Product added to wishlist successfully!');
             } else {
-                alert('Failed to add product to wishlist.');
+                swal("Error",'Failed to add product to wishlist.');
             }
         });
     }

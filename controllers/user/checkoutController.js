@@ -18,6 +18,9 @@ const getCheckoutPage = async (req, res) => {
         cartCount = cart.items.reduce((total, item) => total + item.quantity, 0);
 
         const orderItems = cart && cart.items.length > 0 ? cart.items.map(item => {
+            if(item.quantity>5){
+                return res.send({message : "Max quantity for each product is 5"});
+            }
             return {
                 productName: item.productId.productName,
                 quantity: item.quantity,

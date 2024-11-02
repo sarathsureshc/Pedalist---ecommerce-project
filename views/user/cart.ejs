@@ -40,7 +40,7 @@
 </div>
 
 <%- include('../partials/user/footer.ejs') %>
-
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script>
     function proceedToCheckout() {
         window.location.href = '/checkout';
@@ -72,12 +72,12 @@
             });
 
             if (!response.ok) {
-                throw new Error("Failed to update quantity.");
+                swal("error","Failed to update quantity.");
             }
-            showMessage('Quantity updated successfully', 'success');
+            swal( 'success','Quantity updated successfully');
         } catch (error) {
             console.error("Error updating quantity:", error);
-            showMessage('Failed to update quantity', 'error');
+            swal('error','Failed to update quantity');
         }
     }
 
@@ -88,15 +88,15 @@
                 headers: { 'Content-Type': 'application/json' }
             });
             if (!response.ok) {
-                throw new Error("Failed to remove item.");
+                swal('error',"Failed to remove item.");
             }
             const cartItem = document.querySelector(`[data-product-id="${productId}"]`);
             cartItem.remove();
             updateCartTotal();
-            showMessage('Item removed from cart', 'success');
+           swal( 'success','Item removed from cart');
         } catch (error) {
             console.error(error);
-            showMessage('Failed to remove item', 'error');
+            swal('error','Failed to remove item');
         }
     }
 
@@ -112,11 +112,5 @@
         document.getElementById('cart-total').textContent = totalPrice.toFixed(2);
     }
 
-    function showMessage(message, type) {
-        const messageDiv = document.createElement('div');
-        messageDiv.textContent = message;
-        messageDiv.className = `alert alert-${type}`;
-        document.querySelector('.cart-container').prepend(messageDiv);
-        setTimeout(() => messageDiv.remove(), 3000);
-    }
+    
 </script>
