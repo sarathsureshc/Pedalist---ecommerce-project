@@ -1,0 +1,135 @@
+<%- include('../partials/admin/header.ejs') %>
+<div class="wrapper">
+    <section class="coupon-main-content">
+        <header class="dashboard-header">
+            <h1>Add New Coupon</h1>
+            <a href="/admin/logout" class="dashboard-logout-button btn btn-danger">Logout</a>
+        </header>
+
+        <form id="couponForm" action="/admin/add-coupon" method="POST" onsubmit="return validateForm()">
+
+            <div class="form-group">
+                <label for="couponCode">Coupon Code:</label>
+                <input type="text" id="couponCode" name="couponCode">
+                <small id="couponCodeError" class="error-message"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="discountDescription">Coupon Description:</label>
+                <input type="text" id="discountDescription" name="discountDescription">
+                <small id="descriptionError" class="error-message"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate" name="startDate">
+                <small id="startDateError" class="error-message"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate" name="endDate">
+                <small id="endDateError" class="error-message"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="minPurchaseAmount">Minimum Purchase Amount:</label>
+                <input type="number" id="minPurchaseAmount" name="minPurchaseAmount" step="0.01">
+                <small id="minPurchaseError" class="error-message"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="maxDiscountAmount">Maximum Discount Amount:</label>
+                <input type="number" id="maxDiscountAmount" name="maxDiscountAmount" step="0.01">
+                <small id="maxDiscountError" class="error-message"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="discountType">Discount Type:</label>
+                <select id="discountType" name="discountType">
+                    <option value="Percentage">Percentage</option>
+                    <option value="Fixed">Fixed</option>
+                </select>
+                <small id="discountTypeError" class="error-message"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="value">Discount Value:</label>
+                <input type="number" id="value" name="value" step="0.01">
+                <small id="valueError" class="error-message"></small>
+            </div>
+
+            <button type="submit" class="btn">Add Coupon</button>
+        </form>
+
+        <p><a href="/admin/coupons">Back to Coupons Management</a></p>
+    </section>
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+<script>
+    function validateForm() {
+        // Clear previous error messages
+        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+
+        // Input elements
+        const couponCode = document.getElementById('couponCode').value.trim();
+        const discountDescription = document.getElementById('discountDescription').value.trim();
+        const startDate = new Date(document.getElementById('startDate').value);
+        const endDate = new Date(document.getElementById('endDate').value);
+        const minPurchaseAmount = parseFloat(document.getElementById('minPurchaseAmount').value);
+        const maxDiscountAmount = parseFloat(document.getElementById('maxDiscountAmount').value);
+        const discountType = document.getElementById('discountType').value;
+        const value = parseFloat(document.getElementById('value').value);
+
+        let isValid = true;
+
+        // Coupon Code validation (no spaces, only letters, numbers, and @_-, not empty)
+        const couponCodePattern = /^[a-zA-Z0-9@_-]+$/;
+        if (!couponCode || !couponCodePattern.test(couponCode)) {
+            document.getElementById('couponCodeError').textContent = "Invalid coupon code (only letters, numbers, @_-, no spaces)";
+            isValid = false;
+        }
+
+        // Description validation (not empty, no only numbers, allows certain symbols)
+        const descriptionPattern = /^(?=.*[a-zA-Z])[\w@_\-.,'"():;&%/ ]+$/;
+        if (!discountDescription || !descriptionPattern.test(discountDescription)) {
+            document.getElementById('descriptionError').textContent = "Invalid description (must include letters and only allowed symbols: @_-,.\"':;()&%/)";
+            isValid = false;
+        }
+
+        // Date validation (End date should not be before Start date)
+        if (endDate < startDate) {
+            document.getElementById('endDateError').textContent = "End date cannot be before start date";
+            isValid = false;
+        }
+
+        // Value validation (must be greater than 0)
+        if (isNaN(value) || value <= 0) {
+            document.getElementById('valueError').textContent = "Discount value must be greater than zero";
+            isValid = false;
+        }
+
+        // Minimum Purchase Amount vs Maximum Discount Amount validation
+        if (minPurchaseAmount <= maxDiscountAmount) {
+            document.getElementById('minPurchaseError').textContent = "Minimum Purchase Amount should be greater than Maximum Discount Amount";
+            isValid = false;
+        }
+
+        // Ensure no empty fields
+        if (!startDate || !endDate || isNaN(minPurchaseAmount) || isNaN(maxDiscountAmount) || !discountType) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Missing Fields',
+                text: 'All fields must be filled out',
+            });
+            isValid = false;
+        }
+
+        return isValid;
+    }
+</script>
+
+<%- include('../partials/admin/footer.ejs') %>

@@ -1,0 +1,160 @@
+<%- include('../partials/admin/header.ejs') %>
+<div class="wrapper">
+    <section class="coupon-main-content">
+        <header class="dashboard-header">
+            <h1>Coupon Management</h1>
+            <a href="/admin/logout" class="dashboard-logout-button btn btn-danger">Logout</a>
+        </header>
+
+        <!-- Breadcrumbs -->
+        <nav class="dashboard-breadcrumbs" style="display: flex; align-items: center;">
+            <div>
+                <a href="/admin">Home</a> &gt; <span>Coupons</span>
+            </div>
+            <a class="btn btn-info" href="/admin/add-coupon" style="margin-left: auto;">Add Coupon</a>
+        </nav>
+
+        <form method="GET" action="/admin/coupons" class="mb-3">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Search coupon"
+                    value="<%= search %>" />
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="dashboard-content">
+            <div class="coupon-management-card">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-center">#</th>
+                                <th>Coupon Code</th>
+                                <th>Discount</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Min Purchase</th>
+                                <th>Max Discount</th>
+                                <th>Status</th>
+                                <th>Edit</th>
+                                <th>Activate/Deactivate</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% coupons.reverse().forEach((coupon, index) => { %>
+                                <tr style="<%= coupon.isDeleted ? 'opacity: 0.5;' : '' %>">
+                                    <td class="text-center">
+                                        <%= index + 1 + (currentPage - 1) * 4 %>
+                                    </td>
+                                    <td class="text-start">
+                                        <%= coupon.couponCode %>
+                                    </td>
+                                    <td class="text-start">
+                                        <%= coupon.discountDescription %>
+                                    </td>
+                                    <td class="text-start">
+                                        <%= coupon.startDate.toDateString() %>
+                                    </td>
+                                    <td class="text-start">
+                                        <%= coupon.endDate.toDateString() %>
+                                    </td>
+                                    <td class="text-start">
+                                        <%= coupon.minPurchaseAmount %>
+                                    </td>
+                                    <td class="text-start">
+                                        <%= coupon.maxDiscountAmount %>
+                                    </td>
+                                    <td class="text-start">
+                                        <span class="badge rounded-pill <%= coupon.isActive ? 'bg-success' : 'bg-danger' %>" style="width: 100px">
+                                            <%= coupon.isActive ? 'Active' : 'Inactive' %>
+                                        </span>
+                                    </td>
+                                    <td class="text-start">
+                                        <button class="btn btn-info text-white" <% if (coupon.isDeleted) { %> disabled <% } %>>
+                                            <a href="/admin/edit-coupon/?id=<%= coupon._id %>" class="text-white">Edit</a>
+                                        </button>
+                                    </td>
+                                    <td class="text-start">
+                                        <button class="btn <%= coupon.isActive ? 'btn-danger' : 'btn-success' %>"
+                                            style="width: 100px" <% if (coupon.isDeleted) { %> disabled <% } %>>
+                                            <a href="/admin/<%= coupon.isActive ? 'deactivate' : 'activate' %>-coupon?id=<%= coupon._id %>" class="text-white" style="text-decoration: none;">
+                                                <%= coupon.isActive ? 'Deactivate' : 'Activate' %>
+                                            </a>
+                                        </button>
+                                    </td>
+                                    <td class="text-start">
+                                        <% if (coupon.isDeleted) { %>
+                                            <button class="btn btn-success text-white" onclick="restoreCoupon('<%= coupon._id %>')">Restore</button>
+                                        <% } else { %>
+                                            <button class="btn btn-danger text-white" onclick="deleteCoupon('<%= coupon._id %>')">Delete</button>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination-container">
+                    <% if (currentPage > 1) { %>
+                        <a href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+                    <% } %>
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <% if (i === currentPage) { %>
+                            <span class="current-page"><%= i %></span>
+                        <% } else { %>
+                            <a href="?page=<%= i %>"><%= i %></a>
+                        <% } %>
+                    <% } %>
+                    <% if (currentPage < totalPages) { %>
+                        <a href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Include SweetAlert CSS and JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+<script>
+    function deleteCoupon(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/admin/delete-coupon?id=' + id;
+            }
+        });
+    }
+
+    function restoreCoupon(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to restore this coupon?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, restore it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/admin/restore-coupon?id=' + id;
+            }
+        });
+    }
+</script>
+
+<%- include('../partials/admin/footer.ejs') %>

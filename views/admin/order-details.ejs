@@ -10,7 +10,6 @@
         <div class="dashboard-content">
             <div class="order-details-card">
                 <li><h3>Order ID: <%= order._id %></h3></li>
-                <li><p><strong>User ID:</strong> <%= order.userId._id %></p></li>
                 <li><p><strong>User Name:</strong> <%= order.userId.firstName %></p></li>
                 <li><p><strong>Total Amount:</strong> <%= order.totalPrice %></p></li>
                 <li><p><strong>Payment Status:</strong> <%= order.paymentStatus %></p></li>
@@ -33,33 +32,40 @@
                 </li>
                 
                 <h4>Products:</h4>
-                <ul>
-                    <% if (order.items && order.items.length) { %>
-                        <% order.items.forEach(item => { %>
-                            <ul class="order-product-card"> 
-                            <li>
-                               <strong>Product Name:</strong> <%= item.product.productName %> </li>
-                                <li></li><strong>Quantity:</strong> <%= item.quantity %> </li>
-                                <li> <strong>Unit Price:</strong> <%= item.product.price %></li>
-                                    <li><strong>Total Price:</strong> <%= item.product.price * item.quantity %></li>
-                                </ul>
-                                        <li><% if (item.status === 'Return Request') { %>
-                                    <h4>Return Request:</h4>
-                                    <p><strong>Status:</strong> <%= item.status %></p>
-                                    <button class="btn btn-success" onclick="changeStatus('<%= order._id %>', '<%= item.product._id %>', 'Approved')">Approve Return</button>
-                                    <button class="btn btn-danger" onclick="changeStatus('<%= order._id %>', '<%= item.product._id %>', 'Declined')">Decline Return</button>
-                                
-                                <% }else{ %>
-                                    <p><strong>Status:</strong> <%= item.status %></p>
-                                    <% } %>
-                            </li>
-                        <% }); %>
+<ul>
+    <% if (order.items && order.items.length) { %>
+        <% order.items.forEach(item => { %>
+            <ul class="order-product-card"> 
+                <li>
+                    <strong>Product Name:</strong> <%= item.product.productName %>
+                </li>
+                <li><strong>Quantity:</strong> <%= item.quantity %></li>
+                <li><strong>Unit Price:</strong> <%= item.product.price %></li>
+                <li><strong>Total Price:</strong> <%= item.product.price * item.quantity %></li>
+                <li>
+                    <% if (item.status !== 'Pending' && item.status !== 'Cancelled' && item.status !== 'Returned' && item.status !== 'Return Request') { %>
+                        <strong>Status:</strong>
+                        <select onchange="changeStatus('<%= order._id %>', '<%= item.product._id %>', this.value)">
+                            <option value="Placed" <% if(item.status === 'Placed') { %>selected<% } %>>Placed</option>
+                            <option value="Shipped" <% if(item.status === 'Shipped') { %>selected<% } %>>Shipped</option>
+                            <option value="Delivered" <% if(item.status === 'Delivered') { %>selected<% } %>>Delivered</option>
+                        </select>
+                    <% } else if (item.status === 'Return Request') { %>
+                        <h4>Return Request:</h4>
+                        <p><strong>Status:</strong> <%= item.status %></p>
+                        <button class="btn btn-success" onclick="changeReturnStatus('<%= order._id %>', '<%= item.product._id %>', 'Approved')">Approve Return</button>
+                        <button class="btn btn-danger" onclick="changeReturnStatus('<%= order._id %>', '<%= item.product._id %>', 'Declined')">Decline Return</button>
                     <% } else { %>
-                        <li>No products found for this order.</li>
+                        <p><strong>Status:</strong> <%= item.status %></p>
                     <% } %>
-               
+                </li>
+            </ul>
+        <% }); %>
+    <% } else { %>
+        <li>No products found for this order.</li>
+    <% } %>
+</ul>
 
-                </ul>
             </div>
         </div>
     </div>
@@ -70,6 +76,24 @@
 <script>
 
 function changeStatus(orderId, productId, action) {
+  fetch('/admin/change-order-status', {  
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ orderId, productId, action }),
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.message) {
+        alert(data.message);
+        location.reload();
+      }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function changeReturnStatus(orderId, productId, action) {
   fetch('/admin/change-return-status', {
     method: 'POST',
     headers: {
@@ -81,12 +105,12 @@ function changeStatus(orderId, productId, action) {
     .then(data => {
       if (data.message) {
         alert(data.message);
-        // Optionally, refresh the page or update the UI to reflect the change
         location.reload(); // Reloads the page to see the changes
       }
     })
     .catch(error => console.error('Error:', error));
 }
+
 
 
 </script>

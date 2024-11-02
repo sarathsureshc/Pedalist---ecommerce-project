@@ -3,6 +3,7 @@ const Product = require("../../models/productSchema");
 const Address = require("../../models/addressSchema");
 const Order = require("../../models/orderSchema");
 const Cart = require("../../models/cartSchema");
+const Wallet = require("../../models/walletSchema");
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
 const env = require("dotenv").config();
@@ -218,12 +219,18 @@ const getUserOrders = async (req, res) => {
 
 const cancelOrderItem = async (req, res) => {
   const { orderId, itemId, reason, quantity } = req.body;
-  console.log(`cancelling order`, quantity, orderId, itemId, reason);
+  // console.log(`cancelling order`, quantity, orderId, itemId, reason);
   const user = req.session.user || req.user;
 
   try {
     const order = await Order.findById(orderId);
+    if (!order) {
+      req.flash("message", "Order not found.");
+      return res.redirect("/orders");
+    }
+
     const item = order.items.id(itemId);
+
     if (user) {
       if (
         item &&
@@ -234,6 +241,45 @@ const cancelOrderItem = async (req, res) => {
       ) {
         item.status = "Cancelled";
         item.cancelReason = reason;
+        console.log(item);
+
+        if (order.paymentStatus === "Completed") {
+          let wallet = await Wallet.findOne({ userId: user._id });
+          if (!wallet) {
+            wallet = new Wallet({
+              userId: user._id,
+              balance: 0,
+              card: [],
+              transaction: [],
+            });
+            await wallet.save();
+            console.log(`Created a new wallet for user ${user._id}.`);
+          }
+
+          const product = await Product.findById(item.product);
+          if (!product) {
+            console.error("Product not found:", item.product);
+            req.flash("message", "Product not found.");
+            return res.redirect("/orders");
+          }
+
+          console.log("price :", product.price);
+          console.log(quantity);
+          const refundAmount = product.price * quantity;
+
+          if (!isNaN(refundAmount) && refundAmount > 0) {
+            wallet.balance += refundAmount;
+            await wallet.save();
+            console.log(
+              `Refunded ₹${refundAmount} to user ${user._id}'s wallet.`
+            );
+          } else {
+            console.error("Invalid refund amount calculated:", refundAmount);
+            req.flash("message", "Invalid refund amount.");
+            return res.redirect("/orders");
+          }
+        }
+
         await order.save();
 
         await Product.updateOne(
@@ -242,6 +288,7 @@ const cancelOrderItem = async (req, res) => {
         );
         res.redirect("/orders");
       } else {
+        req.flash("message", "Cannot cancel this item.");
         res.redirect("/orders");
       }
     } else {
@@ -269,10 +316,6 @@ const requestReturn = async (req, res) => {
         item.returnReason = reason;
         await order.save();
 
-        // await Product.updateOne(
-        //   { _id: itemId },
-        //   { $inc: { quantity: parseInt(quantity, 10) } }
-        // );
         res.redirect("/orders");
       } else {
         res.redirect("/orders");

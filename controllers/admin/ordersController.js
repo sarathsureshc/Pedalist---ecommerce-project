@@ -3,23 +3,21 @@ const Product = require("../../models/productSchema");
 const Address = require("../../models/addressSchema");
 const Order = require("../../models/orderSchema");
 const Cart = require("../../models/cartSchema");
+const Wallet = require("../../models/walletSchema");
 
 const loadOrderPage = async (req, res) => {
   try {
     const { search, page = 1, limit = 10 } = req.query;
 
-    // Define the query for finding orders based on user first name
     const query = search
       ? { "user.firstName": { $regex: search, $options: "i" } }
-      : {}; // Case-insensitive search
+      : {};
 
-    // Fetch orders based on the query and populate user details
     const orders = await Order.find(query)
-      .populate("userId", "firstName lastName email") // Populate user details
+      .populate("userId", "firstName lastName email")
       .limit(limit)
       .skip((page - 1) * limit);
 
-    // Count total orders based on the query
     const totalOrders = await Order.countDocuments(query);
     const totalPages = Math.ceil(totalOrders / limit);
 
@@ -34,73 +32,138 @@ const loadOrderPage = async (req, res) => {
   }
 };
 
-// Get order details
 const loadOrderDetail = async (req, res) => {
   try {
-    const orderId = req.query.id; // Get the order ID from URL parameters
-    console.log("Order ID:", orderId); // Log the order ID for debugging
+    const orderId = req.query.id;
+    // console.log("Order ID:", orderId);
 
     const order = await Order.findById(orderId)
       .populate("userId", "firstName")
       .populate("address")
       .populate("items.product");
 
-      console.log(order.items);
+      // console.log(order.items);
 
     if (!order) {
       return res.status(404).send({ message: "Order not found" });
     }
 
     res.render("order-details", {
-      order, // Pass the order object to the view
+      order,
     });
   } catch (error) {
-    console.error("Error fetching order details:", error); // Log the error for debugging
+    console.error("Error fetching order details:", error);
     res.status(500).send({ message: "Error fetching order details", error });
   }
 };
 
-// Change order status
 const changeReturnStatus = async (req, res) => {
-    try {
-      const { orderId, productId, action } = req.body; // Expect orderId, productId, and action (Approved or Declined)
-      
-      // Find the order and update the item status
-      const order = await Order.findById(orderId);
+  try {
+    const { orderId, productId, action, quantity } = req.body;
+    
+    const order = await Order.findById(orderId);
   
-      if (!order) {
-        return res.status(404).send({ message: "Order not found" });
-      }
-  
-      const item = order.items.find(item => item.product._id.toString() === productId);
-  
-      if (!item) {
-        return res.status(404).send({ message: "Item not found" });
-      }
-  
-      // Handle action based on approve or decline
-      if (action === 'Approved') {
-        item.status = 'Returned'; // Update item status to 'Returned'
-  
-        // Find the product and increase the quantity
-        await Product.findByIdAndUpdate(productId, {
-          $inc: { quantity: item.quantity }
-        });
-      } else if (action === 'Declined') {
-        item.status = 'Delivered'; // Update item status to 'Delivered'
-      }
-  
-      await order.save(); // Save the order
-  
-      res.send({ message: "Return status updated successfully." });
-    } catch (error) {
-      console.error("Error changing return status:", error);
-      res.status(500).send({ message: "Error changing return status", error });
+    if (!order) {
+      return res.status(404).send({ message: "Order not found" });
     }
-  };
+  
+    const item = order.items.find(item => item.product._id.toString() === productId);
+  
+    if (!item) {
+      return res.status(404).send({ message: "Item not found" });
+    }
+  
+    if (action === 'Approved') {
+      item.status = 'Returned'; 
+  
+      const user = order.userId;
+      let wallet = await Wallet.findOne({ userId: user });
+      if (!wallet) {
+        wallet = new Wallet({
+          userId: user,
+          balance: 0,
+          card: [],
+          transaction: [],
+        });
+        await wallet.save();
+        console.log(`Created a new wallet for user ${user}.`);
+      }
+  
+      const product = await Product.findById(item.product);
+      if (!product) {
+        console.error("Product not found:", item.product);
+        return res.status(404).send({ message: "Product not found" });
+      }
+  
+      const refundAmount = product.price * item.quantity;
+      
+      if (!isNaN(refundAmount) && refundAmount > 0) {
+
+        wallet.balance += refundAmount;
+        await wallet.save();
+        console.log(`Refunded ₹${refundAmount} to user ${user}'s wallet.`);
+      } else {
+        console.error("Invalid refund amount calculated:", refundAmount);
+        return res.status(400).send({ message: "Invalid refund amount." });
+      }
+  
+      await Product.findByIdAndUpdate(item.product, { $inc: { quantity: item.quantity } });
+    } else if (action === 'Declined') {
+      item.status = 'Delivered'; 
+    }
+  
+    await order.save();
+  
+    res.send({ message: "Return status updated successfully." });
+  } catch (error) {
+    console.error("Error changing return status:", error);
+    res.status(500).send({ message: "Error changing return status", error });
+  }
+};
+
+
+const changeOrderStatus = async (req, res) => {
+  try {
+    const { orderId, productId, action } = req.body; // Expect orderId, productId, and action (new status)
+
+    // Find the order and update the item status
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      return res.status(404).send({ message: "Order not found" });
+    }
+
+    const item = order.items.find(item => item.product._id.toString() === productId);
+
+    if (!item) {
+      return res.status(404).send({ message: "Item not found" });
+    }
+
+    // Update item status based on the new status from the dropdown
+    item.status = action; // Update the item status to the new value provided by the dropdown
+
+    // If the status is 'Returned', increase product quantity
+    if (action === 'Returned') {
+      await Product.findByIdAndUpdate(productId, {
+        $inc: { quantity: item.quantity }
+      });
+    }
+
+    await order.save(); // Save the order
+
+    res.send({ message: "Order status updated successfully." });
+  } catch (error) {
+    console.error("Error changing order status:", error);
+    res.status(500).send({ message: "Error changing order status", error });
+  }
+};
+
+
+
 
 module.exports = {
   loadOrderPage,
   loadOrderDetail,
+  changeOrderStatus,
   changeReturnStatus,
 };

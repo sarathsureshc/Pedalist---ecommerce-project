@@ -90,37 +90,35 @@
             document.addEventListener("DOMContentLoaded", function () {
                 const timerElement = document.getElementById('timer');
                 const resendLink = document.getElementById('resendLink');
-                const otpInputs = document.querySelectorAll('.otp-input'); // Define otpInputs globally
-                let timer = 30; // Timer starts from 30 seconds
+                const otpInputs = document.querySelectorAll('.otp-input'); 
+                let timer = 30;
 
                 resendLink.style.pointerEvents = 'none';
                 resendLink.style.opacity = '0.5';
-
-                // Countdown function
                 const countdown = setInterval(function () {
                     timer--;
                     timerElement.textContent = timer;
 
                     if (timer === 0) {
                         clearInterval(countdown);
-                        // Enable the resend link
-                        resendLink.style.pointerEvents = 'auto'; // Allow clicks
-                        resendLink.style.opacity = '1'; // Make the link fully visible
-                        resendLink.textContent = 'Resend OTP'; // Update text
+    
+                        resendLink.style.pointerEvents = 'auto'; 
+                        resendLink.style.opacity = '1'; 
+                        resendLink.textContent = 'Resend OTP';
                     }
                 }, 1000);
 
-                // Handle Resend OTP action
+                
                 resendLink.addEventListener("click", function (event) {
                     event.preventDefault();
 
-                    // Disable link and reset the timer
-                    resendLink.style.pointerEvents = 'none'; // Disable clicks
-                    resendLink.style.opacity = '0.5'; // Make the link less visible
-                    timer = 30; // Reset timer
+            
+                    resendLink.style.pointerEvents = 'none'; 
+                    resendLink.style.opacity = '0.5'; 
+                    timer = 30;
                     timerElement.textContent = timer;
 
-                    // Restart countdown
+
                     const timerInterval = setInterval(function () {
                         timer--;
                         timerElement.textContent = timer;
@@ -134,50 +132,43 @@
                     }, 1000);
                 });
 
-                // Handle input events for OTP inputs
                 otpInputs.forEach((input, index) => {
                     input.addEventListener('input', () => {
-                        // Move to the next input if the current input is filled
                         if (input.value.length === 1 && index < otpInputs.length - 1) {
                             otpInputs[index + 1].focus();
                         }
                     });
 
                     input.addEventListener('keydown', (event) => {
-                        // Move back to the previous input if the backspace key is pressed
                         if (event.key === 'Backspace' && input.value === '' && index > 0) {
                             otpInputs[index - 1].focus();
                         }
                     });
 
-                    // Handle paste event
                     input.addEventListener('paste', (event) => {
-                        const pastedData = event.clipboardData.getData('text').slice(0, 6); // Limit to 6 digits
+                        const pastedData = event.clipboardData.getData('text').slice(0, 6);
                         otpInputs.forEach((otpInput, idx) => {
-                            otpInput.value = pastedData[idx] || ''; // Fill in the input fields
+                            otpInput.value = pastedData[idx] || ''; 
                             if (idx < pastedData.length) {
-                                otpInput.dispatchEvent(new Event('input')); // Trigger input event to move focus
+                                otpInput.dispatchEvent(new Event('input')); 
                             }
                         });
-                        event.preventDefault(); // Prevent default paste behavior
+                        event.preventDefault(); 
                     });
                 });
             });
 
-            // Handle Verify button click
             document.getElementById('verifyButton').addEventListener('click', function (event) {
-                event.preventDefault(); // Prevent default form submission
+                event.preventDefault();
                 let otpValue = '';
-                const otpInputs = document.querySelectorAll('.otp-input'); // Get otp inputs inside the click event
+                const otpInputs = document.querySelectorAll('.otp-input'); 
 
                 otpInputs.forEach((input) => {
-                    otpValue += input.value; // Concatenate values from input fields
+                    otpValue += input.value;
                 });
 
-                // Log the OTP value (or handle it as needed)
                 console.log('OTP entered:', otpValue);
 
-                // Validate the OTP before proceeding
                 if (otpValue.length !== 6) {
                     Swal.fire({
                         icon: 'error',
@@ -187,7 +178,6 @@
                     return false;
                 }
 
-                // Use otpValue directly in the AJAX call
                 $.ajax({
                     type: "POST",
                     url: "/verify-otp",
@@ -223,14 +213,13 @@
             });
 
             function resendOTP() {
-                // Reset the timer
+  
                 let timer = 30;
                 const timerElement = document.getElementById('timer');
 
-                // Disable link during the process
                 const resendLink = document.getElementById('resendLink');
-                resendLink.style.pointerEvents = 'none'; // Disable clicks
-                resendLink.style.opacity = '0.5'; // Make the link less visible
+                resendLink.style.pointerEvents = 'none';
+                resendLink.style.opacity = '0.5';
 
                 // Start countdown
                 const countdown = setInterval(function () {

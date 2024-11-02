@@ -60,13 +60,13 @@
                                             <strong>Quantity:</strong>
                                             <%= item.quantity %>
                                         </li>
-                                        <li>
+                                        <li class="product-set">
                                             <strong>Status:</strong>
                                             <%= item.status %>
                                         </li>
                                         <% if (item.status==="Pending" || item.status==="Placed" ||
                                             item.status==="Processing" || item.status==="Shipped" ) { %>
-                                            <form action="/cancel-order" method="POST" style="display:inline;">
+                                            <form class="product-set" action="/cancel-order" method="POST" style="display:inline;">
                                                 <input type="hidden" name="orderId" value="<%= order._id %>">
                                                 <input type="hidden" name="itemId" value="<%= item._id %>">
                                                 <input type="hidden" name="quantity" value="<%= item.quantity %>">
@@ -75,7 +75,7 @@
                                             </form>
                                             <% } %>
                                                 <% if (item.status==='Delivered' ) { %>
-                                                    <form action="/return-order" method="POST" style="display:inline;">
+                                                    <form class="product-set" action="/return-order" method="POST" style="display:inline;">
                                                         <input type="hidden" name="orderId" value="<%= order._id %>">
                                                         <input type="hidden" name="itemId" value="<%= item._id %>">
                                                         <input type="hidden" name="quantity"
@@ -104,6 +104,7 @@
                     <li><a href="/address">Manage Address</a></li>
                     <li><a href="/wishlist">Wishlist</a></li>
                     <li class="selected">Orders</li>
+                    <li><a href="/wallet">Wallet</a></li>
                     <li><a href="/logout">Logout</a></li>
                 </ul>
             </div>

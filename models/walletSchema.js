@@ -1,11 +1,9 @@
-import { transformAuthInfo } from "passport";
-
 const mongoose = require("mongoose");
 const {Schema} = mongoose;
 
 const walletSchema = new Schema({
     userId : {
-        type : Schema.types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref : 'User',
         required : true,
     },
@@ -15,7 +13,7 @@ const walletSchema = new Schema({
     },
     card : [{
         cardId : {  
-            type : Schema.types.ObjectId,
+            type : Schema.Types.ObjectId,
             required : true,
           },
           cardNumber : {
@@ -67,3 +65,7 @@ const walletSchema = new Schema({
 
     }]
 })
+
+const Wallet = mongoose.model("Wallet", walletSchema);
+
+module.exports = Wallet;

@@ -2,14 +2,10 @@ const Mongoose = require("mongoose");
 const { Schema } = Mongoose;
 
 const couponSchema =  new Schema({
-    coupon_code:{
+    couponCode:{
         type:String,
         required:true,
         unique:true
-    },
-    Image:{
-        type:String,
-        required:true
     },
     discountDescription:{
         type:String,
@@ -44,12 +40,13 @@ const couponSchema =  new Schema({
         required:true,
         default:true
     },
-    userId: {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
+    isDeleted:{
+        type: Boolean,
+        required: true,
+        default: false
     }
 })
 
-const Coupon = mongoose.model("Coupon",couponSchema);
+const Coupon = Mongoose.model("Coupon",couponSchema);
 
 module.exports = Coupon;

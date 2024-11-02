@@ -7,6 +7,7 @@ const brandController = require("../controllers/admin/brandController");
 const productController = require("../controllers/admin/productController");
 const ordersController = require("../controllers/admin/ordersController");
 const offersController = require("../controllers/admin/offerController");
+const couponController = require("../controllers/admin/couponController")
 const {userAuth,adminAuth} = require("../middlewares/auth");
 const multer = require('multer');
 const storage = require("../helpers/multer");
@@ -54,6 +55,7 @@ router.post('/restoreProduct',adminAuth,productController.restoreProduct);
 
 router.get('/orders',adminAuth,ordersController.loadOrderPage);
 router.get('/order',adminAuth,ordersController.loadOrderDetail);
+router.post('/change-order-status',adminAuth,ordersController.changeOrderStatus);
 router.post('/change-return-status',adminAuth,ordersController.changeReturnStatus);
 
 router.get('/offers',adminAuth,offersController.getOfferPage);
@@ -65,5 +67,15 @@ router.get('/activate-offer',adminAuth, offersController.activateOffer);
 router.get('/deactivate-offer',adminAuth, offersController.deactivateOffer);
 router.get('/delete-offer',adminAuth, offersController.deleteOffer);
 router.get('/restore-offer',adminAuth, offersController.restoreOffer);
+
+router.get('/coupons', adminAuth, couponController.getCouponsPage);
+router.get('/add-coupon', adminAuth, couponController.getAddCouponPage);
+router.post('/add-coupon', adminAuth, couponController.addCoupon);
+router.get('/edit-coupon', adminAuth, couponController.getEditCouponPage);
+router.post('/edit-coupon/:id', adminAuth, couponController.updateCoupon);
+router.get('/activate-coupon', adminAuth, couponController.activateCoupon);
+router.get('/deactivate-coupon', adminAuth, couponController.deactivateCoupon);
+router.get('/delete-coupon', adminAuth, couponController.deleteCoupon);
+router.get('/restore-coupon', adminAuth, couponController.restoreCoupon);
 
 module.exports = router;

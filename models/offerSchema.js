@@ -26,15 +26,18 @@ const offerSchema =  new Schema({
     },    
     productsIncluded:{
         type:Array,
-        ref: 'Product'
+        ref: 'Product',
+        default: null,
     },
     categoriesIncluded:  {
         type:Array,
-        ref: 'Category'
+        ref: 'Category',
+        default: null,
     },
     brandsIncluded: {
         type:Array,
-        ref: 'Brand'
+        ref: 'Brand',
+        default: null,
     },
     minPurchaseAmount: {
         type: Number,

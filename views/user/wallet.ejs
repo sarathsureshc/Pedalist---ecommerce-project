@@ -1,0 +1,77 @@
+<%- include('../partials/user/header.ejs') %>
+<link rel="stylesheet" href="wallet-styles.css">
+<div class="wrapper">
+    <div class="wallet-container">
+        <div class="wallet-details">
+            <h1>Wallet</h1>
+            
+            <!-- Display Wallet Balance -->
+            <div class="wallet-balance">
+                <% if (wallet) { %>
+                    <h2>Balance: ₹<%= wallet.balance.toFixed(2) %></h2>
+                <% } else { %>
+                    <h2>No wallet found.</h2>
+                <% } %>
+            </div>
+            
+            <!-- Display Cards -->
+            <div class="wallet-cards">
+                <h3>Saved Cards</h3>
+                <% if (wallet && wallet.card && wallet.card.length > 0) { %>
+                    <% wallet.card.forEach(card => { %>
+                        <div class="card">
+                            <p><strong>Card Name:</strong> <%= card.cardName %></p>
+                            <p><strong>Card Number:</strong> **** **** **** <%= card.cardNumber.toString().slice(-4) %></p>
+                            <p><strong>Expires:</strong> <%= card.expiresAt.toISOString().split('T')[0] %></p>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p>No cards added yet.</p>
+                <% } %>
+                <button class="btn btn-primary"><a href="/wallet/add-card">Add Card</a></button>
+            </div>
+            
+            <!-- Display Transaction History -->
+            <div class="wallet-transactions">
+                <h3>Transaction History</h3>
+                <% if (wallet && wallet.transaction && wallet.transaction.length > 0) { %>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% wallet.transaction.forEach(transaction => { %>
+                                <tr>
+                                    <td><%= transaction.transactionType %></td>
+                                    <td><%= transaction.transactionDate.toISOString().split('T')[0] %></td>
+                                    <td>₹<%= transaction.amount.toFixed(2) %></td>
+                                    <td><%= transaction.description || '-' %></td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <p>No transactions available.</p>
+                <% } %>
+            </div>
+        </div>
+
+        <div class="right-sidebar">
+            <h3>Profile Navigation</h3>
+            <ul>
+                <li><a href="/profile">View Profile</a></li>
+                <li><a href="/address">Manage Address</a></li>
+                <li><a href="/wishlist">Wishlist</a></li>
+                <li><a href="/orders">Orders</a></li>
+                <li class="selected">Wallet</li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<%- include('../partials/user/footer.ejs') %>

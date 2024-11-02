@@ -183,7 +183,7 @@
                     <% categories.forEach(category=> { %>
                         <label>
                             <%= category.name %><input type="checkbox" name="categoriesIncluded"
-                                    value="<%= category._id %>" <%=offer.categoriesIncluded.includes(category._id)
+                            value="<%= category._id %>" <%= (offer.categoriesIncluded && offer.categoriesIncluded.includes(category._id)) ? 'checked' : '' %> />
                                     ? 'checked' : '' %> />
                         </label>
                         <% }) %>
@@ -197,8 +197,8 @@
                 <div>
                     <% brands.forEach(brand=> { %>
                         <label>
-                            <%= brand.brandName %><input type="checkbox" name="brandsIncluded" value="<%= brand._id %>"
-                                    <%=offer.brandsIncluded.includes(brand._id) ? 'checked' : '' %> />
+                            <%= brand.brandName %><input type="checkbox" name="brandsIncluded" 
+                            value="<%= brand._id %>" <%= (offer.brandsIncluded && offer.brandsIncluded.includes(brand._id)) ? 'checked' : '' %> />
                         </label>
                         <% }) %>
                 </div>
