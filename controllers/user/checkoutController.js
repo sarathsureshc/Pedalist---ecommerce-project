@@ -34,7 +34,7 @@ const getCheckoutPage = async (req, res) => {
         let subtotal = orderItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
     
 
-        const discount = 0; 
+        let discount = 0; 
        
         const deliveryCharge = 50;
     

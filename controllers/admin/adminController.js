@@ -1,4 +1,7 @@
 const User = require("../../models/userSchema");
+const Product = require("../../models/productSchema");
+const Order = require("../../models/orderSchema");
+
 const Mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
@@ -40,13 +43,27 @@ const login = async (req, res) => {
 
 
 const loadDashboard = async(req,res)=>{
-    if(req.session.admin){
-        try {
-            res.render("dashboard");
-        } catch (error) {
-            return res.redirect("/pageerror")
-        }
-}
+    try {
+        
+        const totalUsers = await User.countDocuments(); 
+        const totalProducts = await Product.countDocuments();
+        const totalOrders = await Order.countDocuments();
+        const totalRevenue = await Order.aggregate([
+            { $group: { _id: null, total: { $sum: "$totalPrice" } } } 
+        ]);
+
+        const revenue = totalRevenue.length > 0 ? totalRevenue[0].total : 0;
+
+        res.render("dashboard", {
+            totalUsers,
+            totalProducts,
+            totalOrders,
+            totalRevenue: revenue
+        });
+    } catch (error) {
+        console.error(error);
+        return res.redirect("/pageerror");
+    }
 }
 
 const logout = async (req,res)=>{

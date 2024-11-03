@@ -48,7 +48,7 @@
                 <label for="discountType">Discount Type:</label>
                 <select id="discountType" name="discountType">
                     <option value="Percentage">Percentage</option>
-                    <option value="Fixed">Fixed</option>
+                    <option value="Flat">Flat</option>
                 </select>
                 <small id="discountTypeError" class="error-message"></small>
             </div>
@@ -71,10 +71,8 @@
 
 <script>
     function validateForm() {
-        // Clear previous error messages
         document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
-
-        // Input elements
+    
         const couponCode = document.getElementById('couponCode').value.trim();
         const discountDescription = document.getElementById('discountDescription').value.trim();
         const startDate = new Date(document.getElementById('startDate').value);
@@ -83,43 +81,42 @@
         const maxDiscountAmount = parseFloat(document.getElementById('maxDiscountAmount').value);
         const discountType = document.getElementById('discountType').value;
         const value = parseFloat(document.getElementById('value').value);
-
+    
         let isValid = true;
-
-        // Coupon Code validation (no spaces, only letters, numbers, and @_-, not empty)
+    
         const couponCodePattern = /^[a-zA-Z0-9@_-]+$/;
         if (!couponCode || !couponCodePattern.test(couponCode)) {
             document.getElementById('couponCodeError').textContent = "Invalid coupon code (only letters, numbers, @_-, no spaces)";
             isValid = false;
         }
-
-        // Description validation (not empty, no only numbers, allows certain symbols)
-        const descriptionPattern = /^(?=.*[a-zA-Z])[\w@_\-.,'"():;&%/ ]+$/;
+    
+        const descriptionPattern = /^(?=.*[a-zA-Z])[\w@_.,"':;()&%/-]*$/;
         if (!discountDescription || !descriptionPattern.test(discountDescription)) {
             document.getElementById('descriptionError').textContent = "Invalid description (must include letters and only allowed symbols: @_-,.\"':;()&%/)";
             isValid = false;
         }
-
-        // Date validation (End date should not be before Start date)
+    
         if (endDate < startDate) {
             document.getElementById('endDateError').textContent = "End date cannot be before start date";
             isValid = false;
         }
-
-        // Value validation (must be greater than 0)
+    
         if (isNaN(value) || value <= 0) {
             document.getElementById('valueError').textContent = "Discount value must be greater than zero";
             isValid = false;
         }
-
-        // Minimum Purchase Amount vs Maximum Discount Amount validation
-        if (minPurchaseAmount <= maxDiscountAmount) {
-            document.getElementById('minPurchaseError').textContent = "Minimum Purchase Amount should be greater than Maximum Discount Amount";
+    
+        if (isNaN(minPurchaseAmount) || isNaN(maxDiscountAmount) || minPurchaseAmount <= maxDiscountAmount) {
+            document.getElementById('minPurchaseError').textContent = "Minimum Purchase Amount must be greater than Maximum Discount Amount and must be a number";
             isValid = false;
         }
-
-        // Ensure no empty fields
-        if (!startDate || !endDate || isNaN(minPurchaseAmount) || isNaN(maxDiscountAmount) || !discountType) {
+    
+        if (discountType === "Percentage" && value >= 92) {
+            document.getElementById('valueError').textContent = "Value must be less than 92 when discount type is Percentage";
+            isValid = false;
+        }
+    
+        if (!startDate || !endDate || !discountType) {
             Swal.fire({
                 icon: 'error',
                 title: 'Missing Fields',
@@ -127,9 +124,10 @@
             });
             isValid = false;
         }
-
+    
         return isValid;
     }
-</script>
+    </script>
+    
 
 <%- include('../partials/admin/footer.ejs') %>

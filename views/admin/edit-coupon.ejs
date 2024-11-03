@@ -10,44 +10,52 @@
             <div class="form-group">
                 <label for="couponCode">Coupon Code:</label>
                 <input type="text" id="couponCode" name="couponCode" value="<%= coupon.couponCode %>" required>
+                <span id="couponCodeError" class="error-message" style="color: red;"></span>
             </div>
 
             <div class="form-group">
                 <label for="discountDescription">Coupon Description:</label>
                 <input type="text" id="discountDescription" name="discountDescription" value="<%= coupon.discountDescription %>" required>
+                <span id="descriptionError" class="error-message" style="color: red;"></span>
             </div>
 
             <div class="form-group">
                 <label for="startDate">Start Date:</label>
                 <input type="date" id="startDate" name="startDate" value="<%= coupon.startDate.toISOString().split('T')[0] %>" required>
+                <span id="startDateError" class="error-message" style="color: red;"></span>
             </div>
 
             <div class="form-group">
                 <label for="endDate">End Date:</label>
                 <input type="date" id="endDate" name="endDate" value="<%= coupon.endDate.toISOString().split('T')[0] %>" required>
+                <span id="endDateError" class="error-message" style="color: red;"></span>
             </div>
 
             <div class="form-group">
                 <label for="minPurchaseAmount">Minimum Purchase Amount:</label>
                 <input type="number" id="minPurchaseAmount" name="minPurchaseAmount" value="<%= coupon.minPurchaseAmount %>" step="0.01" required>
+                <span id="minPurchaseError" class="error-message" style="color: red;"></span>
             </div>
 
             <div class="form-group">
                 <label for="maxDiscountAmount">Maximum Discount Amount:</label>
                 <input type="number" id="maxDiscountAmount" name="maxDiscountAmount" value="<%= coupon.maxDiscountAmount %>" step="0.01" required>
+                <span id="maxDiscountError" class="error-message" style="color: red;"></span>
             </div>
 
             <div class="form-group">
-                <label for="couponType">Coupon Type:</label>
-                <select id="couponType" name="couponType" required>
-                    <option value="Percentage" <%= coupon.couponType === 'Percentage' ? 'selected' : '' %>>Percentage</option>
-                    <option value="Fixed" <%= coupon.couponType === 'Fixed' ? 'selected' : '' %>>Fixed</option>
+                <label for="discountType">Discount Type:</label>
+                <select id="discountType" name="discountType" required>
+                    <option value="Percentage" <%= coupon.discountType === 'Percentage' ? 'selected' : '' %>>Percentage</option>
+                    <option value="Fixed" <%= coupon.discountType === 'Fixed' ? 'selected' : '' %>>Fixed</option>
                 </select>
+                <span id="discountTypeError" class="error-message" style="color: red;"></span>
             </div>
 
             <div class="form-group">
                 <label for="value">Discount Value:</label>
                 <input type="number" id="value" name="value" value="<%= coupon.value %>" step="0.01" required>
+                <span id="valueError" class="error-message" style="color: red;"></span>
             </div>
 
             <button type="submit" class="btn">Update Coupon</button>
@@ -62,45 +70,63 @@
 
 <script>
     function validateForm() {
-        const couponCode = document.getElementById('couponCode').value;
-        const discountDescription = document.getElementById('discountDescription').value;
-        const minPurchaseAmount = parseFloat(document.getElementById('minPurchaseAmount').value);
-        const maxDiscountAmount = parseFloat(document.getElementById('maxDiscountAmount').value);
+        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+    
+        const couponCode = document.getElementById('couponCode').value.trim();
+        const discountDescription = document.getElementById('discountDescription').value.trim();
         const startDate = new Date(document.getElementById('startDate').value);
         const endDate = new Date(document.getElementById('endDate').value);
-
-        if (!validateCouponCode(couponCode)) {
-            alert('Invalid coupon code: It must not contain spaces and can only include letters, numbers, and specific symbols (@, _, -).');
-            return false;
+        const minPurchaseAmount = parseFloat(document.getElementById('minPurchaseAmount').value);
+        const maxDiscountAmount = parseFloat(document.getElementById('maxDiscountAmount').value);
+        const discountType = document.getElementById('discountType').value;
+        const value = parseFloat(document.getElementById('value').value);
+    
+        let isValid = true;
+    
+        const couponCodePattern = /^[a-zA-Z0-9@_-]+$/;
+        if (!couponCode || !couponCodePattern.test(couponCode)) {
+            document.getElementById('couponCodeError').textContent = "Invalid coupon code (only letters, numbers, @_-, no spaces)";
+            isValid = false;
         }
-
-        if (!validateDiscountDescription(discountDescription)) {
-            alert('Invalid description: It must contain alphabets or alphanumeric characters with symbols (@, _, -).');
-            return false;
+    
+        const descriptionPattern = /^(?=.*[a-zA-Z])[\w@_.,"':;()&%/-]*$/;
+        if (!discountDescription || !descriptionPattern.test(discountDescription)) {
+            document.getElementById('descriptionError').textContent = "Invalid description (must include letters and only allowed symbols: @_-,.\"':;()&%/)";
+            isValid = false;
         }
-
-        if (minPurchaseAmount <= maxDiscountAmount) {
-            alert('Minimum purchase amount must be greater than the maximum discount amount.');
-            return false;
-        }
-
+    
         if (endDate < startDate) {
-            alert('End date must not be less than the start date.');
-            return false;
+            document.getElementById('endDateError').textContent = "End date cannot be before start date";
+            isValid = false;
         }
-
-        return true;
+    
+        if (isNaN(value) || value <= 0) {
+            document.getElementById('valueError').textContent = "Discount value must be greater than zero";
+            isValid = false;
+        }
+    
+        if (isNaN(minPurchaseAmount) || isNaN(maxDiscountAmount) || minPurchaseAmount <= maxDiscountAmount) {
+            document.getElementById('minPurchaseError').textContent = "Minimum Purchase Amount must be greater than Maximum Discount Amount and must be a number";
+            isValid = false;
+        }
+    
+        if (discountType === "Percentage" && value >= 92) {
+            document.getElementById('valueError').textContent = "Value must be less than 92 when discount type is Percentage";
+            isValid = false;
+        }
+    
+        if (!startDate || !endDate || !discountType) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Missing Fields',
+                text: 'All fields must be filled out',
+            });
+            isValid = false;
+        }
+    
+        return isValid;
     }
-
-    function validateCouponCode(couponCode) {
-        const regex = /^[\w@_.-]*$/; // allows letters, numbers, and specified symbols
-        return regex.test(couponCode) && !/\s/.test(couponCode); // No spaces allowed
-    }
-
-    function validateDiscountDescription(description) {
-        const regex = /^[A-Za-z0-9@_.-,"':;()&%/]*$/; // Modify as needed for your allowed characters
-        return regex.test(description) && !/^\d+$/.test(description); // No all-numeric descriptions
-    }
-</script>
+    </script>
+    
 
 <%- include('../partials/admin/footer.ejs') %>

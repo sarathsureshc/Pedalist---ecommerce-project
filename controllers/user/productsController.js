@@ -29,6 +29,7 @@ const loadProductPage = async (req, res) => {
       filterConditions.$or = [
         { productName: { $regex: search, $options: "i" } },
         { "brand.brandName": { $regex: search, $options: "i" } },
+        { "category.name": { $regex: search, $options: "i" } },
       ];
     }
 

@@ -3,7 +3,7 @@
     <div class="order-details-content">
         <header class="dashboard-header">
             <h1>Order Details</h1>
-            <a href="/admin/orders" class=" btn btn-warning">Back To Orders</a>
+            <a href="/admin/orders" class="btn btn-warning">Back To Orders</a>
             <a href="/admin/logout" class="dashboard-logout-button btn btn-danger">Logout</a>
         </header>
 
@@ -12,69 +12,71 @@
                 <li><h3>Order ID: <%= order._id %></h3></li>
                 <li><p><strong>User Name:</strong> <%= order.userId.firstName %></p></li>
                 <li><p><strong>Total Amount:</strong> <%= order.totalPrice %></p></li>
+                <li><p><strong>Coupon Applied:</strong> <%= order.coupon.couponCode %></p></li>
+                <li><p><strong>Discount:</strong> <%= order.discount %></p></li>
                 <li><p><strong>Payment Status:</strong> <%= order.paymentStatus %></p></li>
                 <li><p><strong>Payment Method:</strong> <%= order.paymentMethod %></p></li>
                 <li><p><strong>Transaction Id:</strong> <%= order.transactionId %></p></li>
                 <li><p><strong>Ordered On:</strong> <%= new Date(order.createdOn).toLocaleString() %></p></li>
                 <li>
-                    <p><ul>
-                        <Li><strong>Order Address :</strong></Li>
-                        <li><strong>Name:</strong> <%= order.address.name %></li>
-                        <li><strong>House Name:</strong> <%= order.address.houseName %></li>
-                        <li><strong>Street Name:</strong> <%= order.address.streetName %></li>
-                        <li><strong>Landmark:</strong> <%= order.address.landmark %></li>
-                        <li><strong>Locality:</strong> <%= order.address.locality %></li>
-                        <li><strong>City:</strong> <%= order.address.city %></li>
-                        <li><strong>State:</strong> <%= order.address.state %></li>
-                        <li><strong>PIN:</strong> <%= order.address.pin %></li>
-                        <li><strong>Contact No:</strong> <%=order.address.contactNo %></li>
-                    </ul></p>
+                    <p>
+                        <ul>
+                            <li><strong>Order Address:</strong></li>
+                            <li><strong>Name:</strong> <%= order.address.name %></li>
+                            <li><strong>House Name:</strong> <%= order.address.houseName %></li>
+                            <li><strong>Street Name:</strong> <%= order.address.streetName %></li>
+                            <li><strong>Landmark:</strong> <%= order.address.landmark %></li>
+                            <li><strong>Locality:</strong> <%= order.address.locality %></li>
+                            <li><strong>City:</strong> <%= order.address.city %></li>
+                            <li><strong>State:</strong> <%= order.address.state %></li>
+                            <li><strong>PIN:</strong> <%= order.address.pin %></li>
+                            <li><strong>Contact No:</strong> <%= order.address.contactNo %></li>
+                        </ul>
+                    </p>
                 </li>
                 
                 <h4>Products:</h4>
-<ul>
-    <% if (order.items && order.items.length) { %>
-        <% order.items.forEach(item => { %>
-            <ul class="order-product-card"> 
-                <li>
-                    <strong>Product Name:</strong> <%= item.product.productName %>
-                </li>
-                <li><strong>Quantity:</strong> <%= item.quantity %></li>
-                <li><strong>Unit Price:</strong> <%= item.product.price %></li>
-                <li><strong>Total Price:</strong> <%= item.product.price * item.quantity %></li>
-                <li>
-                    <% if (item.status !== 'Pending' && item.status !== 'Cancelled' && item.status !== 'Returned' && item.status !== 'Return Request') { %>
-                        <strong>Status:</strong>
-                        <select onchange="changeStatus('<%= order._id %>', '<%= item.product._id %>', this.value)">
-                            <option value="Placed" <% if(item.status === 'Placed') { %>selected<% } %>>Placed</option>
-                            <option value="Shipped" <% if(item.status === 'Shipped') { %>selected<% } %>>Shipped</option>
-                            <option value="Delivered" <% if(item.status === 'Delivered') { %>selected<% } %>>Delivered</option>
-                        </select>
-                    <% } else if (item.status === 'Return Request') { %>
-                        <h4>Return Request:</h4>
-                        <p><strong>Status:</strong> <%= item.status %></p>
-                        <button class="btn btn-success" onclick="changeReturnStatus('<%= order._id %>', '<%= item.product._id %>', 'Approved')">Approve Return</button>
-                        <button class="btn btn-danger" onclick="changeReturnStatus('<%= order._id %>', '<%= item.product._id %>', 'Declined')">Decline Return</button>
+                <ul>
+                    <% if (order.items && order.items.length) { %>
+                        <% order.items.forEach(item => { %>
+                            <ul class="order-product-card"> 
+                                <li>
+                                    <strong>Product Name:</strong> <%= item.product.productName %>
+                                </li>
+                                <li><strong>Quantity:</strong> <%= item.quantity %></li>
+                                <li><strong>Unit Price:</strong> <%= item.product.price %></li>
+                                <li><strong>Total Price:</strong> <%= item.product.price * item.quantity %></li>
+                                <li>
+                                    <% if (item.status !== 'Pending' && item.status !== 'Cancelled' && item.status !== 'Returned' && item.status !== 'Return Request') { %>
+                                        <strong>Status:</strong>
+                                        <select onchange="changeStatus('<%= order._id %>', '<%= item.product._id %>', this.value)">
+                                            <option value="Placed" <% if(item.status === 'Placed') { %>selected<% } %>>Placed</option>
+                                            <option value="Shipped" <% if(item.status === 'Shipped') { %>selected<% } %>>Shipped</option>
+                                            <option value="Delivered" <% if(item.status === 'Delivered') { %>selected<% } %>>Delivered</option>
+                                        </select>
+                                    <% } else if (item.status === 'Return Request') { %>
+                                        <h4>Return Request:</h4>
+                                        <p><strong>Status:</strong> <%= item.status %></p>
+                                        <button class="btn btn-success" onclick="changeReturnStatus('<%= order._id %>', '<%= item.product._id %>', 'Approved')">Approve Return</button>
+                                        <button class="btn btn-danger" onclick="changeReturnStatus('<%= order._id %>', '<%= item.product._id %>', 'Declined')">Decline Return</button>
+                                    <% } else { %>
+                                        <p><strong>Status:</strong> <%= item.status %></p>
+                                    <% } %>
+                                </li>
+                            </ul>
+                        <% }); %>
                     <% } else { %>
-                        <p><strong>Status:</strong> <%= item.status %></p>
+                        <li>No products found for this order.</li>
                     <% } %>
-                </li>
-            </ul>
-        <% }); %>
-    <% } else { %>
-        <li>No products found for this order.</li>
-    <% } %>
-</ul>
-
+                </ul>
             </div>
         </div>
     </div>
 </div>
 
 <%- include('../partials/admin/footer.ejs') %>
-
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script>
-
 function changeStatus(orderId, productId, action) {
   fetch('/admin/change-order-status', {  
     method: 'POST',
@@ -86,8 +88,11 @@ function changeStatus(orderId, productId, action) {
     .then(response => response.json())
     .then(data => {
       if (data.message) {
-        alert(data.message);
-        location.reload();
+        swal("Success", data.message, "success").then(() => {
+          setTimeout(() => {
+            location.reload();
+          }, 2000);
+        });
       }
     })
     .catch(error => console.error('Error:', error));
@@ -104,13 +109,13 @@ function changeReturnStatus(orderId, productId, action) {
     .then(response => response.json())
     .then(data => {
       if (data.message) {
-        alert(data.message);
-        location.reload(); // Reloads the page to see the changes
+        swal("Success", data.message, "success").then(() => {
+          setTimeout(() => {
+            location.reload();
+          }, 2000);
+        });
       }
     })
     .catch(error => console.error('Error:', error));
 }
-
-
-
 </script>

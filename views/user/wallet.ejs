@@ -5,7 +5,7 @@
         <div class="wallet-details">
             <h1>Wallet</h1>
             
-            <!-- Display Wallet Balance -->
+            <!-- Display Wallet Balance --> 
             <div class="wallet-balance">
                 <% if (wallet) { %>
                     <h2>Balance: ₹<%= wallet.balance.toFixed(2) %></h2>
@@ -48,7 +48,13 @@
                             <% wallet.transaction.forEach(transaction => { %>
                                 <tr>
                                     <td><%= transaction.transactionType %></td>
-                                    <td><%= transaction.transactionDate.toISOString().split('T')[0] %></td>
+                                    <td>
+                                        <%= 
+                                            String(transaction.transactionDate.getDate()).padStart(2, '0') + '/' + 
+                                            String(transaction.transactionDate.getMonth() + 1).padStart(2, '0') + '/' + 
+                                            transaction.transactionDate.getFullYear() 
+                                        %>
+                                    </td>
                                     <td>₹<%= transaction.amount.toFixed(2) %></td>
                                     <td><%= transaction.description || '-' %></td>
                                 </tr>

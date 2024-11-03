@@ -43,15 +43,15 @@ h1{
     margin: 10px 0;
 }
 
-.table {
+table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.table th, .table td {
+table th, table td {
     padding: 10px;
     text-align: left;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #000000;
 }
 
 .form-group {

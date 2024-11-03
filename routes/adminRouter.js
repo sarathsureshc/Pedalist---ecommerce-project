@@ -8,6 +8,7 @@ const productController = require("../controllers/admin/productController");
 const ordersController = require("../controllers/admin/ordersController");
 const offersController = require("../controllers/admin/offerController");
 const couponController = require("../controllers/admin/couponController")
+const reportController = require("../controllers/admin/reportController");
 const {userAuth,adminAuth} = require("../middlewares/auth");
 const multer = require('multer');
 const storage = require("../helpers/multer");
@@ -77,5 +78,9 @@ router.get('/activate-coupon', adminAuth, couponController.activateCoupon);
 router.get('/deactivate-coupon', adminAuth, couponController.deactivateCoupon);
 router.get('/delete-coupon', adminAuth, couponController.deleteCoupon);
 router.get('/restore-coupon', adminAuth, couponController.restoreCoupon);
+
+router.get("/sales-report",adminAuth, reportController.getSalesReport);
+router.get('/sales-report-pdf',adminAuth, reportController.downloadSalesReportPDF);
+router.get('/sales-report-excel',adminAuth, reportController.downloadSalesReportExcel);
 
 module.exports = router;

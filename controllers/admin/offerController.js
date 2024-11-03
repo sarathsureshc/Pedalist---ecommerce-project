@@ -203,7 +203,7 @@ const deactivateOffer = async (req, res) => {
 const deleteOffer = async (req, res) => {
     const { id } = req.query;
     try {
-        await Offer.updateOne({ _id: id }, { isDeleted: true });
+        await Offer.updateOne({ _id: id }, { isDeleted: true, isActive: false });
         res.redirect('/admin/offers');
     } catch (error) {
         console.error('Error deleting offer:', error);

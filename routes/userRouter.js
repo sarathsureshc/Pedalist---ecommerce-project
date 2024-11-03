@@ -11,6 +11,7 @@ const checkoutController = require('../controllers/user/checkoutController');
 const orderController = require('../controllers/user/orderController');
 const wishlistController = require('../controllers/user/wishlistController');
 const walletController = require('../controllers/user/walletController');
+const couponController = require('../controllers/user/couponController');
 
 router.get("/pageNotFound", userController.pageNotFound);
 router.get("/",userAuth,userController.loadHomepage);
@@ -68,7 +69,10 @@ router.post('/place-order',userAuth, orderController.placeOrder);
 router.get('/order-placed',userAuth, orderController.loadOrderPlaced);
 router.post('/verify-payment',userAuth, orderController.verifyRazorpayPayment);
 
-router.get('/wallet',userAuth, walletController.getWallet)
+router.get('/wallet',userAuth, walletController.getWallet);
+
+router.get('/coupons',userAuth, couponController.showCoupon);
+router.post('/validate-coupon', userAuth, couponController.validateCoupon);
 
 
 

@@ -1,0 +1,118 @@
+<%- include('../partials/admin/header.ejs') %>
+<div class="wrapper">
+    <section class="sales-report-main-content">
+        <header class="dashboard-header">
+            <h1>Sales Report</h1>
+            <a href="/admin/logout" class="dashboard-logout-button btn btn-danger">Logout</a>
+        </header>
+
+        <nav class="dashboard-breadcrumbs" style="display: flex; align-items: center;">
+            <div>
+                <a href="/admin">Home</a> &gt; <span>Sales Report</span>
+            </div>
+        </nav>
+
+        <div class="dashboard-content">
+            <div class="sales-report-card">
+                <div class="d-flex justify-content-between mb-3">
+                    <a href="/admin/sales-report-pdf" class="btn btn-primary">Download PDF</a>
+                    <a href="/admin/sales-report-excel" class="btn btn-success">Download Excel</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-center">#</th>
+                                <th>Product Name</th>
+                                <th>Total Sales Count</th>
+                                <th>Total Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (salesData && salesData.length > 0) { %>
+                                <% salesData.forEach((sale, index) => { %>
+                                    <tr>
+                                        <td class="text-center">
+                                            <%= index + 1 %>
+                                        </td>
+                                        <td class="text-start">
+                                            <%= sale.productName %> 
+                                        </td>
+                                        <td class="text-start">
+                                            <%= sale.totalSalesCount %> 
+                                        </td>
+                                        <td class="text-start">₹
+                                            <%= sale.totalRevenue.toFixed(2) %> 
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="4" class="text-center">No sales data available for the selected period.</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Add a canvas for the chart -->
+            <div class="chart-container" style="margin-top: 30px;">
+                <canvas id="salesChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </section>
+</div>
+
+<%- include('../partials/admin/footer.ejs') %>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+   
+        const salesData = <%- JSON.stringify(salesData) %>; 
+
+        const labels = salesData.map(sale => sale.productName);
+        const salesCounts = salesData.map(sale => sale.totalSalesCount);
+
+        const ctx = document.getElementById('salesChart').getContext('2d');
+
+        const salesChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Number of Sales',
+                    data: salesCounts,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+
+    function toggleDateInputs(filter) {
+        const startDateInput = document.querySelector('input[name="startDate"]');
+        const endDateInput = document.querySelector('input[name="endDate"]');
+        if (filter === 'custom') {
+            startDateInput.style.display = 'block';
+            endDateInput.style.display = 'block';
+        } else {
+            startDateInput.style.display = 'none';
+            endDateInput.style.display = 'none';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const selectedFilter = document.querySelector('select[name="filter"]').value;
+        toggleDateInputs(selectedFilter);
+    });
+</script>

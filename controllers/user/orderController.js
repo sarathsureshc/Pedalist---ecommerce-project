@@ -4,6 +4,8 @@ const Address = require("../../models/addressSchema");
 const Order = require("../../models/orderSchema");
 const Cart = require("../../models/cartSchema");
 const Wallet = require("../../models/walletSchema");
+const Coupon = require("../../models/couponSchema");
+const mongoose = require("mongoose");
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
 const env = require("dotenv").config();
@@ -15,8 +17,10 @@ const razorpay = new Razorpay({
 
 const placeOrder = async (req, res) => {
   try {
-    const { address, paymentMethod } = req.body;
+    const { address, paymentMethod, discount, couponCode } = req.body;
     const user = req.session.user || req.user;
+
+    console.log(couponCode);
 
     if (!user) {
       return res
@@ -33,6 +37,8 @@ const placeOrder = async (req, res) => {
         .json({ success: false, message: "Your cart is empty." });
     }
 
+    const coupon = await Coupon.findOne({ couponCode });
+
     for (const item of cart.items) {
       if (item.productId.quantity < item.quantity) {
         return res.status(400).json({
@@ -46,7 +52,9 @@ const placeOrder = async (req, res) => {
       (acc, item) => acc + item.productId.price * item.quantity,
       0
     );
-    const discount = 0;
+
+    if (!discount) discount = 0;
+
     const deliveryCharge = 50;
     const totalPrice = subtotal - discount + deliveryCharge;
 
@@ -64,6 +72,8 @@ const placeOrder = async (req, res) => {
       paymentMethod:
         paymentMethod === "Cash On Delivery" ? "Cash On Delivery" : "Pending",
       totalPrice,
+      discount,
+      coupon,
       finalAmount: totalPrice,
       paymentStatus: "Pending",
     });
@@ -221,6 +231,10 @@ const cancelOrderItem = async (req, res) => {
   const { orderId, itemId, reason, quantity } = req.body;
   // console.log(`cancelling order`, quantity, orderId, itemId, reason);
   const user = req.session.user || req.user;
+  if (!user) {
+    return res.redirect("/login");
+  }
+  userId = user._id;
 
   try {
     const order = await Order.findById(orderId);
@@ -244,7 +258,7 @@ const cancelOrderItem = async (req, res) => {
         console.log(item);
 
         if (order.paymentStatus === "Completed") {
-          let wallet = await Wallet.findOne({ userId: user._id });
+          let wallet = await Wallet.findOne({ userId });
           if (!wallet) {
             wallet = new Wallet({
               userId: user._id,
@@ -263,13 +277,13 @@ const cancelOrderItem = async (req, res) => {
             return res.redirect("/orders");
           }
 
-          console.log("price :", product.price);
-          console.log(quantity);
           const refundAmount = product.price * quantity;
 
           if (!isNaN(refundAmount) && refundAmount > 0) {
             wallet.balance += refundAmount;
             await wallet.save();
+            const description = `Refunded ${refundAmount} due to cancellation of ${product.productName}`;
+            processRefund(userId, orderId, refundAmount, description);
             console.log(
               `Refunded ₹${refundAmount} to user ${user._id}'s wallet.`
             );
@@ -328,6 +342,34 @@ const requestReturn = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
+
+async function processRefund(userId, orderId, amount, description) {
+  try {
+    const wallet = await Wallet.findOne({ userId });
+
+    if (!wallet) {
+      throw new Error("Wallet not found");
+    }
+
+    const transaction = {
+      transactionId: new mongoose.Types.ObjectId(),
+      transactionType: "Refund",
+      transactionDate: new Date(),
+      reference: `Refund for Order: ${orderId}`,
+      orderId: orderId,
+      amount: amount,
+      description: description,
+    };
+
+    wallet.transaction.push(transaction);
+
+    await wallet.save();
+
+    console.log("Refund processed successfully.");
+  } catch (error) {
+    console.error("Error processing refund:", error);
+  }
+}
 
 module.exports = {
   placeOrder,

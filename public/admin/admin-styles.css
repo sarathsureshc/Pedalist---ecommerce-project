@@ -103,6 +103,10 @@ body {
 .dashboard-breadcrumbs {
     padding: 10px 0px;
 }
+.dashboard-home-content{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
 
 /* Card Styles */
 .dashboard-card {

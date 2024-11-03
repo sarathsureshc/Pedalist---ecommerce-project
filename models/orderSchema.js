@@ -46,6 +46,10 @@ const orderSchema = new Schema({
         type:Number,
         default:0
     },
+    coupon:{
+        type:Schema.Types.ObjectId,
+        ref:'Coupon'
+    },
     finalAmount:{
         type:Number,
         required:true
@@ -63,10 +67,6 @@ const orderSchema = new Schema({
         type:Date,
         default:Date.now,
         required:true
-    },
-    coupon:{
-        type:Schema.Types.ObjectId,
-        ref:'Coupon'
     },
     offer : {
         type: Schema.Types.ObjectId,

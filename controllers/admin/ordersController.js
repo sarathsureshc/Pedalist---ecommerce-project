@@ -4,6 +4,8 @@ const Address = require("../../models/addressSchema");
 const Order = require("../../models/orderSchema");
 const Cart = require("../../models/cartSchema");
 const Wallet = require("../../models/walletSchema");
+const Coupon = require("../../models/couponSchema");
+const mongoose = require("mongoose");
 
 const loadOrderPage = async (req, res) => {
   try {
@@ -40,7 +42,8 @@ const loadOrderDetail = async (req, res) => {
     const order = await Order.findById(orderId)
       .populate("userId", "firstName")
       .populate("address")
-      .populate("items.product");
+      .populate("items.product")
+      .populate("coupon");
 
       // console.log(order.items);
 
@@ -102,6 +105,8 @@ const changeReturnStatus = async (req, res) => {
         wallet.balance += refundAmount;
         await wallet.save();
         console.log(`Refunded ₹${refundAmount} to user ${user}'s wallet.`);
+        const description = `Refund for returned product - ${item.product.name}`;
+        processRefund(user, orderId, refundAmount, description)
       } else {
         console.error("Invalid refund amount calculated:", refundAmount);
         return res.status(400).send({ message: "Invalid refund amount." });
@@ -124,9 +129,8 @@ const changeReturnStatus = async (req, res) => {
 
 const changeOrderStatus = async (req, res) => {
   try {
-    const { orderId, productId, action } = req.body; // Expect orderId, productId, and action (new status)
+    const { orderId, productId, action } = req.body;
 
-    // Find the order and update the item status
     const order = await Order.findById(orderId);
 
     if (!order) {
@@ -139,17 +143,15 @@ const changeOrderStatus = async (req, res) => {
       return res.status(404).send({ message: "Item not found" });
     }
 
-    // Update item status based on the new status from the dropdown
-    item.status = action; // Update the item status to the new value provided by the dropdown
+    item.status = action; n
 
-    // If the status is 'Returned', increase product quantity
     if (action === 'Returned') {
       await Product.findByIdAndUpdate(productId, {
         $inc: { quantity: item.quantity }
       });
     }
 
-    await order.save(); // Save the order
+    await order.save();
 
     res.send({ message: "Order status updated successfully." });
   } catch (error) {
@@ -158,7 +160,33 @@ const changeOrderStatus = async (req, res) => {
   }
 };
 
+async function processRefund(userId, orderId, amount, description) {
+  try {
+      const wallet = await Wallet.findOne({ userId });
+      
+      if (!wallet) {
+          throw new Error('Wallet not found');
+      }
 
+      const transaction = {
+          transactionId: new mongoose.Types.ObjectId(),
+          transactionType: 'Refund',
+          transactionDate: new Date(),
+          reference: `Refund for Order: ${orderId}`,
+          orderId: orderId,
+          amount: amount,
+          description: description
+      };
+
+      wallet.transaction.push(transaction);
+      
+      await wallet.save();
+      
+      console.log('Refund processed successfully.');
+  } catch (error) {
+      console.error('Error processing refund:', error);
+  }
+}
 
 
 module.exports = {

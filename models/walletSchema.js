@@ -40,7 +40,7 @@ const walletSchema = new Schema({
         },
         transactionType : {
             type : String,
-            enum : ['Debit', 'Credit'],
+            enum: ['Debit', 'Credit', 'Refund'],
             required : true,
         },
         transactionDate : {

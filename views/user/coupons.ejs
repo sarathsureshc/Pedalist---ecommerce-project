@@ -1,0 +1,58 @@
+<link rel="stylesheet" href="coupon-styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+
+<div class="container mt-5">
+    <h2 class="text-center">Available Coupons</h2>
+    <div class="row">
+        <% if (coupons && coupons.length > 0) { %>
+            <% coupons.forEach(coupon => { %>
+                <div class="col-md-4 mb-4">
+                    <div class="card coupon-card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Coupon Code: <span id="coupon-<%= coupon._id %>"><%= coupon.couponCode %></span></h5>
+                            <% if (coupon.discountType === 'Flat') { %>
+                                <p class="card-text">Discount Amount: &#8377; <%= coupon.value.toFixed(2) %></p>
+                            <% } else { %>
+                                <p class="card-text">Discount Percentage: <%= coupon.value.toFixed(2) %>%</p>
+                            <% } %>
+                            <button class="btn btn-outline-secondary mt-2" onclick="copyCouponCode('<%= coupon._id %>')">Copy Code</button>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <div class="col-12">
+                <div class="alert alert-info text-center">No coupons available.</div>
+            </div>
+        <% } %>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="/checkout" class="btn btn-primary">Back to Checkout</a>
+    </div>
+</div>
+
+<script>
+    function copyCouponCode(couponId) {
+        const couponCodeElement = document.getElementById(`coupon-${couponId}`);
+        const couponCode = couponCodeElement.innerText;
+        
+        navigator.clipboard.writeText(couponCode).then(() => {
+            swal({
+                title: "Copied!",
+                text: "Coupon code copied to clipboard!",
+                icon: "success",
+                button: "OK",
+            });
+        }).catch(err => {
+            console.error('Failed to copy coupon code: ', err);
+            swal({
+                title: "Error!",
+                text: "Failed to copy coupon code.",
+                icon: "error",
+                button: "OK",
+            });
+        });
+    }
+</script>
