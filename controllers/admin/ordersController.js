@@ -143,7 +143,7 @@ const changeOrderStatus = async (req, res) => {
       return res.status(404).send({ message: "Item not found" });
     }
 
-    item.status = action; n
+    item.status = action;
 
     if (action === 'Returned') {
       await Product.findByIdAndUpdate(productId, {
