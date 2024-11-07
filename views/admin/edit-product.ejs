@@ -1,6 +1,6 @@
 <%- include('../partials/admin/header.ejs') %>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
+    <link href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css" rel="stylesheet">
     <style>
         .thumbnails-container {
             display: flex;
@@ -21,19 +21,38 @@
             color: red;
             display: none;
         }
+
+        .img-upload {
+            max-width: 200px;
+            max-height: 200px;
+            margin: 10px 0;
+            display: block;
+        }
+
+        .modal-body {
+            height: 70vh;
+            padding: 20px;
+        }
+
+        #modalImage {
+            height: 100%;
+            width: auto;
+            display: block;
+            margin: 0 auto;
+        }
     </style>
 
     <div class="wrapper">
         <section class="content-main">
             <div class="row">
-                <div class="col-9">
-                    <div class="content-header">
+                <div class="col-10">
+                    <div class="dashboard-header">
                         <h2 class="content-title">Edit Product</h2>
 
 
                     </div>
                 </div>
-                <div class="col-lg-6">
+                <div class="col-lg-10">
                     <div class="card mb-4">
 
 
@@ -175,68 +194,28 @@
                                         <% } %>
 
 
-                                            <div class="card-body">
-                                                <div class="card-body align-items-center" style="margin-bottom: 20px;">
-                                                    <img src="" alt="" id="imgView1">
-                                                    <input class="form-control" type="file" name="images" id="input1"
-                                                        accept="image/png, image/jpeg, image/jpg"
-                                                        onchange="viewImage1(event), viewImage(event, 1)">
+                                            
+                                               
+                                                <div class="image-upload-section">
+                                                    <div class="row">
+                                                        <% for(let i=1; i <=4; i++) { %>
+                                                            <div class="col-md-3">
+                                                                <div class="card-body align-items-center mb-3">
+                                                                    <img src="" alt="" id="imgView<%= i %>"
+                                                                        class="img-upload">
+                                                                    <input class="form-control" type="file"
+                                                                        name="images" id="input<%= i %>"
+                                                                        accept="image/png, image/jpeg, image/jpg"
+                                                                        onchange="viewImage(event, <%= i %>)">
+                                                                    <div id="images-error-<%= i %>"
+                                                                        class="error-message"></div>
+                                                                </div>
+                                                            </div>
+                                                            <% } %>
+                                                    </div>
                                                     <div id="images-error" class="error-message"></div>
                                                 </div>
-                                                <div class="image-cropper d-flex align-items-center"
-                                                    style="display:none; width: 300px; height: 300px; margin-bottom: 20px;">
-                                                    <img src="" id="croppedImg1" alt="" class="img-cropped">
-                                                    <button type="button" id="saveButton1"
-                                                        class="btn-sm btn-primary">Save</button>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="card-body align-items-center"
-                                                        style="margin-bottom: 20px;">
-                                                        <img src="" alt="" id="imgView2">
-                                                        <input class="form-control" type="file" name="images"
-                                                            id="input2" accept="image/png, image/jpeg, image/jpg"
-                                                            onchange="viewImage2(event),viewImage(event, 2)">
-                                                    </div>
-                                                    <div class="image-cropper d-flex align-items-center"
-                                                        style="display:none; width: 300px; height: 300px; margin-bottom: 20px;">
-                                                        <img src="" id="croppedImg2" alt="" class="img-cropped">
-                                                        <button type="button" id="saveButton2"
-                                                            class="btn-sm btn-primary">Save</button>
-                                                    </div>
-                                                </div>
-
-                                                <div class="row">
-                                                    <div class="card-body align-items-center"
-                                                        style="margin-bottom: 20px;">
-                                                        <img src="" alt="" id="imgView3">
-                                                        <input class="form-control" type="file" name="images"
-                                                            id="input3" accept="image/png, image/jpeg, image/jpg"
-                                                            onchange="viewImage3(event),viewImage(event, 3)">
-                                                    </div>
-                                                    <div class="image-cropper d-flex align-items-center"
-                                                        style="display:none; width: 300px; height: 300px; margin-bottom: 20px;">
-                                                        <img src="" id="croppedImg3" alt="" class="img-cropped">
-                                                        <button type="button" id="saveButton3"
-                                                            class="btn-sm btn-primary">Save</button>
-                                                    </div>
-                                                </div>
-
-                                                <div class="row">
-                                                    <div class="card-body align-items-center"
-                                                        style="margin-bottom: 20px;">
-                                                        <img src="" alt="" id="imgView4">
-                                                        <input class="form-control" type="file" name="images"
-                                                            id="input4" accept="image/png, image/jpeg, image/jpg"
-                                                            onchange="viewImage4(event),viewImage(event, 4)">
-                                                    </div>
-                                                    <div class="image-cropper d-flex align-items-center"
-                                                        style="display:none; width: 300px; height: 300px; margin-bottom: 20px;">
-                                                        <img src="" id="croppedImg4" alt="" class="img-cropped">
-                                                        <button type="button" id="saveButton4"
-                                                            class="btn-sm btn-primary">Save</button>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                           
                                 </div>
                                 <div>
 
@@ -252,14 +231,40 @@
     </section>
     </div>
 
+    <div class="modal fade" id="cropModal" tabindex="-1" role="dialog" aria-labelledby="cropModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cropModalLabel">Crop Image</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div style="max-width: 100%; height: 70vh;">
+                        <img id="modalImage" src="" alt="Image to crop">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelCropButton">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="cropButton">Crop</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <%- include('../partials/admin/footer.ejs') %>
 
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
         <script>
 
-
+            let cropper;
+            let currentImageIndex;
 
             function validateAndSubmit() {
                 if (validateForm()) {
@@ -292,7 +297,7 @@
                 const quantity = document.getElementsByName('quantity')[0].value;
                 const color = document.getElementsByName('color')[0].value;
                 imageDatas = document.getElementById("imageDatas")?.value;
-              
+
 
                 let isValid = true;
                 if (name.trim() === "") {
@@ -385,68 +390,54 @@
 
 
 
-            function viewImage1(event) {
-                document.getElementById('imgView1').src = URL.createObjectURL(event.target.files[0])
-            }
-
-
-            function viewImage2(event) {
-                document.getElementById('imgView2').src = URL.createObjectURL(event.target.files[0])
-            }
-
-
-            function viewImage3(event) {
-                document.getElementById('imgView3').src = URL.createObjectURL(event.target.files[0])
-            }
-
-
-            function viewImage4(event) {
-                document.getElementById('imgView4').src = URL.createObjectURL(event.target.files[0])
-            }
-
-
-
-
             function viewImage(event, index) {
+                currentImageIndex = index;
                 let input = event.target;
-                let reader = new FileReader();
-                reader.onload = function () {
-                    let dataURL = reader.result;
-                    let image = document.getElementById('imgView' + index);
-                    image.src = dataURL;
-                    let cropper = new Cropper(image, {
-                        aspectRatio: 1,
-                        viewMode: 1,
-                        guides: true,
-                        background: false,
-                        autoCropArea: 1,
-                        zoomable: true
-                    });
-                    let cropperContainer = document.querySelector('#croppedImg' + index).parentNode;
-                    cropperContainer.style.display = 'block';
-                    let saveButton = document.querySelector('#saveButton' + index);
-                    saveButton.addEventListener('click', async function () {
-                        let croppedCanvas = cropper.getCroppedCanvas();
-                        let croppedImage = document.getElementById("croppedImg" + index);
-                        croppedImage.src = croppedCanvas.toDataURL('image/jpeg', 1.0);
-                        let timestamp = new Date().getTime();
-                        let fileName = `cropped-img-${timestamp}-${index}.png`;
-                        await croppedCanvas.toBlob(blob => {
-                            let input = document.getElementById('input' + index);
-                            let imgFile = new File([blob], fileName, blob)
-                            const fileList = new DataTransfer();
-                            fileList.items.add(imgFile);
-                            input.files = fileList.files
+                if (input.files && input.files[0]) {
+                    let reader = new FileReader();
+                    reader.onload = function (e) {
+                        let modalImage = document.getElementById("modalImage");
+                        modalImage.src = e.target.result;
+
+                        $('#cropModal').modal('show');
+
+                        if (cropper) {
+                            cropper.destroy();
+                        }
+                        cropper = new Cropper(modalImage, {
+                            aspectRatio: 1,
+                            viewMode: 1,
+                            guides: true,
+                            background: false,
+                            responsive: true,
+                            autoCropArea: 1,
+                            zoomable: true,
                         });
-                        cropperContainer.style.display = 'none';
-                    });
-                };
-                reader.readAsDataURL(input.files[0]);
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
             }
 
+            document.getElementById("cropButton").onclick = function () {
+                if (cropper) {
+                    let croppedCanvas = cropper.getCroppedCanvas();
+                    let imgView = document.getElementById("imgView" + currentImageIndex);
+                    imgView.src = croppedCanvas.toDataURL('image/jpeg', 1.0);
 
-            const selectedImages = [];
-            document.getElementById("imageInput").addEventListener("change", handleFileSelect);
+                    let timestamp = new Date().getTime();
+                    let fileName = `cropped-img-${timestamp}-${currentImageIndex}.png`;
+
+                    croppedCanvas.toBlob(blob => {
+                        let input = document.getElementById('input' + currentImageIndex);
+                        let imgFile = new File([blob], fileName, { type: 'image/png' });
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(imgFile);
+                        input.files = dataTransfer.files;
+                    });
+
+                    $('#cropModal').modal('hide');
+                }
+            };
 
 
             function handleFileSelect(event) {
@@ -493,4 +484,10 @@
                     })
                 })
             };
+
+            $('#cropModal').on('hidden.bs.modal', function () {
+                if (cropper) {
+                    cropper.destroy();
+                }
+            });
         </script>

@@ -19,8 +19,10 @@
         padding: 20px;
     }
     #modalImage {
-        max-height: 100%;
-        width: auto;
+    height: 100%; 
+    width: auto;
+    display: block;
+    margin: 0 auto;
     }
 </style>
 
@@ -207,6 +209,7 @@ function viewImage(event, index) {
                 viewMode: 1,
                 guides: true,
                 background: false,
+                responsive:true,
                 autoCropArea: 1,
                 zoomable: true,
             });
@@ -235,6 +238,8 @@ document.getElementById("cropButton").onclick = function () {
         $('#cropModal').modal('hide');
     }
 };
+
+
 
 function validateForm() {
     console.log("validation running");

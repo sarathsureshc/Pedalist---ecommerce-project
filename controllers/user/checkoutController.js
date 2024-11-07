@@ -3,6 +3,7 @@ const Product = require('../../models/productSchema');
 const Address = require('../../models/addressSchema');
 const Order = require('../../models/orderSchema');
 const Cart = require('../../models/cartSchema');
+const Coupon = require('../../models/couponSchema');
 
 const getCheckoutPage = async (req, res) => {
     try {
@@ -18,7 +19,7 @@ const getCheckoutPage = async (req, res) => {
         cartCount = cart.items.reduce((total, item) => total + item.quantity, 0);
 
         const orderItems = cart && cart.items.length > 0 ? cart.items.map(item => {
-            if(item.quantity>5){
+            if(item.quantity > 5){
                 return res.send({message : "Max quantity for each product is 5"});
             }
             return {
@@ -28,17 +29,14 @@ const getCheckoutPage = async (req, res) => {
             };
         }) : [];
 
-
-        const addresses = await Address.find({userId:user._id});
+        const addresses = await Address.find({userId: user._id});
   
         let subtotal = orderItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-    
-
         let discount = 0; 
-       
         const deliveryCharge = 50;
-    
         const totalPrice = subtotal - discount + deliveryCharge;
+
+        let coupons = await Coupon.find({isActive: true, minPurchaseAmount: { $lte: subtotal }});
 
         res.render("checkout", {
             addresses,
@@ -47,7 +45,8 @@ const getCheckoutPage = async (req, res) => {
             discount,
             deliveryCharge,
             totalPrice,
-            user : userData,
+            user: userData,
+            coupons,
             cartCount,
         });
     } catch (error) {
@@ -56,12 +55,6 @@ const getCheckoutPage = async (req, res) => {
     }
 };
  
-  
-
-
-
-
-
 
 module.exports = {
     getCheckoutPage,
