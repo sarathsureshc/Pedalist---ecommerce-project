@@ -45,8 +45,7 @@
                             <div class="order-item">
                                 <h5><%= item.productName %></h5>
                                 <p>Quantity: <%= item.quantity %></p>
-                                <p>Regular Price: &#8377;<%= item.price.toFixed(2) %></p>
-                                <p>Discounted Price: &#8377;<%= (item.price - (item.price * (item.discountPercentage || 0) / 100)).toFixed(2) %></p>
+                                <p>Price: &#8377;<%= (item.price - (item.price * (item.discountPercentage || 0) / 100)).toFixed(2) %></p>
                                 <p>Subtotal: &#8377;<%= item.subtotal.toFixed(2) %></p>
                             </div>
                         <% }) %>
@@ -204,6 +203,14 @@
             couponCode: discount > 0 ? document.getElementById('couponCode').value : null
         };
 
+        if(selectedPaymentMethod === "Cash On Delivery" && totalPrice > 3500  ){
+            Swal.fire({
+                    icon: 'error',
+                    title: 'Order Failed',
+                    text: 'Cash on delivery is not applicable for order above 3500!!!',
+                    confirmButtonText: 'OK'
+                });
+        }
         console.log("Order Data to be sent:", orderData);
 
         fetch('/place-order', {
