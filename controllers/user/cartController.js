@@ -3,6 +3,7 @@ const Product = require("../../models/productSchema");
 const Category = require("../../models/categorySchema");
 const Brand = require("../../models/brandSchema");
 const Cart = require("../../models/cartSchema");
+const Offer = require("../../models/offerSchema");
 
 const addToCart = async (req, res) => {
   try {
@@ -70,39 +71,102 @@ const addToCart = async (req, res) => {
 
 const getCart = async (req, res) => {
   try {
-    const user = req.session.user || req.user;
-    let cartCount = 0 ;
-    if (!user) {
-      return res.redirect("/login");
-    }
+      const user = req.session.user || req.user;
+      if (!user) {
+          return res.redirect("/login");
+      }
 
-    const cart = await Cart.findOne({ userId: user._id }).populate(
-      "items.productId"
-    );
-    if (!cart) {
-      return res
-        .status(404)
-        .render("cart", { cart: [], totalPrice: 0, offer: "No offer" });
-    }
-    cartCount = cart.items.reduce((total, item) => total + item.quantity, 0);
-    let totalPrice = 0;
-    const offer = "No offer"; 
-    cart.items.forEach((item) => {
-      totalPrice += item.productId.price * item.quantity;
-    });
+      const cart = await Cart.findOne({ userId: user._id }).populate("items.productId");
+      if (!cart) {
+          return res.status(404).render("cart", { cart: [], totalPrice: 0, offer: "No offer" });
+      }
 
-    const userData = await User.findOne({ _id: user._id });
+      // Fetch all active offers
+      const offers = await Offer.find({ isActive: true, isDeleted: false });
 
-    res.render("cart", {
-      user: userData,
-      cart: cart.items,
-      totalPrice,
-      offer,
-      cartCount,
-    });
+      // Calculate total price and attach best offers
+      let totalPrice = 0;
+      let globalDiscount = 0; // Initialize global discount
+
+      cart.items.forEach(item => {
+          const product = item.productId;
+          let bestOffer = null;
+
+          // Determine the best offer for the product
+          offers.forEach(offer => {
+              let isApplicable = false;
+
+              // Check if the offer is applicable based on the offerGroup
+              switch (offer.offerGroup) {
+                  case 'Brand':
+                      isApplicable = offer.brandsIncluded.includes(product.brand._id.toString());
+                      break;
+                  case 'Category':
+                      isApplicable = offer.categoriesIncluded.includes(product.category._id.toString());
+                      break;
+                  case 'Product':
+                      isApplicable = offer.productsIncluded.includes(product._id.toString());
+                      break;
+                  case 'Global': // Check for global offers
+                      isApplicable = true; // Global offers apply to all products
+                      break;
+              }
+
+              // If applicable, calculate the effective discount
+              if (isApplicable) {
+                  let effectiveDiscount = 0;
+                  if (offer.offerType === 'Percentage') {
+                      effectiveDiscount = (product.price * offer.offerValue) / 100;
+                  } else if (offer.offerType === 'Flat') {
+                      effectiveDiscount = offer.offerValue;
+                  }
+
+                  // Ensure the effective discount does not exceed the max discount amount
+                  if (offer.maxDiscountAmount) {
+                      effectiveDiscount = Math.min(effectiveDiscount, offer.maxDiscountAmount);
+                  }
+
+                  // Determine if this is the best offer
+                  if (!bestOffer || effectiveDiscount > bestOffer.effectiveDiscount) {
+                      bestOffer = {
+                          offerName: offer.offerName,
+                          effectiveDiscount,
+                      };
+                  }
+              }
+          });
+
+          // Calculate total price considering the best offer
+          if (bestOffer) {
+              totalPrice += (product.price - bestOffer.effectiveDiscount) * item.quantity;
+
+              // Check if it's a global offer
+              if (bestOffer.offerName && offers.some(o => o.offerGroup === 'Global' && o.offerName === bestOffer.offerName)) {
+                  globalDiscount = Math.max(globalDiscount, bestOffer.effectiveDiscount);
+              }
+          } else {
+              totalPrice += product.price * item.quantity;
+          }
+
+          product.bestOffer = bestOffer;
+      });
+
+      const minPurchaseAmount = Math.min(...offers.filter(o => o.offerGroup === 'Global').map(o => o.minPurchaseAmount || 0));
+      if (totalPrice > minPurchaseAmount) {
+          totalPrice -= globalDiscount;
+      }
+
+      const userData = await User.findOne({ _id: user._id });
+      res.render("cart", {
+          user: userData,
+          cart: cart.items,
+          totalPrice,
+          offer: globalDiscount > 0 ? `Global Offer Applied: ₹${globalDiscount.toFixed(2)}` : "No offer",
+          cartCount: cart.items.reduce((total, item) => total + item.quantity, 0),
+      });
   } catch (error) {
-    console.error("Error fetching cart:", error);
-    res.status(500).json({ success: false, message: "Internal Server Error." });
+      console.error("Error fetching cart:", error);
+      res.status(500).json({ success: false, message: "Internal Server Error." });
   }
 };
 

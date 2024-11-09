@@ -16,7 +16,7 @@ const pageNotFound = async (req, res) => {
 const loadHomepage = async (req, res) => {
   try {
     const user = req.session.user || req.user;
-    const newArrivals = await Product.find().sort({ createdAt: -1 }).limit(4);
+    const newArrivals = await Product.find().sort({ createdOn: -1 }).limit(4);
     if (user) {
       const userData = await User.findOne({ _id: user._id });
       const cart = await Cart.findOne({ userId: user._id });

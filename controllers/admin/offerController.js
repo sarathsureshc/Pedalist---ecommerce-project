@@ -102,12 +102,21 @@ const addOffer = async (req, res) => {
     }
 };
 
-const getEditOffer = async (req, res)=>{
+const getEditOffer = async (req, res) => {
     try {
         const offer = await Offer.findById(req.params.id);
-        const products = await Product.find(); 
-        const categories = await Category.find(); 
-        const brands = await Brand.find(); 
+        if (!offer) {
+            return res.status(404).redirect('/admin/offers'); // Redirect if the offer is not found
+        }
+
+        const products = await Product.find();
+        const categories = await Category.find();
+        const brands = await Brand.find();
+
+        // Ensure that offer's properties are initialized
+        offer.productsIncluded = offer.productsIncluded || [];
+        offer.categoriesIncluded = offer.categoriesIncluded || [];
+        offer.brandsIncluded = offer.brandsIncluded || [];
 
         res.render('edit-offer', { offer, products, categories, brands });
     } catch (err) {

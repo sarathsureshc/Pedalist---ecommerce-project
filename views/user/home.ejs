@@ -99,23 +99,45 @@
   <!-- New Arrivals Section -->
 <section class="new-arrivals">
   <div class="container">
-      <h2 class="text-center my-4">New Arrivals</h2>
-      <div class="row d-none d-lg-flex"> <!-- For larger screens -->
-          <!-- Dynamic Content -->
-          <% newArrivals.forEach((product) => { %>
-              <div class="col-md-3 mb-4">
-                <a href="/product-detail?id=<%= product._id %>">
-                  <div class="card">
-                      <img src="./uploads/product-images/<%= product.image[0] %>" class="card-img-top" alt="<%= product.productName %>">
+    <h2 class="text-center my-4">New Arrivals</h2>
+    
+    <!-- Carousel for New Arrivals -->
+    <div id="newArrivalsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+      <div class="carousel-inner">
+        <!-- Dynamic Carousel Items -->
+        <% for (let i = 0; i < newArrivals.length; i += 4) { %>
+          <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
+            <div class="row">
+              <% for (let j = 0; j < 4 && (i + j) < newArrivals.length; j++) { %>
+                <div class="col-md-3 mb-4">
+                  <a href="/product-detail?id=<%= newArrivals[i + j]._id %>">
+                    <div class="card">
+                      <img src="./uploads/product-images/<%= newArrivals[i + j].image[0] %>" class="card-img-top" alt="<%= newArrivals[i + j].productName %>">
                       <div class="card-body">
-                          <h5 class="card-title"><%= product.productName %></h5>
-                          <p class="card-text">&#8377;<%= product.price %></p>
+                        <h5 class="card-title"><%= newArrivals[i + j].productName %></h5>
+                        <p class="card-text">&#8377;<%= newArrivals[i + j].price %></p>
                       </div>
-                  </div>
-                </a>
-              </div>
-          <% }); %>
+                    </div>
+                  </a>
+                </div>
+              <% } %>
+            </div>
+          </div>
+        <% } %>
       </div>
+
+      <!-- Carousel Controls -->
+      <button class="carousel-control-prev" type="button" data-bs-target="#newArrivalsCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#newArrivalsCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+  </div>
+</section>
 
       <!-- Carousel for small screens -->
       <div id="newArrivalsCarousel" class="carousel slide d-lg-none" data-bs-ride="carousel">

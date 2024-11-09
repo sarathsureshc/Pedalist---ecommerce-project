@@ -1,113 +1,77 @@
 <%- include('../partials/user/header.ejs') %>
-    <link rel="stylesheet" href="profile-styles.css">
-    <div class="wrapper">
-        <div class="user-profile-container">
-            <div class="user-details">
-                <h1>Your Orders</h1>
-                <div class="order-info">
-                    <% if (orders.length> 0) { %>
-                        <% orders.forEach(order=> { %>
-                            <div class="order-card">
-                                <h2>Order ID: <%= order.orderId %>
-                                </h2>
-                                <p><strong>Total Price:</strong> ₹<%= order.totalPrice %>
-                                </p>
-                                <p><strong>Payment Status:</strong>
-                                    <%= order.paymentStatus %>
-                                </p>
-                                <p><strong>Address </strong></p>
-                                <p>
-                                <ul>
-                                    <li><strong>Name:</strong>
-                                        <%= order.address.name %>
-                                    </li>
-                                    <li><strong>House Name:</strong>
-                                        <%= order.address.houseName %>
-                                    </li>
-                                    <li><strong>Street Name:</strong>
-                                        <%= order.address.streetName %>
-                                    </li>
-                                    <li><strong>Landmark:</strong>
-                                        <%= order.address.landmark %>
-                                    </li>
-                                    <li><strong>Locality:</strong>
-                                        <%= order.address.locality %>
-                                    </li>
-                                    <li><strong>City:</strong>
-                                        <%= order.address.city %>
-                                    </li>
-                                    <li><strong>State:</strong>
-                                        <%= order.address.state %>
-                                    </li>
-                                    <li><strong>PIN:</strong>
-                                        <%= order.address.pin %>
-                                    </li>
-                                    <li><strong>Contact No:</strong>
-                                        <%=order.address.contactNo %>
-                                    </li>
-                                </ul>
-                                </p>
-                                <p><strong>Invoice Date:</strong>
-                                    <%= order.invoiceDate.toLocaleDateString() %>
-                                </p>
-                                <ul>
-                                    <% order.items.forEach(item=> { %>
-                                        <li>
-                                            <strong>Product Name:</strong>
-                                            <%= item.product.productName %>
-                                        </li>
-                                        <li>
-                                            <strong>Quantity:</strong>
-                                            <%= item.quantity %>
-                                        </li>
-                                        <li class="product-set">
-                                            <strong>Status:</strong>
-                                            <%= item.status %>
-                                        </li>
-                                        <% if (item.status==="Pending" || item.status==="Placed" ||
-                                            item.status==="Processing" || item.status==="Shipped" ) { %>
-                                            <form class="product-set" action="/cancel-order" method="POST" style="display:inline;">
+<link rel="stylesheet" href="order-styles.css">
+<div class="wrapper">
+    <div class="user-profile-container">
+        <div class="user-details">
+            <h1>Your Orders</h1>
+            <div class="order-info">
+                <% if (orders.length > 0) { %>
+                    <% orders.forEach(order => { %>
+                        <div class="order-card">
+                            <h2>Order ID: <%= order.orderId %></h2>
+                            <p><span class="price-text">Total Price:</span> <span class="price-amount">₹<%= order.totalPrice.toFixed(2) %></span></p>
+                            <p><span class="strong-text">Payment Status:</span> <%= order.paymentStatus %></p>
+                            
+                            <ul>
+                                <h3>Delivery Address</h3>
+                                <p><span class="strong-text">Name:</span> <%= order.address.name %></p>
+                                <p><span class="strong-text">Address:</span> <%= order.address.houseName %>, <%= order.address.streetName %>, <%= order.address.landmark %>, <%= order.address.locality %>, <%= order.address.city %>, <%= order.address.state %> - <%= order.address.pin %></p>
+                                <p><span class="strong-text">Contact No:</span> <%= order.address.contactNo %></p>
+                            <p><span class="strong-text">Invoice Date:</span> <%= order.invoiceDate.toLocaleDateString() %></p>
+                            <ul>
+                                <% order.items.forEach(item => { %>
+                                    <li class="item">
+                                        <span class="strong-text">Product Name:</span> <%= item.product.productName %><br>
+                                        <span class="strong-text">Quantity:</span> <%= item.quantity %><br>
+                                        <span class="strong-text">Unit Price:</span>₹<%= item.priceApplied.toFixed(2) %><br>
+                                        <span class="strong-text">Status:</span> <%= item.status %>
+                                        <% if (item.status === "Pending" || item.status === "Placed" || item.status === "Processing" || item.status === "Shipped") { %>
+                                            <form class="product-set" action="/cancel-order" method="POST" style="margin-top: 5px;">
                                                 <input type="hidden" name="orderId" value="<%= order._id %>">
                                                 <input type="hidden" name="itemId" value="<%= item._id %>">
                                                 <input type="hidden" name="quantity" value="<%= item.quantity %>">
                                                 <input type="text" name="reason" placeholder="Cancel reason" required>
                                                 <button type="submit" class="btn btn-danger">Cancel</button>
                                             </form>
-                                            <% } %>
-                                                <% if (item.status==='Delivered' ) { %>
-                                                    <form class="product-set" action="/return-order" method="POST" style="display:inline;">
-                                                        <input type="hidden" name="orderId" value="<%= order._id %>">
-                                                        <input type="hidden" name="itemId" value="<%= item._id %>">
-                                                        <input type="hidden" name="quantity"
-                                                            value="<%= item.quantity %>">
-                                                        <input type="text" name="reason" placeholder="Return reason"
-                                                            required>
-                                                        <button type="submit" class="btn btn-warning">Request
-                                                            Return</button>
-                                                    </form>
-                                                    <% } %>
-                                                        </li>
-                                                        <% }); %>
-                                </ul>
-                            </div>
-                            <% }); %>
-                                <% } else { %>
-                                    <p>No orders found.</p>
-                                    <% } %>
-                </div>
+                                        <% } %>
+                                        <% if (item.status === 'Delivered') { %>
+                                            <form class="product-set" action="/return-order" method="POST" style="margin-top: 5px;">
+                                                <input type="hidden" name="orderId" value="<%= order._id %>">
+                                                <input type="hidden" name="itemId" value="<%= item._id %>">
+                                                <input type="hidden" name="quantity" value="<%= item.quantity %>">
+                                                <input type="text" name="reason" placeholder="Return reason" required>
+                                                <button type="submit" class="btn btn-warning">Request Return</button>
+                                            </form>
+                                        <% } %>
+                                    </li>
+                                <% }); %>
+                            </ul>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <p>No orders found.</p>
+                <% } %>
             </div>
-
-            <div class="right-sidebar">
-                <h3>Profile Navigation</h3>
-                <ul>
-                    <li><a href="/profile">View Profile</a></li>
-                    <li><a href="/address">Manage Address</a></li>
-                    <li><a href="/wishlist">Wishlist</a></li>
-                    <li class="selected">Orders</li>
-                    <li><a href="/wallet">Wallet</a></li>
-                    <li><a href="/logout">Logout</a></li>
-                </ul>
+            <div class="pagination">
+                <% if (totalPages > 1) { %>
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <a href="?page=<%= i %>" class="<%= i === page ? 'active' : '' %>"><%= i %></a>
+                    <% } %>
+                <% } %>
             </div>
         </div>
+
+        <div class="right-sidebar">
+            <h3>Profile Navigation</h3>
+            <ul>
+                <li><a href="/profile">View Profile</a></li>
+                <li><a href="/address">Manage Address</a></li>
+                <li><a href="/wishlist">Wishlist</a></li>
+                <li class="selected">Orders</li>
+                <li><a href="/wallet">Wallet</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
     </div>
-    <%- include('../partials/user/footer.ejs') %>
+</div>
+<%- include('../partials/user/footer.ejs') %>

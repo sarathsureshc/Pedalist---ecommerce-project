@@ -1188,18 +1188,22 @@ body {
 }
 
 .content-product .product h3 {
-  color: #000;
-  font-size: 18px;
+  font-size: 24px;
+  color: #333;
+  font-weight: 500;
   margin: 10px 0;
 }
 
 .content-product .product h6 {
   color: #161616;
+  font-weight: 400;
+  margin-bottom: 5px;
 }
 
 .content-product .product p {
   font-size: 16px;
-  color: #333;
+  color: #666;
+  margin-bottom: 5px;
 }
 
 
@@ -1251,8 +1255,43 @@ input[type="range"]::-moz-range-thumb {
   cursor: pointer;
 }
 
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
 
-/* Product Detail Page Styling */
+.pagination a {
+  display: inline-block;
+  padding: 10px 15px;
+  margin: 0 5px;
+  background-color: #f0f0f0;
+  color: #333;
+  text-decoration: none;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination a:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.pagination a.active {
+  background-color: #007bff;
+  color: white;
+  border: 1px solid #007bff;
+}
+
+.pagination a:disabled {
+  background-color: #e9ecef;
+  color: #6c757d;
+  border: 1px solid #dee2e6;
+  cursor: not-allowed;
+}
+
 .pedalist-product-detail {
   padding-top: 20px;
   padding-bottom: 20px;
@@ -1355,13 +1394,13 @@ input[type="range"]::-moz-range-thumb {
 .main-image {
   width: 100%;
   height: auto;
-  transition: transform 0.3s ease-in-out;
+  transition: transform 0.2s ease;
   cursor: zoom-in;
 }
 
 .main-image-container:hover .main-image {
   transform: scale(1.5);
-  /* Zoom effect */
+  z-index:10;
 }
 
 .pedalist-thumbnail {
@@ -1382,7 +1421,6 @@ input[type="range"]::-moz-range-thumb {
 
 .pedalist-thumbnail-img:hover {
   border-color: #007bff;
-  /* Highlight thumbnail on hover */
 }
 
 
@@ -1397,12 +1435,24 @@ input[type="range"]::-moz-range-thumb {
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
   position: relative;
   width: 100%;
+  min-height: max-content;
 
 }
 .new-arrivals{
   width: 100%;
 }
 
+.original-price {
+    text-decoration: line-through;
+    color: gray;
+    font-size: 1.1em;
+    font-weight: 600;
+}
 
+.discounted-price {
+    color: red;
+    font-weight: bold;
+    font-size: 1.2em;
+}
 
 /***** End Product detail page *****/

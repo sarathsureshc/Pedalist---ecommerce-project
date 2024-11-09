@@ -4,23 +4,42 @@
 </head>
 <div class="cart-container">
     <h2>Your Cart</h2>
+    
+    <!-- Notification Div -->
+    <div class="notification" id="notification" style="display: none;"></div>
+
     <div id="cartItems">
         <% if (cart.length === 0) { %>
             <p>Your cart is empty.</p>
         <% } else { %>
             <% cart.forEach(item => { %>
                 <div class="cart-item" data-product-id="<%= item.productId._id %>">
-                    <img src="./uploads/product-images/<%= item.productId.image[0] %>" alt="<%= item.productId.productName %>" class="img-thumbnail" style="width: 100px;">
-                    <div>
-                        <h5><%= item.productId.productName %></h5>
-                        <p>Brand: <%= item.productId.brandName %></p>
-                        <p>Price: &#8377;<span class="item-price"><%= item.productId.price.toFixed(2) %></span></p>
-                        <p>Quantity: 
-                            <input type="number" value="<%= item.quantity %>" min="1" 
-                                   onchange="updateQuantity('<%= item.productId._id %>', this.value)"
-                                   aria-label="Quantity for <%= item.productId.productName %>">
-                        </p>
-                        <p>Total: &#8377;<span class="item-total" id="total-<%= item.productId._id %>"><%= (item.productId.price * item.quantity).toFixed(2) %></span></p>
+                    <div style="flex: 1; display: flex; align-items: center;">
+                        <img src="./uploads/product-images/<%= item.productId.image[0] %>" alt="<%= item.productId.productName %>" class="img-thumbnail">
+                        <div>
+                            <h5><%= item.productId.productName %></h5>
+                            <p>Brand: <%= item.productId.brandName %></p>
+                            <p>Price: 
+                                <% if (item.productId.bestOffer) { %>
+                                    <span class="original-price" style="text-decoration: line-through;">&#8377;<%= item.productId.price.toFixed(2) %></span>
+                                    <span class="discounted-price" style="color: red;">&#8377;<%= (item.productId.price - item.productId.bestOffer.effectiveDiscount).toFixed(2) %></span>
+                                <% } else { %>
+                                    &#8377;<span class="discounted-price"><%= item.productId.price.toFixed(2) %></span>
+                                <% } %>
+                            </p>
+                            <p>Quantity: 
+                                <input type="number" value="<%= item.quantity %>" min="1" 
+                                       onchange="updateQuantity('<%= item.productId._id %>', this.value)"
+                                       aria-label="Quantity for <%= item.productId.productName %>">
+                            </p>
+                        </div>
+                    </div>
+                    <div style="text-align: right; flex: 0 0 200px;">
+                        <% if (item.productId.bestOffer) { %>
+                            <p>Total: &#8377;<span class="item-total" id="total-<%= item.productId._id %>"><%= ((item.productId.price - item.productId.bestOffer.effectiveDiscount) * item.quantity).toFixed(2) %></span></p>
+                        <% } else { %>
+                            <p>Total: &#8377;<span class="item-total" id="total-<%= item.productId._id %>"><%= (item.productId.price * item.quantity).toFixed(2) %></span></p>
+                        <% } %>
                         <button class="btn btn-danger" onclick="removeFromCart('<%= item.productId._id %>')"
                                 aria-label="Remove <%= item.productId.productName %> from cart">Remove</button>
                     </div>
@@ -34,8 +53,8 @@
             <p>Offer: <%= offer %></p>
         <% } %>
     </div>
-    <% if(cart.length>0){ %>
-    <button class="btn btn-success" onclick="proceedToCheckout()">Proceed to Checkout</button>
+    <% if(cart.length > 0) { %>
+        <button class="btn btn-success" onclick="proceedToCheckout()">Proceed to Checkout</button>
     <% } %>
 </div>
 
@@ -48,16 +67,16 @@
 
     async function updateQuantity(productId, quantity) {
         const cartItem = document.querySelector(`[data-product-id="${productId}"]`);
-        const itemPriceElement = cartItem.querySelector('.item-price');
         const itemTotalElement = cartItem.querySelector('.item-total');
-        const price = parseFloat(itemPriceElement.textContent);
+        const price = cartItem.querySelector('.discounted-price');
 
-        if (isNaN(price)) {
+        if (!price) {
             console.error("Price not found for the item.");
             return;
         }
 
-        const itemTotal = (price * parseInt(quantity)).toFixed(2);
+        const itemPrice = parseFloat(price.textContent.replace(/₹|,/g, '').trim());
+        const itemTotal = (itemPrice * parseInt(quantity)).toFixed(2);
         itemTotalElement.textContent = itemTotal;
 
         updateCartTotal();
@@ -71,13 +90,16 @@
                 body: JSON.stringify({ quantity: parseInt(quantity) }),
             });
 
+            const result = await response.json();
+
             if (!response.ok) {
-                swal("error","Failed to update quantity.");
+                showNotification(result.message || "Failed to update quantity.", "error");
+            } else {
+                showNotification('Quantity updated successfully', "success");
             }
-            swal( 'success','Quantity updated successfully');
         } catch (error) {
             console.error("Error updating quantity:", error);
-            swal('error','Failed to update quantity');
+            showNotification('Failed to update quantity', "error");
         }
     }
 
@@ -87,30 +109,45 @@
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' }
             });
+
+            const result = await response.json();
+
             if (!response.ok) {
-                swal('error',"Failed to remove item.");
+                showNotification(result.message || "Failed to remove item.", "error");
+            } else {
+                const cartItem = document.querySelector(`[data-product-id="${productId}"]`);
+                cartItem.remove();
+                updateCartTotal();
+                showNotification('Item removed from cart', "success");
             }
-            const cartItem = document.querySelector(`[data-product-id="${productId}"]`);
-            cartItem.remove();
-            updateCartTotal();
-           swal( 'success','Item removed from cart');
         } catch (error) {
             console.error(error);
-            swal('error','Failed to remove item');
+            showNotification('Failed to remove item', "error");
         }
     }
 
-    function updateCartTotal() {
-        const cartItems = document.querySelectorAll('.item-total');
-        let totalPrice = 0;
-        cartItems.forEach(item => {
-            const itemValue = parseFloat(item.textContent);
-            if (!isNaN(itemValue)) {
-                totalPrice += itemValue;
-            }
-        });
-        document.getElementById('cart-total').textContent = totalPrice.toFixed(2);
-    }
+    function showNotification(message, type) {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.style.display = 'block'; // Ensure the notification is displayed
 
-    
+        // Change background color based on type
+        notification.style.backgroundColor = type === "success" ? "#28a745" : "#dc3545"; // Green for success, red for error
+
+        notification.classList.add('show');
+
+        // Hide the notification after 3 seconds
+        setTimeout(() => {
+            notification.classList.remove('show');
+            notification.style.display = 'none'; // Hide the notification after it fades out
+        }, 3000);
+    }
+    function updateCartTotal() {
+        const itemTotals = document.querySelectorAll('.item-total');
+        let total = 0;
+        itemTotals.forEach(item => {
+            total += parseFloat(item.textContent.replace(/₹|,/g, '').trim());
+        });
+        document.getElementById('cart-total').textContent = total.toFixed(2);
+    }
 </script>

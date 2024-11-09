@@ -40,13 +40,14 @@
                 <% if (orderItems.length === 0) { %>
                     <p>Your cart is empty.</p>
                 <% } else { %>
-                    <div id="orderItems">
+                    <div id="order Items">
                         <% orderItems.forEach(item => { %>
                             <div class="order-item">
                                 <h5><%= item.productName %></h5>
                                 <p>Quantity: <%= item.quantity %></p>
-                                <p>Price: &#8377;<%= item.price.toFixed(2) %></p>
-                                <p>Subtotal: &#8377;<%= (item.price * item.quantity).toFixed(2) %></p>
+                                <p>Regular Price: &#8377;<%= item.price.toFixed(2) %></p>
+                                <p>Discounted Price: &#8377;<%= (item.price - (item.price * (item.discountPercentage || 0) / 100)).toFixed(2) %></p>
+                                <p>Subtotal: &#8377;<%= item.subtotal.toFixed(2) %></p>
                             </div>
                         <% }) %>
                     </div>
@@ -200,8 +201,10 @@
             address: selectedAddress,
             paymentMethod: selectedPaymentMethod,
             discount: discount,
-            couponCode: discount > 0 ? document.getElementById('couponCode').value : null // Keep track of the coupon code if needed
+            couponCode: discount > 0 ? document.getElementById('couponCode').value : null
         };
+
+        console.log("Order Data to be sent:", orderData);
 
         fetch('/place-order', {
             method: 'POST',
