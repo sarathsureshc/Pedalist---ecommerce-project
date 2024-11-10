@@ -89,7 +89,6 @@ const getCheckoutPage = async (req, res) => {
             };
         });
 
-        // Calculate global discount
         const globalOffers = offers.filter(offer => offer.offerGroup === 'Global');
         let totalDiscount = 0;
         globalOffers.forEach(offer => {
@@ -100,8 +99,12 @@ const getCheckoutPage = async (req, res) => {
 
         const deliveryCharge = 50;
         const totalPrice = subtotal - totalDiscount + deliveryCharge;
+        if(subtotal===0){
+            return res.status(404).json({message:"Cart is empty."});
+        }
 
-        const addresses = await Address.find({ userId: user._id }); // Assuming you have an Address model
+        const addresses = await Address.find({ userId: user._id });
+
 
         res.render("checkout", {
             orderItems,

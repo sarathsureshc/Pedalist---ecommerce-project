@@ -1,68 +1,94 @@
 <%- include('../partials/user/header.ejs') %>
-<head>
-    <link rel="stylesheet" href="cart-style.css">
-</head>
-<div class="cart-container">
-    <h2>Your Wishlist</h2>
-    <div id="wishlistItems">
-        <% if (wishlist.length === 0) { %>
-            <p>Your wishlist is empty.</p>
-        <% } else { %>
-            <% wishlist.forEach(item => { %>
-                <div class="cart-item" data-product-id="<%= item.productId._id %>">
-                    <img src="./uploads/product-images/<%= item.productId.image[0] %>" alt="<%= item.productId.productName %>" class="img-thumbnail" style="width: 100px;">
-                    <div>
-                        <h5><%= item.productId.productName %></h5>
-                        <p>Brand: <%= item.productId.brandName %></p>
-                        <p>Price: &#8377;<span class="item-price"><%= item.productId.price.toFixed(2) %></span></p>
-                        <button class="btn btn-primary" onclick="addToCart('<%= item.productId._id %>')"
-                                aria-label="Add <%= item.productId.productName %> to cart">Add to Cart</button>
-                        <button class="btn btn-danger" onclick="removeFromWishlist('<%= item.productId._id %>')"
-                                aria-label="Remove <%= item.productId.productName %> from wishlist">Remove</button>
-                    </div>
-                </div>
-            <% }) %>
-        <% } %>
+
+    <head>
+        <link rel="stylesheet" href="cart-style.css">
+    </head>
+    <div class="cart-container">
+        <div class="head">
+            <h2>Your Wishlist</h2>
+            <a href="javascript:history.back()" class="btn btn-secondary">Back</a>
+        </div>
+        <div id="wishlistItems">
+            <% if (wishlist.length===0) { %>
+                <p>Your wishlist is empty.</p>
+                <% } else { %>
+                    <% wishlist.forEach(item=> { %>
+                        <div class="cart-item" data-product-id="<%= item.productId._id %>">
+                            <img src="./uploads/product-images/<%= item.productId.image[0] %>"
+                                alt="<%= item.productId.productName %>" class="img-thumbnail" style="width: 100px;">
+                            <div>
+                                <h5>
+                                    <%= item.productId.productName %>
+                                </h5>
+                                <p>Brand: <%= item.productId.brandName %>
+                                </p>
+                                <p>Price: &#8377;<span class="item-price">
+                                        <%= item.productId.price.toFixed(2) %>
+                                    </span></p>
+                                <button class="btn btn-primary" onclick="moveToCart('<%= item.productId._id %>')"
+                                    aria-label="move <%= item.productId.productName %> to cart">move to Cart</button>
+                                <button class="btn btn-danger" onclick="removeFromWishlist('<%= item.productId._id %>')"
+                                    aria-label="Remove <%= item.productId.productName %> from wishlist">Remove</button>
+                            </div>
+                        </div>
+                        <% }) %>
+                            <% } %>
+        </div>
+        <% if(totalProducts> 10) {%>
+            <div class="pagination">
+                <% for (let i=1; i <=totalPages; i++) { %>
+                    <a href="?page=<%= i %>&limit=<%= limit %>" class="<%= currentPage === i ? 'active' : '' %>">
+                        <%= i %>
+                    </a>
+                    <% } %>
+            </div>
+            <% } %>
     </div>
-</div>
 
-<%- include('../partials/user/footer.ejs') %>
+    <%- include('../partials/user/footer.ejs') %>
 
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-<script>
-    async function addToCart(productId) {
-        try {
-            const response = await fetch(`/add-to-cart`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ productId, quantity: 1 })
-            });
-            if (!response.ok) {
-                throw new Error("Failed to add item to cart.");
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        <script>
+            async function moveToCart(productId) {
+                try {
+                    const response = await fetch(`/add-to-cart`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ productId, quantity: 1 })
+                    });
+                    if (!response.ok) {
+                        throw new Error("Failed to move item to cart.");
+                    }
+                    const result = await response.json();
+                    swal("Success", result.message, "success").then(() => {
+                        const wishlistItem = document.querySelector(`[data-product-id="${productId}"]`);
+                        if (wishlistItem) {
+                            wishlistItem.remove();
+                        }
+                        updateCartCount();
+                    });
+                } catch (error) {
+                    console.error("Error moving item to cart:", error);
+                    swal("Error", "Failed to move item to cart", "error");
+                }
             }
-            swal("Success", "Item added to cart", "success");
-        } catch (error) {
-            console.error("Error adding item to cart:", error);
-            swal("Error", "Failed to add item to cart", "error");
-        }
-    }
 
-    async function removeFromWishlist(productId) {
-    try {
-        const response = await fetch(`/wishlist/${productId}`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' }
-        });
-        if (!response.ok) {
-            throw new Error("Failed to remove item from wishlist.");
-        }
-        const wishlistItem = document.querySelector(`[data-product-id="${productId}"]`);
-        wishlistItem.remove();
-        swal("Success", "Item removed from wishlist", "success");
-    } catch (error) {
-        console.error("Error removing item from wishlist:", error);
-        swal("Error", "Failed to remove item from wishlist", "error");
-    }
-}
+            async function removeFromWishlist(productId) {
+                try {
+                    const response = await fetch(`/wishlist/${productId}`, {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    if (!response.ok) {
+                        throw new Error("Failed to remove item from wishlist.");
+                    }
+                    const wishlistItem = document.querySelector(`[data-product-id="${productId}"]`);
+                    wishlistItem.remove();
+                    swal("Success", "Item removed from wishlist", "success");
+                } catch (error) {
+                    console.error("Error removing item from wishlist:", error);
+                    swal("Error", "Failed to remove item from wishlist", "error");
+                }
+            }
 
-</script>
+        </script>

@@ -61,9 +61,25 @@
 <%- include('../partials/user/footer.ejs') %>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script>
-    function proceedToCheckout() {
-        window.location.href = '/checkout';
+    async function proceedToCheckout() {
+    try {
+        const response = await fetch('/checkout');
+
+        if (response.ok) {
+            window.location.href = '/checkout';
+        } else {
+            const data = await response.json();
+            if (data.message) {
+                showNotification(data.message, "error");
+            } else {
+                showNotification("An unexpected error occurred.", "error");
+            }
+        }
+    } catch (error) {
+        console.error("Error proceeding to checkout:", error);
+        showNotification("Failed to proceed to checkout.", "error");
     }
+}
 
     async function updateQuantity(productId, quantity) {
         const cartItem = document.querySelector(`[data-product-id="${productId}"]`);
@@ -129,17 +145,15 @@
     function showNotification(message, type) {
         const notification = document.getElementById('notification');
         notification.textContent = message;
-        notification.style.display = 'block'; // Ensure the notification is displayed
+        notification.style.display = 'block';
 
-        // Change background color based on type
-        notification.style.backgroundColor = type === "success" ? "#28a745" : "#dc3545"; // Green for success, red for error
+        notification.style.backgroundColor = type === "success" ? "#28a745" : "#dc3545";
 
         notification.classList.add('show');
 
-        // Hide the notification after 3 seconds
         setTimeout(() => {
             notification.classList.remove('show');
-            notification.style.display = 'none'; // Hide the notification after it fades out
+            notification.style.display = 'none';
         }, 3000);
     }
     function updateCartTotal() {

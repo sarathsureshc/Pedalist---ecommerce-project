@@ -5,6 +5,7 @@
         <div class="wallet-details">
             <h1>Wallet</h1>
             
+            
             <!-- Display Wallet Balance --> 
             <div class="wallet-balance">
                 <% if (wallet) { %>
@@ -15,7 +16,7 @@
             </div>
             
             <!-- Display Cards -->
-            <div class="wallet-cards">
+            <!-- <div class="wallet-cards">
                 <h3>Saved Cards</h3>
                 <% if (wallet && wallet.card && wallet.card.length > 0) { %>
                     <% wallet.card.forEach(card => { %>
@@ -29,7 +30,7 @@
                     <p>No cards added yet.</p>
                 <% } %>
                 <button class="btn btn-primary"><a href="/wallet/add-card">Add Card</a></button>
-            </div>
+            </div> -->
             
             <!-- Display Transaction History -->
             <div class="wallet-transactions">

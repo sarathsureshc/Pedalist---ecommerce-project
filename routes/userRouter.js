@@ -62,6 +62,7 @@ router.delete('/cart/:id',userAuth,cartController.removeFromCart);
 router.post("/add-to-wishlist",userAuth,wishlistController.addToWishlist)
 router.get("/wishlist",userAuth,wishlistController.loadWishlist);
 router.delete("/wishlist/:id",userAuth,wishlistController.removeFromWishlist);
+router.post("/move-to-cart",userAuth,wishlistController.moveToCart);
 
 router.get('/checkout',userAuth,checkoutController.getCheckoutPage);
 

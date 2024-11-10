@@ -30,28 +30,24 @@ const placeOrder = async (req, res) => {
       return res.status(400).json({ success: false, message: "Your cart is empty." });
     }
 
-    // Fetch all active offers
     const offers = await Offer.find({ isActive: true, isDeleted: false });
 
-    let totalDiscount = 0; // Initialize total discount
-    let subtotal = 0; // Initialize subtotal
-    let coupon = null; // Initialize coupon variable
+    let totalDiscount = 0;
+    let subtotal = 0;
+    let coupon = null;
 
-    // Check if a coupon code was provided
     if (couponCode) {
       coupon = await Coupon.findOne({ couponCode });
     }
 
     for (const item of cart.items) {
       const product = await Product.findById(item.productId._id);
-      let priceAfterOffer = product.price; // Start with the original price
+      let priceAfterOffer = product.price;
       let bestOffer = null;
 
-      // Check applicable offers
       offers.forEach(offer => {
         let isApplicable = false;
 
-        // Determine if the offer is applicable based on the offerGroup
         switch (offer.offerGroup) {
           case 'Brand':
             isApplicable = offer.brandsIncluded.includes(product.brand._id.toString());
@@ -64,7 +60,6 @@ const placeOrder = async (req, res) => {
             break;
         }
 
-        // If the offer is applicable, calculate the effective discount
         if (isApplicable) {
           let effectiveDiscount = 0;
 
@@ -74,12 +69,10 @@ const placeOrder = async (req, res) => {
             effectiveDiscount = offer.offerValue;
           }
 
-          // Ensure the effective discount does not exceed the max discount amount
           if (offer.maxDiscountAmount) {
             effectiveDiscount = Math.min(effectiveDiscount, offer.maxDiscountAmount);
           }
 
-          // Determine if this is the best offer
           if (!bestOffer || effectiveDiscount > bestOffer.effectiveDiscount) {
             bestOffer = {
               offerName: offer.offerName,
@@ -89,21 +82,17 @@ const placeOrder = async (req, res) => {
         }
       });
 
-      // Apply the best offer to the product price
       if (bestOffer) {
         priceAfterOffer -= bestOffer.effectiveDiscount;
-        totalDiscount += bestOffer.effectiveDiscount; // Add to total discount
+        totalDiscount += bestOffer.effectiveDiscount;
       }
 
-      // Calculate subtotal with the price after applying the offer
-      subtotal += priceAfterOffer * item.quantity; // Calculate subtotal
-      item.priceApplied = priceAfterOffer; // Save the price after applying the offer
+      subtotal += priceAfterOffer * item.quantity;
+      item.priceApplied = priceAfterOffer;
     }
 
-    // Log subtotal for debugging
     console.log("Subtotal:", subtotal);
 
-    // Add coupon discount if applicable
     let couponDiscount = 0;
     if (coupon) {
       if (coupon.discountType === 'Percentage') {
@@ -114,21 +103,17 @@ const placeOrder = async (req, res) => {
         } else {
             couponDiscount = coupon.value;
         }
-      totalDiscount += couponDiscount; // Add coupon discount to total discount
-      console.log("Coupon Discount:", couponDiscount); // Log coupon discount for debugging
+      totalDiscount += couponDiscount;
+      console.log("Coupon Discount:", couponDiscount);
     }
 
-    // Log total discount for debugging
     console.log("Total Discount (including coupon):", totalDiscount);
 
-    // Calculate final total price
     const deliveryCharge = 50;
     const totalPrice = subtotal - couponDiscount + deliveryCharge;
 
-    // Log total price for debugging
     console.log("Total Price (after discounts and delivery charge):", totalPrice);
 
-    // Ensure totalPrice is a number
     if (isNaN(totalPrice)) {
       throw new Error("Total price calculation resulted in NaN");
     }
@@ -138,15 +123,15 @@ const placeOrder = async (req, res) => {
       items: cart.items.map((item) => ({
         product: item.productId._id,
         quantity: item.quantity,
-        priceApplied: item.priceApplied, // Save the price applied
+        priceApplied: item.priceApplied,
         status: paymentMethod === "Cash On Delivery" ? "Placed" : "Pending",
       })),
       address,
       paymentMethod: paymentMethod === "Cash On Delivery" ? "Cash On Delivery" : "Pending",
-      totalPrice: totalPrice, // Ensure this is a valid number
-      discount: totalDiscount, // Ensure this is a valid number
-      coupon: coupon ? coupon._id : null, // Save coupon ID if applicable
-      finalAmount: totalPrice, // Ensure this is a valid number
+      totalPrice: totalPrice,
+      discount: totalDiscount,
+      coupon: coupon ? coupon._id : null,
+      finalAmount: totalPrice,
       paymentStatus: "Pending",
     });
 
@@ -154,7 +139,7 @@ const placeOrder = async (req, res) => {
 
     if (paymentMethod === "payNow") {
       const options = {
-        amount: totalPrice * 100, // Convert to smallest currency unit
+        amount: totalPrice * 100,
         currency: "INR",
         receipt: `order_rcptid_${newOrder._id}`,
       };
@@ -271,9 +256,9 @@ const getUserOrders = async (req, res) => {
   try {
     const user = req.session.user || req.user;
     let cartCount = 0;
-    const page = parseInt(req.query.page) || 1; // Get the current page from query params
-    const limit = 3; // Number of orders per page
-    const skip = (page - 1) * limit; // Calculate how many orders to skip
+    const page = parseInt(req.query.page) || 1;
+    const limit = 3;
+    const skip = (page - 1) * limit;
 
     if (user) {
       const userId = user._id;
@@ -281,12 +266,12 @@ const getUserOrders = async (req, res) => {
       const orders = await Order.find({ userId })
         .populate("items.product")
         .populate("address")
-        .sort({ invoiceDate: -1 }) // Sort by invoice date descending
+        .sort({ invoiceDate: -1 })
         .skip(skip)
         .limit(limit);
 
-      const totalOrders = await Order.countDocuments({ userId }); // Get total number of orders
-      const totalPages = Math.ceil(totalOrders / limit); // Calculate total pages
+      const totalOrders = await Order.countDocuments({ userId });
+      const totalPages = Math.ceil(totalOrders / limit);
 
       const cart = await Cart.findOne({ userId: user._id });
 

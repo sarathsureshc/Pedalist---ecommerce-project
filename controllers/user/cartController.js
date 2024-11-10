@@ -81,22 +81,19 @@ const getCart = async (req, res) => {
           return res.status(404).render("cart", { cart: [], totalPrice: 0, offer: "No offer" });
       }
 
-      // Fetch all active offers
       const offers = await Offer.find({ isActive: true, isDeleted: false });
 
-      // Calculate total price and attach best offers
+
       let totalPrice = 0;
-      let globalDiscount = 0; // Initialize global discount
+      let globalDiscount = 0; 
 
       cart.items.forEach(item => {
           const product = item.productId;
           let bestOffer = null;
 
-          // Determine the best offer for the product
           offers.forEach(offer => {
               let isApplicable = false;
 
-              // Check if the offer is applicable based on the offerGroup
               switch (offer.offerGroup) {
                   case 'Brand':
                       isApplicable = offer.brandsIncluded.includes(product.brand._id.toString());
@@ -107,12 +104,10 @@ const getCart = async (req, res) => {
                   case 'Product':
                       isApplicable = offer.productsIncluded.includes(product._id.toString());
                       break;
-                  case 'Global': // Check for global offers
-                      isApplicable = true; // Global offers apply to all products
-                      break;
+                  case 'Global': 
+                      isApplicable = true;
               }
 
-              // If applicable, calculate the effective discount
               if (isApplicable) {
                   let effectiveDiscount = 0;
                   if (offer.offerType === 'Percentage') {
@@ -121,12 +116,10 @@ const getCart = async (req, res) => {
                       effectiveDiscount = offer.offerValue;
                   }
 
-                  // Ensure the effective discount does not exceed the max discount amount
                   if (offer.maxDiscountAmount) {
                       effectiveDiscount = Math.min(effectiveDiscount, offer.maxDiscountAmount);
                   }
 
-                  // Determine if this is the best offer
                   if (!bestOffer || effectiveDiscount > bestOffer.effectiveDiscount) {
                       bestOffer = {
                           offerName: offer.offerName,
@@ -136,11 +129,9 @@ const getCart = async (req, res) => {
               }
           });
 
-          // Calculate total price considering the best offer
           if (bestOffer) {
               totalPrice += (product.price - bestOffer.effectiveDiscount) * item.quantity;
 
-              // Check if it's a global offer
               if (bestOffer.offerName && offers.some(o => o.offerGroup === 'Global' && o.offerName === bestOffer.offerName)) {
                   globalDiscount = Math.max(globalDiscount, bestOffer.effectiveDiscount);
               }
