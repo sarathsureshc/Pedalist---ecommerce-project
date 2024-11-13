@@ -46,6 +46,12 @@
                                     </li>
                                 <% }); %>
                             </ul>
+                            <% if (order.paymentMethod === "Pending" && order.paymentStatus === "Pending") { %>
+                                <form action="/continue-payment" method="POST" style="margin-top: 10px;">
+                                    <input type="hidden" name="orderId" value="<%= order._id %>">
+                                    <button type="submit" class="btn btn-primary">Continue Payment</button>
+                                </form>
+                            <% } %>
                         </div>
                     <% }); %>
                 <% } else { %>
@@ -75,3 +81,82 @@
     </div>
 </div>
 <%- include('../partials/user/footer.ejs') %>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Handle the continue payment form submission
+        const continuePaymentForms = document.querySelectorAll('form[action="/continue-payment"]');
+        
+        continuePaymentForms.forEach(form => {
+            form.addEventListener('submit', async function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                const orderId = form.querySelector('input[name="orderId"]').value;
+
+                try {
+                    const response = await fetch('/continue-payment', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ orderId }),
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        const options = {
+                            "key": data.keyId,
+                            "amount": data.amount * 100,
+                            "currency": data.currency,
+                            "order_id": data.razorpayOrderId,
+                            "handler": function(response) {
+                                verifyPayment(response, orderId);
+                            }
+                        };
+
+                        const razorpay = new Razorpay(options);
+                        razorpay.open(); // Open Razorpay payment modal
+                    } else {
+                        alert(data.message); // Show error message
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred while processing the payment.');
+                }
+            });
+        });
+    });
+
+    // Function to verify payment
+    async function verifyPayment(paymentResponse, orderId) {
+        try {
+            const response = await fetch('/verify-payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    razorpayOrderId: paymentResponse.razorpay_order_id,
+                    paymentId: paymentResponse.razorpay_payment_id,
+                    signature: paymentResponse.razorpay_signature,
+                    orderId: orderId,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert('Payment verified successfully!'); // Show success message
+                // Optionally, redirect to order details or success page
+                window.location.href = '/orders'; // Redirect to orders page
+            } else {
+                alert(data.message); // Show error message
+            }
+        } catch (error) {
+            console.error('Error verifying payment:', error);
+            alert('An error occurred while verifying the payment.');
+        }
+    }
+</script>

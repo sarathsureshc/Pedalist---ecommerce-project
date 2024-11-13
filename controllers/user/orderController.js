@@ -180,22 +180,15 @@ const placeOrder = async (req, res) => {
 const verifyRazorpayPayment = async (req, res) => {
   try {
     const { razorpayOrderId, orderId, paymentId, signature } = req.body;
-    console.log(req.body);
     const order = await Order.findById(orderId);
 
     if (!order) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Order not found." });
+      return res.status(404).json({ success: false, message: "Order not found." });
     }
 
     const hmac = crypto.createHmac("sha256", process.env.RAZORPAY_SECRET_KEY);
     hmac.update(`${razorpayOrderId}|${paymentId}`);
     const expectedSignature = hmac.digest("hex");
-
-    console.log("Expected signature: ", expectedSignature);
-
-    console.log(expectedSignature === signature);
 
     if (expectedSignature === signature) {
       order.paymentStatus = "Completed";
@@ -208,7 +201,7 @@ const verifyRazorpayPayment = async (req, res) => {
       for (const item of order.items) {
         await Product.updateOne(
           { _id: item.product },
-          { $inc: { quantity: -item.quantity } }
+          { $inc: { quantity: - item.quantity } }
         );
       }
 
@@ -220,9 +213,7 @@ const verifyRazorpayPayment = async (req, res) => {
     } else {
       order.paymentStatus = "Failed";
       await order.save();
-      res
-        .status(400)
-        .json({ success: false, message: "Payment verification failed." });
+      res.render("payment-failed", { order });
     }
   } catch (error) {
     console.error("Error verifying payment:", error);
@@ -506,6 +497,52 @@ async function processRefund(userId, orderId, amount, description) {
   }
 }
 
+const continuePayment = async (req, res) => {
+  try {
+    const { orderId } = req.body;
+
+    // Validate orderId
+    if (!mongoose.Types.ObjectId.isValid(orderId)) {
+      return res.status(400).json({ success: false, message: "Invalid order ID." });
+    }
+
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found." });
+    }
+
+    // Updated condition to check payment status and method
+    if (order.paymentStatus !== "Pending" || order.paymentMethod !== "Pending") {
+      return res.status(400).json({ success: false, message: "Payment cannot be continued for this order." });
+    }
+
+    const options = {
+      amount: order.totalPrice * 100, // Convert to smallest currency unit
+      currency: "INR",
+      receipt: `order_rcptid_${order._id}`,
+    };
+
+    const razorpayOrder = await razorpay.orders.create(options);
+
+    // Save Razorpay order ID to the order document
+    order.razorpayOrderId = razorpayOrder.id;
+    await order.save();
+
+    return res.status(200).json({
+      success: true,
+      orderId: order._id,
+      razorpayOrderId: razorpayOrder.id,
+      amount: order.totalPrice,
+      currency: "INR",
+      keyId: razorpay.key_id,
+    });
+  } catch (error) {
+    console.error("Error continuing payment:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error." });
+  }
+};
+
 module.exports = {
   placeOrder,
   verifyRazorpayPayment,
@@ -514,4 +551,5 @@ module.exports = {
   getUserOrders,
   cancelOrderItem,
   requestReturn,
+  continuePayment,
 };

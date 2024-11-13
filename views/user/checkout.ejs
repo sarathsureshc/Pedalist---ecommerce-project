@@ -292,12 +292,7 @@
                     window.location.href = `/order-placed?id=${orderId}`;
                 });
             } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Verification Failed',
-                    text: 'Payment verification failed.',
-                    confirmButtonText: 'OK'
-                });
+                window.location.href = '/payment-failed?id=' + orderId;
             }
         })
         .catch(error => {
@@ -310,6 +305,9 @@
             });
         });
     }
+
+    const rzp = new Razorpay(options);
+rzp.open();
 
     function cancelOrder() {
         window.location.href = '/cart';

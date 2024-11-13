@@ -1,0 +1,48 @@
+<%- include('../partials/user/header.ejs') %>
+<link rel="stylesheet" href="order-placed-styles.css">
+
+<div class="order-confirmation-container">
+    <div class="order-header">
+        <h1 class="order-failure-message" style="color: red;">Payment Failed</h1>
+        <p class="failure-message">We're sorry, but your payment could not be processed.</p>
+    </div>
+
+    <div class="order-details">
+        <h3>Order Summary</h3>
+        <ul>
+            <li><strong>Order ID:</strong> <%= order.orderId %></li>
+            <li><strong>Order Date:</strong> <%= order.invoiceDate.toDateString() %></li>
+            <li><strong>Total Amount:</strong> <span class="price">&#8377;<%= order.totalPrice.toFixed(2) %></span></li>
+            <li><strong>Total Discount:</strong> <span class="price">&#8377;<%= order.discount.toFixed(2) %></span> <strong>(Including Offers and Coupon)</strong></li>
+            <li><strong>Payment Method:</strong> <%= order.paymentMethod %></li>
+        </ul>
+    </div>
+
+    <div class="order-items">
+        <h3>Items Ordered</h3>
+        <% order.items.forEach(item => { %>
+            <div class="item">
+                <h5><%= item.product.productName %></h5>
+                <p>Quantity: <%= item.quantity %></p>
+                <p>Price per Item: &#8377;<%= item.priceApplied.toFixed(2) %></p>
+                <p>Subtotal: &#8377;<%= (item.priceApplied * item.quantity).toFixed(2) %></p>
+                <p><strong>Status:</strong> <%= item.status %></p>
+            </div>
+        <% }) %>
+    </div>
+
+    <div class="delivery-address">
+        <h3>Delivery Address</h3>
+        <p><strong>Name:</strong> <%= order.address.name %></p>
+        <p><strong>Address:</strong> <%= order.address.houseName %>, <%= order.address.streetName %>, <%= order.address.landmark %>, <%= order.address.locality %>, <%= order.address.city %>, <%= order.address.state %> - <%= order.address.pin %></p>
+        <p><strong>Contact No:</strong> <%= order.address.contactNo %></p>
+    </div>
+
+    <div class="order-actions">
+        <a href="/orders" class="btn btn-primary">View My Orders</a>
+        <a href="/" class="btn btn-secondary">Continue Shopping</a>
+        <a href="/continue-payment?id=<%= order._id %>" class="btn btn-warning">Retry Payment</a>
+    </div>
+</div>
+
+<%- include('../partials/user/footer.ejs') %>
