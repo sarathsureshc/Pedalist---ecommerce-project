@@ -103,33 +103,79 @@ body {
 .dashboard-breadcrumbs {
     padding: 10px 0px;
 }
-.dashboard-home-content{
+
+.dashboard-home-content {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    justify-content: center;
+    gap: 10px;
 }
 
 /* Card Styles */
 .dashboard-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: baseline;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
     margin: 15px 0;
-    width: fit-content;
 }
 
-/* Optional: Card Title Style */
+/* Header Styles */
 .dashboard-card h3 {
-    font-size: 1.5em;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    font-size: 1.4em;
+    font-weight: 600;
+    text-align: center;
 }
 
-/* Optional: Card Value Style */
+/* Paragraph Styles */
 .dashboard-card p {
-    font-size: 2em;
-    color: #007bff;
+    font-size: 1.3em;
+    font-weight: 700;
+    margin: 0;
+    text-align: center;
 }
 
+/* List Styles */
+.dashboard-card ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dashboard-card li {
+    display: flex; /* Enable Flexbox */
+    justify-content: space-between; /* Space between left and right spans */
+    padding: 5px 0;
+    font-size: 1em;
+}
+
+/* Button Styles */
+.button {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.button:hover {
+    background-color: #0056b3;
+}
+
+/* Chart Styles */
+.dashboard-chart {
+    margin-top: 20px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 
 /* User Management and Category Management Styles */
 .user-main-content,
@@ -184,7 +230,7 @@ th {
     object-fit: cover;
 }
 
-.img-cropped{
+.img-cropped {
     width: 200px;
     height: auto;
     object-fit: cover;
@@ -214,11 +260,16 @@ th {
 
 /* Styling for the image */
 .thumbnail img {
-    width: 100px; /* Set a fixed width for the images */
-    height: 100px; /* Set a fixed height for the images */
-    object-fit: cover; /* Ensures the image covers the container without stretching */
-    border-radius: 5px; /* Optional: add rounded corners */
-    border: 1px solid #ccc; /* Optional: add a border */
+    width: 100px;
+    /* Set a fixed width for the images */
+    height: 100px;
+    /* Set a fixed height for the images */
+    object-fit: cover;
+    /* Ensures the image covers the container without stretching */
+    border-radius: 5px;
+    /* Optional: add rounded corners */
+    border: 1px solid #ccc;
+    /* Optional: add a border */
 }
 
 /* Styling for the remove icon */
@@ -249,7 +300,7 @@ th {
     width: 100px;
     height: auto;
     margin-top: 10px;
-    
+
 }
 
 /* pagination styles */
@@ -311,13 +362,13 @@ th {
     }
 }
 
-.order-product-card{
+.order-product-card {
     padding: 20px;
     margin: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     max-width: 20rem;
 }
 
-li{
+li {
     list-style-type: none;
 }

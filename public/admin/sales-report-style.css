@@ -1,0 +1,121 @@
+
+/* Dashboard Header */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.dashboard-header h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+/* Breadcrumb Navigation */
+.dashboard-breadcrumbs {
+    margin-bottom: 20px;
+    color: #666;
+}
+
+/* Filter Form */
+#filterForm {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    max-width: fit-content;
+}
+
+#filterForm select, #filterForm input, #filterForm button {
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#filterForm button {
+    color: white;
+    border: none;
+}
+
+/* Sales Report Table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+/* Download Buttons
+a[href*="pdf"], a[href*="excel"] {
+    display: inline-block;
+    margin-right: 10px;
+    padding: 10px 15px;
+    background-color: #28a745;
+    color: white;
+    border-radius: 4px;
+} */
+
+
+#filterForm input[type="text"]{
+    margin-right: 10px;
+}
+
+.download{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: end;
+    gap: 10px;
+    max-width: fit-content;
+    height: 40px;
+}
+
+.filterLine{
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+    
+}
+
+/* Cards Container */
+.cards-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+/* Individual Card */
+.card {
+    background-color: #f8f9fa; /* Light background */
+    border: 1px solid #ddd; /* Border color */
+    border-radius: 8px; /* Rounded corners */
+    padding: 20px; /* Padding inside the card */
+    text-align: center; /* Centered text */
+    flex: 1; /* Equal width for all cards */
+    margin-right: 10px; /* Space between cards */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.card:last-child {
+    margin-right: 0; /* No margin on the last card */
+}
+
+.card h4 {
+    margin: 0 0 10px; /* Margin for the heading */
+    font-size: 18px; /* Font size for the heading */
+}
+
+.card p {
+    font-size: 24px; /* Font size for the content */
+    font-weight: bold; /* Bold text */
+    color: #333; /* Dark text color */
+}

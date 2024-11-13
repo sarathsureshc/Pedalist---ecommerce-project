@@ -44,11 +44,11 @@ const productSchema =  new Schema({
         type: Number,
         required : true
     },
-    discountedPrice : {
-        type: Number,
-        default: 0,
-        required: true
-    },
+    // discountedPrice : {
+    //     type: Number,
+    //     default: 0,
+    //     required: true
+    // },
     quantity : {
         type: Number,
         required: true

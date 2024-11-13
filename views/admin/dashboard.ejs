@@ -1,34 +1,149 @@
 <%- include('../partials/admin/header.ejs') %>
-<div class="wrapper">
-    <div class="dashboard-main-content">
-        <header class="dashboard-header">
-            <h1>Welcome Admin</h1>
-            <a href="/admin/logout" class="dashboard-logout-button">Logout</a>
-        </header>
+    <div class="wrapper">
+        <div class="dashboard-main-content">
+            <header class="dashboard-header">
+                <h1>Welcome Admin</h1>
+                <a href="/admin/logout" class="dashboard-logout-button">Logout</a>
+            </header>
 
-        <nav class="dashboard-breadcrumbs">
-            <a href="/admin">Home</a> 
-        </nav>
+            <nav class="dashboard-breadcrumbs">
+                <a href="/admin">Home</a>
+            </nav>
 
-        <div class="dashboard-home-content">
-            <div class="dashboard-card">
-                <h3>Total Users</h3>
-                <p><%= totalUsers %></p>
+            <div class="dashboard-home-content">
+                <div class="dashboard-card">
+                    <h3>Total Users</h3>
+                    <p>
+                        <%= totalUsers %>
+                    </p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Total Products</h3>
+                    <p>
+                        <%= totalProducts %>
+                    </p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Total Orders</h3>
+                    <p>
+                        <%= totalOrders %>
+                    </p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Total Revenue</h3>
+                    <p>₹ <%= totalRevenue.toFixed(2) %>
+                    </p>
+                </div>
+
+                <!-- Best Selling Products -->
+                <div class="dashboard-card">
+                    <h3>Best Selling Products</h3>
+                    <ul id="bestSellingProducts">
+                        <% bestSellingProducts.forEach(product=> { %>
+                            <li>
+                                <span class="left"><%= product.name %></span><span class="right"><%= product.totalSold %></span>
+                            </li>
+                            <% }) %>
+                    </ul>
+                </div>
+
+                <!-- Best Selling Categories -->
+                <div class="dashboard-card">
+                    <h3>Best Selling Categories</h3>
+                    <ul id="bestSellingCategories">
+                        <% bestSellingCategories.forEach(category=> { %>
+                            <li>
+                                <span class="left"><%= category.name %></span><span class="right"> <%= category.totalSold %>
+                            </li>
+                            <% }) %>
+                    </ul>
+                </div>
+
+                <!-- Best Selling Brands -->
+                <div class="dashboard-card">
+                    <h3>Best Selling Brands</h3>
+                    <ul id="bestSellingBrands">
+                        <% bestSellingBrands.forEach(brand=> { %>
+                            <li>
+                                <span class="left"><%= brand.name %>  </span><span class="right"> <%= brand.totalSold %></span>
+                            </li>
+                            <% }) %>
+                    </ul>
+                </div>
+
+                <!-- Generate Ledger Book -->
+                <div class="dashboard-card">
+                    <h3>Generate Ledger Book</h3>
+                    <a href="/admin/generate-ledger" class="button">Download Ledger</a>
+                </div>
+
             </div>
-            <div class="dashboard-card">
-                <h3>Total Products</h3>
-                <p><%= totalProducts %></p>
+
+            <!-- Sales Overview Chart -->
+            <div class="dashboard-chart">
+                <h3>Sales Overview</h3>
+                <select id="timeframe" onchange="updateChart()">
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                </select>
+                <div id="loading" style="display: none;">Loading...</div>
+                <canvas id="salesChart"></canvas>
             </div>
-            <div class="dashboard-card">
-                <h3>Total Orders</h3>
-                <p><%= totalOrders %></p>
-            </div>
-            <div class="dashboard-card">
-                <h3>Total Revenue</h3>
-                <p>₹ <%= totalRevenue.toFixed(2) %></p>
-            </div>
+
         </div>
     </div>
-</div>
-   
-<%- include('../partials/admin/footer.ejs') %>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let salesChart;
+
+        const updateChart = async () => {
+            const timeframe = document.getElementById('timeframe').value;
+            const loadingIndicator = document.getElementById('loading');
+            loadingIndicator.style.display = 'block'; // Show loading indicator
+
+            try {
+                const response = await fetch(`/admin/sales-data?timeframe=${timeframe}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+
+                if (salesChart) {
+                    salesChart.destroy();
+                }
+
+                const ctx = document.getElementById('salesChart').getContext('2d');
+                salesChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: 'Sales',
+                            data: data.sales,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error fetching sales data:', error);
+                alert('Failed to load sales data. Please try again later.');
+            } finally {
+                loadingIndicator.style.display = 'none'; // Hide loading indicator
+            }
+        };
+
+        // Initial load
+        updateChart();
+    </script>
+
+    <%- include('../partials/admin/footer.ejs') %>
