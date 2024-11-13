@@ -7,6 +7,8 @@
         <p class="thank-you-message">Your order has been successfully placed and is being processed.</p>
     </div>
 
+    
+
     <div class="order-details">
         <h3>Order Summary</h3>
         <ul>
@@ -41,6 +43,7 @@
     <div class="order-actions">
         <a href="/orders" class="btn btn-primary">View My Orders</a>
         <a href="/" class="btn btn-secondary">Continue Shopping</a>
+        <a href="/invoice?id=<%= order._id %>" class="btn btn-success">Download Invoice</a>
     </div>
 </div>
 

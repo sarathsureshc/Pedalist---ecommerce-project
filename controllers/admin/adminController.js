@@ -282,8 +282,7 @@ const generateLedger = async (req, res) => {
 
   doc.pipe(res);
 
-  // Load a font that supports the Rupee symbol
-  doc.font("C:/Windows/Fonts/Arial.ttf"); // Ensure the path is correct
+  doc.font("C:/Windows/Fonts/Arial.ttf"); 
 
   // Title
   doc.fontSize(25).text("Ledger Book", { align: "center" });

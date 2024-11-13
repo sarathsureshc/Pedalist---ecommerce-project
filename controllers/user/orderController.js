@@ -10,6 +10,8 @@ const mongoose = require("mongoose");
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
 const env = require("dotenv").config();
+const PDFDocument = require("pdfkit");
+const path = require('path');
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_ID_KEY,
@@ -239,7 +241,7 @@ const loadOrderPlaced = async (req, res) => {
     const order = await Order.findById(orderId)
       .populate("items.product")
       .populate("address");
-    console.log("Order:", order);
+    // console.log("Order:", order);
 
     if (!order) {
       return res.status(404).send("Order not found");
@@ -248,6 +250,74 @@ const loadOrderPlaced = async (req, res) => {
     res.render("order-placed", { order });
   } catch (error) {
     console.error("Error fetching order:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+const downloadInvoice = async (req, res) => {
+  try {
+    const orderId = req.query.id;
+    const order = await Order.findById(orderId)
+      .populate("items.product")
+      .populate("address");
+
+    if (!order) {
+      return res.status(404).send("Order not found");
+    }
+
+    const doc = new PDFDocument({ margin: 50 });
+    let filename = `invoice-${order.orderId}.pdf`;
+    res.setHeader("Content-disposition", `attachment; filename="${filename}"`);
+    res.setHeader("Content-type", "application/pdf");
+
+    doc.pipe(res);
+
+    doc.font("C:/Windows/Fonts/Arial.ttf");
+
+    doc.fontSize(25).text("Invoice", { align: "center" }).moveDown(1.5);
+    doc.fontSize(16).text(`Order ID: ${order.orderId}`, { align: "right" });
+    doc.text(`Order Date: ${order.invoiceDate.toDateString()}`, { align: "right" });
+    doc.moveDown();
+
+    doc.fontSize(18).text("Order Summary:", { underline: true }).moveDown(0.5);
+    doc.fontSize(14).text(`Total Amount: ₹${order.totalPrice.toFixed(2)}`);
+    doc.text(`Total Discount: ₹${order.discount.toFixed(2)} (Including Offers and Coupon)`);
+    doc.text(`Payment Method: ${order.paymentMethod}`);
+    doc.moveDown(1.5);
+
+    doc.fontSize(18).text("Items Ordered:", { underline: true }).moveDown(0.5);
+    const tableTop = doc.y;
+    doc.fontSize(12).text("Item", 50, tableTop, { bold: true });
+    doc.text("Quantity", 200, tableTop, { bold: true });
+    doc.text("Price per Item", 300, tableTop, { bold: true });
+    doc.text("Subtotal", 400, tableTop, { bold: true });
+
+    doc.moveTo(50, doc.y + 5).lineTo(550, doc.y + 5).stroke();
+    doc.moveDown(1);
+
+    order.items.forEach((item) => {
+      const productName = item.product.productName;
+      const quantity = item.quantity;
+      const price = `₹${item.priceApplied.toFixed(2)}`;
+      const subtotal = `₹${(item.priceApplied * quantity).toFixed(2)}`;
+
+      const rowY = doc.y;
+      doc.fontSize(12).text(productName, 50, rowY);
+      doc.text(quantity, 200, rowY);
+      doc.text(price, 300, rowY);
+      doc.text(subtotal, 400, rowY);
+      doc.moveDown(1);
+    });
+
+    doc.moveDown(2);
+    doc.fontSize(18).text("Delivery Address:", { underline: true }).moveDown(0.5);
+    doc.fontSize(14).text(`Name: ${order.address.name}`);
+    doc.text(`Address: ${order.address.houseName}, ${order.address.streetName}, ${order.address.landmark}, ${order.address.locality}, ${order.address.city}, ${order.address.state} - ${order.address.pin}`);
+    doc.text(`Contact No: ${order.address.contactNo}`);
+
+    doc.end();
+  } catch (error) {
+    console.error("Error generating invoice:", error);
     res.status(500).send("Internal Server Error");
   }
 };
@@ -440,6 +510,7 @@ module.exports = {
   placeOrder,
   verifyRazorpayPayment,
   loadOrderPlaced,
+  downloadInvoice,
   getUserOrders,
   cancelOrderItem,
   requestReturn,

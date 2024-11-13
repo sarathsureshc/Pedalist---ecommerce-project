@@ -68,6 +68,7 @@ router.get('/checkout',userAuth,checkoutController.getCheckoutPage);
 
 router.post('/place-order',userAuth, orderController.placeOrder);
 router.get('/order-placed',userAuth, orderController.loadOrderPlaced);
+router.get("/invoice",userAuth, orderController.downloadInvoice);
 router.post('/verify-payment',userAuth, orderController.verifyRazorpayPayment);
 
 router.get('/wallet',userAuth, walletController.getWallet);

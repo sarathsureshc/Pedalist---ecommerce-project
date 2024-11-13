@@ -46,6 +46,7 @@ const getSalesReport = async (req, res) => {
     const salesData = await Order.aggregate([
         { $match: match },
         { $unwind: "$items" },
+        { $match: { "items.status": { $in: ["Placed", "Shipped", "Delivered"] } } },
         {
             $lookup: {
                 from: "products",
@@ -62,7 +63,7 @@ const getSalesReport = async (req, res) => {
                 price: { $first: "$productDetails.price" },
                 totalSalesCount: { $sum: "$items.quantity" },
                 totalRevenue: { $sum: { $multiply: ["$items.quantity", "$items.priceApplied"] } },
-                productDiscount: {
+                totalDiscount: {
                     $sum: {
                         $multiply: ["$items.quantity", { $subtract: ["$productDetails.price", "$items.priceApplied"] }]
                     }
@@ -72,20 +73,10 @@ const getSalesReport = async (req, res) => {
         { $sort: { totalSalesCount: -1 } }
     ]);
 
-    // Additional aggregation for total discount in all orders
-    const discountAggregation = await Order.aggregate([
-        { $match: match },
-        {
-            $group: {
-                _id: null,
-                totalDiscount: { $sum: "$discount" }
-            }
-        }
-    ]);
-
-    const totalDiscount = discountAggregation.length > 0 ? discountAggregation[0].totalDiscount : 0;
+    // Calculate total discount from sales data
+    const totalDiscount = salesData.reduce((acc, sale) => acc + (sale.totalDiscount || 0), 0);
     const totalSalesCount = salesData.reduce((acc, sale) => acc + sale.totalSalesCount, 0);
-    const totalOrderAmount = salesData.reduce((acc , sale) => acc + sale.totalRevenue, 0);
+    const totalOrderAmount = salesData.reduce((acc, sale) => acc + sale.totalRevenue, 0);
     const topProduct = salesData[0];
 
     // Respond with JSON if AJAX request
@@ -126,6 +117,8 @@ const downloadSalesReportPDF = async (req, res) => {
         res.setHeader('Content-type', 'application/pdf');
 
         doc.pipe(res);
+
+        doc.font("C:/Windows/Fonts/Arial.ttf"); 
 
         // Headline
         doc.fontSize(25).text('Pedalist Bikes', { align: 'center' });
@@ -282,6 +275,7 @@ const getSalesData = async (filters) => {
         const salesData = await Order.aggregate([
             { $match: match },
             { $unwind: "$items" },
+            { $match: { "items.status": { $in: ["Placed", "Shipped", "Delivered"] } } }, // Filter by item status
             {
                 $lookup: {
                     from: "products",
