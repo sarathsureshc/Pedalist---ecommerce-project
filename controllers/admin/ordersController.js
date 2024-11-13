@@ -37,7 +37,6 @@ const loadOrderPage = async (req, res) => {
 const loadOrderDetail = async (req, res) => {
   try {
     const orderId = req.query.id;
-    // console.log("Order ID:", orderId);
 
     const order = await Order.findById(orderId)
       .populate("userId", "firstName")
@@ -45,7 +44,9 @@ const loadOrderDetail = async (req, res) => {
       .populate("items.product")
       .populate("coupon");
 
-      // console.log(order.items);
+    if (order) {
+      order.coupon = order.coupon || { couponCode: null };
+    }
 
     if (!order) {
       return res.status(404).send({ message: "Order not found" });

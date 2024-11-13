@@ -73,13 +73,13 @@ const loadDashboard = async (req, res) => {
     const bestSellingCategories = await getBestSellingCategories();
     const bestSellingBrands = await getBestSellingBrands();
 
-    console.log("Total Users:", totalUsers);
-    console.log("Total Products:", totalProducts);
-    console.log("Total Orders:", ordersCount);
-    console.log("Total Revenue:", revenue);
-    console.log("Best Selling Products:", bestSellingProducts);
-    console.log("Best Selling Categories:", bestSellingCategories);
-    console.log("Best Selling Brands:", bestSellingBrands);
+    // console.log("Total Users:", totalUsers);
+    // console.log("Total Products:", totalProducts);
+    // console.log("Total Orders:", ordersCount);
+    // console.log("Total Revenue:", revenue);
+    // console.log("Best Selling Products:", bestSellingProducts);
+    // console.log("Best Selling Categories:", bestSellingCategories);
+    // console.log("Best Selling Brands:", bestSellingBrands);
 
     res.render("dashboard", {
       totalUsers,
@@ -192,7 +192,7 @@ const getBestSellingProducts = async () => {
     { $unwind: "$product" },
     { $project: { name: "$product.productName", totalSold: "$totalSold" } },
   ]);
-  console.log("Best Selling Products Results:", results);
+  // console.log("Best Selling Products Results:", results);
   return results;
 };
 
@@ -230,7 +230,7 @@ const getBestSellingCategories = async () => {
     { $unwind: "$category" },
     { $project: { name: "$category.name", totalSold: "$totalSold" } },
   ]);
-  console.log("Best Selling Categories Results:", results);
+  // console.log("Best Selling Categories Results:", results);
   return results;
 };
 
@@ -265,7 +265,7 @@ const getBestSellingBrands = async () => {
     { $unwind: "$brand" },
     { $project: { name: "$brand.brandName", totalSold: "$totalSold" } },
   ]);
-  console.log("Best Selling Brands Results:", results);
+  // console.log("Best Selling Brands Results:", results);
   return results;
 };
 

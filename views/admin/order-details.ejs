@@ -12,8 +12,8 @@
                 <li><h3>Order ID: <%= order._id %></h3></li>
                 <li><p><strong>User Name:</strong> <%= order.userId.firstName %></p></li>
                 <li><p><strong>Total Amount:</strong> <%= order.totalPrice %></p></li>
-                <li><p><strong>Coupon Applied:</strong> <%= order.coupon.couponCode %></p></li>
-                <li><p><strong>Discount:</strong> <%= order.discount %></p></li>
+                <li>
+                  <p><strong>Coupon Applied:</strong> <%= order.coupon && order.coupon.couponCode ? order.coupon.couponCode : 'No coupon applied' %></p></li>
                 <li><p><strong>Payment Status:</strong> <%= order.paymentStatus %></p></li>
                 <li><p><strong>Payment Method:</strong> <%= order.paymentMethod %></p></li>
                 <li><p><strong>Transaction Id:</strong> <%= order.transactionId %></p></li>

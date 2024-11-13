@@ -157,28 +157,31 @@ const getUnlistProduct = async (req, res) => {
 const deleteProduct = async (req, res) => {
   const { productId } = req.body;
 
+  console.log(req.body);
+
   if (!productId) {
-    console.log("Product not found");
-    return res.status(400).json({ message: "Product not found" });
+    console.log("Product ID not provided");
+    return res.status(400).json({ message: "Product ID not found" });
   }
+
   try {
+    // Check if the product exists
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Update the product
     const result = await Product.findByIdAndUpdate(
       productId,
       { isDeleted: true, isListed: false },
       { new: true }
     );
 
-    if (!result) {
-      return res.status(404).json({ message: "Product not found" });
-    }
-    res
-      .status(200)
-      .json({ status: true, message: "Product deleted successfully" });
+    res.status(200).json({ status: true, message: "Product deleted successfully" });
   } catch (error) {
     console.error("Error deleting product:", error);
-    res
-      .status(500)
-      .json({ status: false, message: "Failed to delete product" });
+    res.status(500).json({ status: false, message: "Failed to delete product" });
   }
 };
 

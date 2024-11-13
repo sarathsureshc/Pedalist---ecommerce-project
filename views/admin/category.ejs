@@ -195,53 +195,18 @@
                 });
             }
 
-            async function addOffer(categoryId) {
-                const { value: amount } = await Swal.fire({
-                    title: 'Enter Offer Percentage',
-                    input: 'number',
-                    inputLabel: 'Percentage',
-                    inputPlaceholder: "%"
-                });
-
-                if (amount) {
-                    try {
-                        const response = await fetch("/admin/add-category-offer", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ categoryId, percentage: amount }),
-                        });
-                        const data = await response.json();
-                        if (response.ok && data.status) {
-                            Swal.fire('Offer Added', 'Offer has been added successfully', 'success').then(() => location.reload());
-                        } else {
-                            Swal.fire("Failed", data.message || "Adding offer failed", "error");
-                        }
-                    } catch (error) {
-                        Swal.fire('Error', 'Failed to add offer', 'error');
-                    }
-                }
-            }
-
-            async function removeOffer(categoryId) {
-                try {
-                    const response = await fetch("/admin/remove-category-offer", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ categoryId }),
-                    });
-                    const data = await response.json();
-                    if (response.ok && data.status) {
-                        Swal.fire('Offer Removed', 'Offer has been removed successfully', 'success').then(() => location.reload());
-                    } else {
-                        Swal.fire("Failed", data.message || "Removing offer failed", "error");
-                    }
-                } catch (error) {
-                    Swal.fire('Error', 'Failed to remove offer', 'error');
-                }
-            }
+    
 
             async function deleteCategory(categoryId) {
-                const confirmation = confirm("Are you sure you want to delete this category?");
+                const confirmation = await Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Are you sure to delete this category?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                })
                 if (!confirmation) return;
 
                 try {

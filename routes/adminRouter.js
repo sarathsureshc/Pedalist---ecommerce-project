@@ -53,8 +53,8 @@ router.get("/unlist-product",adminAuth,productController.getUnlistProduct);
 router.get("/edit-product",adminAuth,productController.getEditProduct);
 router.post("/edit-product/:id",adminAuth,uploads.array("images",4), productController.editProduct);
 router.post("/delete-image",adminAuth,productController.deleteSingleImage);
-router.post('/deleteProduct',adminAuth,productController.deleteProduct);
-router.post('/restoreProduct',adminAuth,productController.restoreProduct);
+router.post('/delete-product',adminAuth,productController.deleteProduct);
+router.post('/restore-product',adminAuth,productController.restoreProduct);
 
 router.get('/orders',adminAuth,ordersController.loadOrderPage);
 router.get('/order',adminAuth,ordersController.loadOrderDetail);

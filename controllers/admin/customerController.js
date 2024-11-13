@@ -34,7 +34,7 @@ const customerInfo = async (req, res) => {
 
     const totalPages = Math.ceil(count / limit);
 
-    console.log("page rendered");
+    // console.log("page rendered");
     res.render("customers", {
       data: userData,
       count,
