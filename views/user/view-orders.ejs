@@ -25,7 +25,7 @@
                                         <span class="strong-text">Quantity:</span> <%= item.quantity %><br>
                                         <span class="strong-text">Unit Price:</span>₹<%= item.priceApplied.toFixed(2) %><br>
                                         <span class="strong-text">Status:</span> <%= item.status %>
-                                        <% if (item.status === "Pending" || item.status === "Placed" || item.status === "Processing" || item.status === "Shipped") { %>
+                                        <% if (item.status === "Placed" || item.status === "Processing" || item.status === "Shipped") { %>
                                             <form class="product-set" action="/cancel-order" method="POST" style="margin-top: 5px;">
                                                 <input type="hidden" name="orderId" value="<%= order._id %>">
                                                 <input type="hidden" name="itemId" value="<%= item._id %>">
@@ -49,7 +49,7 @@
                             <% if (order.paymentMethod === "Pending" && order.paymentStatus === "Pending") { %>
                                 <form action="/continue-payment" method="POST" style="margin-top: 10px;">
                                     <input type="hidden" name="orderId" value="<%= order._id %>">
-                                    <button type="submit" class="btn btn-primary">Continue Payment</button>
+                                    <button type="submit" class="btn btn-danger">Retry Payment</button>
                                 </form>
                             <% } %>
                         </div>

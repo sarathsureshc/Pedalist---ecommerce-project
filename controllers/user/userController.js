@@ -1,9 +1,12 @@
 const User = require("../../models/userSchema");
 const Product = require("../../models/productSchema");
 const Cart = require("../../models/cartSchema");
+const Offer = require("../../models/offerSchema");
+const Wallet = require("../../models/walletSchema");
 const env = require("dotenv").config();
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
+const mongoose = require("mongoose");
 
 const pageNotFound = async (req, res) => {
   try {
@@ -108,7 +111,7 @@ async function sendVerificationEmail(email, otp) {
 
 const signup = async (req, res) => {
   try {
-    const { firstName, lastName, mobileNumber, email, password } = req.body;
+    const { firstName, lastName, mobileNumber, email, password,referral } = req.body;
 
     const findUser = await User.findOne({ email: email });
     if (findUser) {
@@ -136,6 +139,7 @@ const signup = async (req, res) => {
       mobileNumber,
       email,
       passwordHash,
+      referral
     };
 
     // console.log(req.session.userData);
@@ -158,50 +162,124 @@ const securePassword = async (password) => {
 
 const verifyOtp = async (req, res) => {
   try {
-    const { otp } = req.body;
+      const { otp } = req.body;
 
-    // console.log("Entered OTP : ",otp);
+      if (Date.now() > req.session.otpExpiry) {
+          return res
+              .status(400)
+              .json({ success: false, message: "OTP has expired. Please request a new one." });
+      }
 
-    if (Date.now() > req.session.otpExpiry) {
-      console.log("OTP expired");
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "OTP has expired. Please request a new one.",
-        });
-    }
+      if (otp === req.session.userOtp) {
+          const user = req.session.userData;
 
-    if (otp === req.session.userOtp) {
-      const user = req.session.userData;
+          const generateReferralCode = () => {
+              return Math.random().toString(36).substring(2, 8).toUpperCase();
+          };
 
-      const saveUserData = new User({
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        mobileNumber: user.mobileNumber,
-        password: user.passwordHash,
-      });
+          const saveUserData = new User({
+              firstName: user.firstName,
+              lastName: user.lastName,
+              email: user.email,
+              mobileNumber: user.mobileNumber,
+              password: user.passwordHash,
+              referral: user.referral,
+              referralCode: generateReferralCode(),
+          });
 
-      // console.log("Saved data : ", saveUserData);
+          let newUserReward = 0;
 
-      await saveUserData.save();
-      // req.session.user = saveUserData._id;
+          if (saveUserData.referral) {
+              const referralUser  = await User.findOne({ referralCode: user.referral });
+              if (referralUser ) {
+                  const refOffer = await Offer.findOne({ offerGroup: "Referral" });
+                  if (refOffer && typeof refOffer.offerValue === 'number') {
+                      let referralUserWallet = await Wallet.findOne({ userId: referralUser._id });
+                      const offerAmount = Number(refOffer.offerValue);
 
-      req.session.userOtp = null;
-      req.session.otpExpiry = null;
+                      if (!referralUserWallet) {
+                          referralUserWallet = new Wallet({
+                              userId: referralUser._id,
+                              balance: offerAmount, 
+                              card: [],
+                              transaction: [],
+                          });
+                          await referralUserWallet.save();
+                      } else {
+                          referralUserWallet.balance = (referralUserWallet.balance || 0) + offerAmount;
+                          await referralUserWallet.save();
+                      }
+                      const description = `Added ${offerAmount} due to referral`;
+                      await processReferral(referralUser._id, offerAmount, description);
 
-      res.json({ success: true, redirectUrl: "/login" });
-    } else {
-      res
-        .status(400)
-        .json({ success: false, message: "Invalid OTP, Please try again" });
-    }
+                      newUserReward = offerAmount;
+                  } else {
+                      console.error("Referral offer not found or invalid offer amount");
+                  }
+              } else {
+                  console.error("Referral user not found");
+              }
+          }
+
+          await saveUserData.save();
+
+          let newUserWallet = await Wallet.findOne({ userId: saveUserData._id });
+          if (!newUserWallet) {
+              newUserWallet = new Wallet({
+                  userId: saveUserData._id,
+                  balance: newUserReward,
+                  card: [],
+                  transaction: [],
+              });
+              await newUserWallet.save();
+
+          } else {
+              newUserWallet.balance = (newUserWallet.balance || 0) + newUserReward;
+              await newUserWallet.save();
+          }
+          const description = `Added ${newUserReward} due to referral`;
+          await processReferral(saveUserData._id, newUserReward, description);
+
+          req.session.userOtp = null;
+          req.session.otpExpiry = null;
+
+          res.json({ success: true, redirectUrl: "/login" });
+      } else {
+          res.status(400).json({ success: false, message: "Invalid OTP, Please try again" });
+      }
   } catch (error) {
-    console.error("Error verifying OTP", error);
-    res.status(500).json({ success: false, message: "An error occurred" });
+      console.error("Error verifying OTP", error);
+      res.status(500).json({ success: false, message: "An error occurred" });
   }
 };
+
+
+async function processReferral(userId, amount, description) {
+  try {
+      const wallet = await Wallet.findOne({ userId });
+
+      if (!wallet) {
+          throw new Error("Wallet not found");
+      }
+
+      const transaction = {
+          transactionId: new mongoose.Types.ObjectId(),
+          transactionType: "Referral",
+          transactionDate: new Date(),
+          reference: `Reward for referral`,
+          amount: amount,
+          description: description,
+      };
+
+      wallet.transaction.push(transaction);
+
+      await wallet.save();
+
+      console.log("Referral processed successfully.");
+  } catch (error) {
+      console.error("Error processing referral:", error);
+  }
+}
 
 const resendOtp = async (req, res) => {
   try {

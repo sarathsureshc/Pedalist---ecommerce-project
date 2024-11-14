@@ -76,25 +76,18 @@
             <input type="password" id="password" name="password" placeholder="Enter a password">
             <div id="passwordError" class="error-message"></div>
           </div>
+
+          <div class="input-group">
+            <label for="referral">Referral Code</label>
+            <input type="referral" id="referral" name="referral" placeholder="Enter a referral code">
+          </div>
+
           <% if(locals.message && message.length >0){ %>
             <div  class="alert alert-danger text-center">
               <%= message %>
             </div>
           <%}%>
           <button class="button">CONTINUE</button>
-        </div>
-
-        <!-- Separator -->
-        <div class="separator my-3">
-          <span>OR</span>
-        </div>
-
-        <!-- Social login buttons -->
-        <div class="d-grid gap-2">
-          <a href="/auth/google" class="btn btn-outline-dark"><i class="fab fa-google"></i> Login with Google</a>
-          <a type="button" class="btn btn-outline-primary"><i class="fab fa-facebook"></i> Login with
-            Facebook</a>
-          <a type="button" class="btn btn-outline-secondary"><i class="fab fa-apple"></i> Login with Apple</a>
         </div>
 
         <!-- Sign up -->

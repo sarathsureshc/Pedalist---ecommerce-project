@@ -22,7 +22,7 @@ const offerSchema =  new Schema({
     offerGroup:{
         type : String,
         required: true,
-        enum:['Global','Product','Category','Brand']
+        enum:['Global','Product','Category','Brand','Referral']
     },    
     productsIncluded:{
         type:Array,
@@ -47,8 +47,7 @@ const offerSchema =  new Schema({
     },
     offerType: {
         type: String,
-        required: true,
-        enum:['Percentage','Flat']
+        enum:['Percentage','Flat','null']
     },
     offerValue: {
         type: Number,

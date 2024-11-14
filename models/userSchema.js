@@ -59,8 +59,12 @@ const userSchema = new Schema({
         type : Date,
         default : Date.now
     },
+    referral:{
+        type : String
+    },
     referralCode : {
         type : String,
+        unique : true
     },
     redeemed : {
         type : Boolean,

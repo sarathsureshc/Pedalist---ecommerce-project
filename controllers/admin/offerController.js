@@ -53,26 +53,27 @@ const getAddOfferPage = async (req, res) => {
 const addOffer = async (req, res) => {
     const { offerName, discountDescription, offerGroup, productsIncluded, categoriesIncluded, brandsIncluded, 
             startDate, endDate, minPurchaseAmount, maxDiscountAmount, offerType, offerValue } = req.body;
-   console.log(req.body)
-    
-    
+
     try {
-       
         const existingOffer = await Offer.findOne({
             offerName: { $regex: new RegExp('^' + offerName + '$', 'i') },
             isDeleted: false
         });
 
         if (existingOffer) {
-            return res.status(400).send({message :'An offer with this name already exists.'});
+            return res.status(400).send({ message: 'An offer with this name already exists.' });
+        }
+
+        if (offerGroup === 'Referral' && !offerValue) {
+            return res.status(400).send({ message: 'Offer Value is required for Referral offers.' });
         }
 
         if (offerType === 'Percentage') {
             if (offerValue > 92) {
-                return res.status(400).send({message : 'Percentage offer value cannot exceed 92%.'});
+                return res.status(400).send({ message: 'Percentage offer value cannot exceed 92%.' });
             }
             if (offerValue < 0) {
-                return res.status(400).send({message : 'Percentage offer value cannot be less than 0.'});
+                return res.status(400).send({ message: 'Percentage offer value cannot be less than 0.' });
             }
         }
 
@@ -94,8 +95,7 @@ const addOffer = async (req, res) => {
 
         const newOffer = new Offer(offerData);
         await newOffer.save();
-        console.log("saved",newOffer)
-        res.status(200).send({success:true , message : 'Offer Added Successfully'});
+        res.status(200).send({ success: true, message: 'Offer Added Successfully' });
     } catch (error) {
         console.error('Error creating offer:', error);
         res.status(500).send('Internal Server Error');
@@ -141,10 +141,7 @@ const editOffer = async (req, res) => {
     const categoriesIncluded = req.body.categoriesIncluded || [];
     const brandsIncluded = req.body.brandsIncluded || [];
 
-    console.log("Id :" , req.params.id); 
-
     try {
-        
         const existingOffer = await Offer.findOne({
             offerName: { $regex: new RegExp('^' + offerName + '$', 'i') },
             isDeleted: false,
@@ -152,19 +149,23 @@ const editOffer = async (req, res) => {
         });
 
         if (existingOffer) {
-            return res.status(400).send({message : 'An active offer with the same name already exists.'});
+            return res.status(400).send({ message: 'An active offer with the same name already exists.' });
+        }
+
+        if (offerGroup === 'Referral' && !offerValue) {
+            return res.status(400).send({ message: 'Offer Value is required for Referral offers.' });
         }
 
         if (offerType === 'Percentage') {
             if (offerValue > 92) {
-                return res.status(400).send({message : 'Percentage offer value cannot exceed 92%.'});
+                return res.status(400).send({ message: 'Percentage offer value cannot exceed 92%.' });
             }
             if (offerValue < 0) {
-                return res.status(400).send({message : 'Percentage offer value cannot be less than 0.'});
+                return res.status(400).send({ message: 'Percentage offer value cannot be less than 0.' });
             }
         }
 
-        const offerup = await Offer.findByIdAndUpdate(req.params.id, {
+        const offerUpdateData = {
             offerName,
             discountDescription,
             startDate,
@@ -177,13 +178,13 @@ const editOffer = async (req, res) => {
             productsIncluded,
             categoriesIncluded,
             brandsIncluded,
-        }, { new: true });
-        res.json({
-            success: true,
-            message: 'Offer edited successfully.'});
+        };
+
+        await Offer.findByIdAndUpdate(req.params.id, offerUpdateData, { new: true });
+        res.json({ success: true, message: 'Offer edited successfully.' });
     } catch (err) {
         console.error('Error updating offer:', err);
-        res.status(500).redirect(`/admin/edit-offer/${req.params.id}`);
+        res.status(500).send('Internal Server Error');
     }
 };
 
