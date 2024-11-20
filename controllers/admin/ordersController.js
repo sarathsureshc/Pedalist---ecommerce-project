@@ -9,6 +9,7 @@ const mongoose = require("mongoose");
 
 const loadOrderPage = async (req, res) => {
   try {
+    
     const { search, page = 1, limit = 10 } = req.query;
 
     const query = search
@@ -36,6 +37,7 @@ const loadOrderPage = async (req, res) => {
 
 const loadOrderDetail = async (req, res) => {
   try {
+
     const orderId = req.query.id;
 
     const order = await Order.findById(orderId)

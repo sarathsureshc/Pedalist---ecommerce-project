@@ -5,6 +5,7 @@
     <div class="checkout-layout">
         <div class="address-selection-container">
             <h3>Select Address</h3>
+            <button class="btn btn-primary" onclick="showAddAddressModal()">Add New Address</button>
             <div class="address-selection">
                 <% if (addresses.length === 0) { %>
                     <p>No addresses found. Please add an address.</p>
@@ -77,6 +78,10 @@
                     <label for="payNow">Pay Now</label>
                 </div>
                 <div>
+                    <input type="radio" id="walletPayment" name="paymentMethod" value="Wallet Payment">
+                    <label for="walletPayment">Wallet Payment</label>
+                </div>
+                <div>
                     <input type="radio" id="cashOnDelivery" name="paymentMethod" value="Cash On Delivery">
                     <label for="cashOnDelivery">Cash on Delivery</label>
                 </div>
@@ -114,12 +119,94 @@
     </div>
 </div>
 
+<!-- Add Address Modal -->
+<div id="addAddressModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeAddAddressModal()">&times;</span>
+        <h2>Add New Address</h2>
+        <form id="addAddressForm">
+            <input type="text" id="name" placeholder="Name" required>
+            <input type="text" id="houseName" placeholder="House Name" required>
+            <input type="text" id="streetName" placeholder="Street Name" required>
+            <input type="text" id="landmark" placeholder="Landmark" required>
+            <input type="text" id="locality" placeholder="Locality" required>
+            <input type="text" id="city" placeholder="City" required>
+            <input type="text" id="state" placeholder="State" required>
+            <input type="text" id="pin" placeholder="PIN" required>
+            <input type="text" id="contactNo" placeholder="Contact No" required>
+            <button type="submit" class="btn btn-success">Add Address</button>
+        </form>
+    </div>
+</div>
+
+
 <%- include('../partials/user/footer.ejs') %>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script>
+
+function showAddAddressModal() {
+        document.getElementById('addAddressModal').style.display = 'block';
+    }
+
+    function closeAddAddressModal() {
+        document.getElementById('addAddressModal').style.display = 'none';
+    }
+
+    document.getElementById('addAddressForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const newAddress = {
+            name: document.getElementById('name').value,
+            houseName: document.getElementById('houseName').value,
+            streetName: document.getElementById('streetName').value,
+            landmark: document.getElementById('landmark').value,
+            locality: document.getElementById('locality').value,
+            city: document.getElementById('city').value,
+            state: document.getElementById('state').value,
+            pin: document.getElementById('pin').value,
+            contactNo: document.getElementById('contactNo').value
+        };
+
+        fetch('/add-checkout-address', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newAddress)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Address Added',
+                    text: 'New address has been added successfully.',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    location.reload();
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.message,
+                    confirmButtonText: 'OK'
+                });
+            }
+        })
+        .catch(error => {
+            console.error("Error adding address:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'An error occurred while adding the address. Please try again.',
+                confirmButtonText: 'OK'
+            });
+        });
+    });
+
     let discount = 0;
 
     function showCouponModal() {
@@ -183,88 +270,100 @@
     }
 
     function placeOrder() {
-        const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked').value;
-        const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+    const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked').value;
+    const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
 
-        if (!selectedAddress) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'No Address Selected',
-                text: 'Please select an address.',
-                confirmButtonText: 'OK'
-            });
-            return;
-        }
+    if (!selectedAddress) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'No Address Selected',
+            text: 'Please select an address.',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
 
-        const orderData = {
-            address: selectedAddress,
-            paymentMethod: selectedPaymentMethod,
-            discount: discount,
-            couponCode: discount > 0 ? document.getElementById('couponCode').value : null
-        };
+    const orderData = {
+        address: selectedAddress,
+        paymentMethod: selectedPaymentMethod,
+        discount: discount,
+        couponCode: discount > 0 ? document.getElementById('couponCode').value : null
+    };
 
-        if(selectedPaymentMethod === "Cash On Delivery" && totalPrice > 3500  ){
-            Swal.fire({
-                    icon: 'error',
-                    title: 'Order Failed',
-                    text: 'Cash on delivery is not applicable for order above 3500!!!',
+    // Handle the case for Cash On Delivery limit
+    if(selectedPaymentMethod === "Cash On Delivery" && totalPrice > 3500) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Order Failed',
+            text: 'Cash on delivery is not applicable for orders above ₹3500!',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    console.log("Order Data to be sent:", orderData);
+
+    fetch('/place-order', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(orderData)
+    })
+    .then(response => response.json())
+    .then(data => { 
+        console.log(data);
+        if (data.success) {
+            if (selectedPaymentMethod === "payNow") {
+                const options = {
+                    "key": data.keyId,
+                    "amount": data.amount * 100,
+                    "currency": data.currency,
+                    "order_id": data.razorpayOrderId,
+                    "handler": function (response) {
+                        verifyPayment(response, data.orderId);
+                    }
+                };
+                const rzp1 = new Razorpay(options);
+                rzp1.open();
+            } else if (selectedPaymentMethod === "Wallet Payment") {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Order Placed',
+                    text: 'Order placed successfully using Wallet!',
                     confirmButtonText: 'OK'
+                }).then(() => {
+                    window.location.href = `/order-placed?id=${data.orderId}`;
                 });
-        }
-        console.log("Order Data to be sent:", orderData);
-
-        fetch('/place-order', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(orderData)
-        })
-        .then(response => response.json())
-        .then(data => { 
-            console.log(data);
-            if (data.success) {
-                if (selectedPaymentMethod === "payNow") {
-                    const options = {
-                        "key": data.keyId,
-                        "amount": data.amount * 100,
-                        "currency": data.currency,
-                        "order_id": data.razorpayOrderId,
-                        "handler": function (response) {
-                            verifyPayment(response, data.orderId);
-                        }
-                    };
-                    const rzp1 = new Razorpay(options);
-                    rzp1.open();
-                } else {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Order Placed',
-                        text: 'Order placed successfully!',
-                        confirmButtonText: 'OK'
-                    }).then(() => {
-                        window.location.href = `/order-placed?id=${data.orderId}`;
-                    });
-                }
             } else {
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Order Failed',
-                    text: 'Failed to place the order. Please try again.',
+                    icon: 'success',
+                    title: 'Order Placed',
+                    text: 'Order placed successfully!',
                     confirmButtonText: 'OK'
+                }).then(() => {
+                    window.location.href = `/order-placed?id=${data.orderId}`;
                 });
             }
-        })
-        .catch(error => {
-            console.error("Error placing the order:", error);
+        } else {
             Swal.fire({
                 icon: 'error',
-                title: 'Error',
-                text: 'An error occurred. Please try again.',
+                title: 'Order Failed',
+                text: 'Failed to place the order. Please try again.',
                 confirmButtonText: 'OK'
             });
+        }
+    })
+    .catch(error => {
+        console.error("Error placing the order:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred. Please try again.',
+            confirmButtonText: 'OK'
         });
-    }
+    });
+}
 
     function verifyPayment(response, orderId) {
         console.log(response);

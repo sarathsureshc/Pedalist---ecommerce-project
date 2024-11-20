@@ -1,29 +1,30 @@
 <%- include('../partials/user/header.ejs') %>
+<link rel="stylesheet" href="product-styles.css">
 
 <div class="wrapper">
     <div class="sidebar">
         <h3>Search</h3>
-        <input id="search" placeholder="Search products..." type="text" onkeydown="handleKeyDown(event)" />
-        <button onclick="applyFilters()">
-            <i class="fas fa-search">Search</i>
-        </button>
-
+        <div class="search-wrapper" style="display: flex; gap: 10px;">
+            <input id="search" placeholder="Search products..." type="text" value="<%= search %>" onkeydown="handleKeyDown(event)" />
+            <button onclick="applyFilters()">Search</button>
+        </div>
+    
         <div class="price-filter">
             <h3>Filter by Price</h3>
             <div id="priceSlider"></div>
             <div>
-                <span>Selected Price Range: ₹<span id="selectedPriceRange">20 - 100,000</span></span>
+                <span>Selected Price Range: ₹<span id="selectedPriceRange">0 - 100,000</span></span>
             </div>
-            <button onclick="applyFilters()">APPLY</button>
+            <button onclick="applyFilters()">Apply</button>
         </div>
-
+    
         <div class="out-of-stock-filter">
             <label>
                 <input type="checkbox" id="showOutOfStock" onchange="applyFilters()" <% if (showOutOfStock==="true") { %> checked <% } %> >
                 Show Out of Stock Products
             </label>
         </div>
-
+    
         <div class="category-filter">
             <h3>Filter by Category:</h3>
             <select id="category" onchange="applyFilters()">
@@ -35,7 +36,7 @@
                 <% }); %>
             </select>
         </div>
-
+    
         <div class="sorting-options">
             <h3>Sort by:</h3>
             <select id="sortBy" onchange="applyFilters()">
@@ -49,7 +50,7 @@
                 <option value="zToA" <%= sortBy === "zToA" ? "selected" : "" %>>Z - A</option>
             </select>
         </div>
-    </div>
+    </div>    
 
     <div class="content-product">
         <div class="breadcrumbs">
@@ -112,7 +113,7 @@
         start: [minPrice, maxPrice],
         connect: true,
         range: {
-            'min': 20,
+            'min': 0,
             'max': 100000
         }
     });

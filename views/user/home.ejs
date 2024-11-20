@@ -83,15 +83,15 @@
 
     <div class="container text-white overlay-text">
       <h5 class="subheading">Newly Launched</h5>
-      <h1 class="main-heading">Marlin GRS100</h1>
+      <h1 class="main-heading"><%= newArrivals[0].productName %></h1>
       <h6 class="small-heading mt-4">Specifications</h6>
       <ul class="specifications-list">
-        <li><i class="fas fa-bullseye"></i> Frame: Carbon Fiber</li>
-        <li><i class="fas fa-bullseye"></i> Gears: Shimano 21-Speed</li>
-        <li><i class="fas fa-bullseye"></i> Brakes: Hydraulic Disc Brakes</li>
-        <li><i class="fas fa-bullseye"></i> Suspension: Front Suspension Fork</li>
+        <li><i class="fas fa-bullseye"></i> <%= newArrivals[0].specification1 %></li>
+        <li><i class="fas fa-bullseye"></i> <%= newArrivals[0].specification2 %></li>
+        <li><i class="fas fa-bullseye"></i> <%= newArrivals[0].specification3 %></li>
+        <li><i class="fas fa-bullseye"></i> <%= newArrivals[0].specification4 %></li>
       </ul>
-      <a href="#" class="btn buy-now-btn">BUY NOW</a>
+      <a href="/product-detail?id=<%= newArrivals[0]._id %>" class="btn buy-now-btn">Explore More</a>
     </div>
 
   </div>
@@ -126,15 +126,7 @@
         <% } %>
       </div>
 
-      <!-- Carousel Controls -->
-      <button class="carousel-control-prev" type="button" data-bs-target="#newArrivalsCarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#newArrivalsCarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
+      
     </div>
   </div>
 </section>
@@ -188,7 +180,7 @@
             <li class="bullet"><i class="fas fa-bullseye"></i> Available in Multiple Sizes</li>
           </ul>
         </div>
-        <a href="#" class="explore-more-btn">Explore More</a>
+        <a href="/products?category=670826ef4b7371a0e09fb56d" class="explore-more-btn">Explore More</a>
       </div>
     </div>
   </section>
@@ -214,12 +206,12 @@
             <li class="bullet"><i class="fas fa-bullseye"></i> Internal Cable Routing</li>
           </ul>
         </div>
-        <a href="#" class="explore-more-btn">Explore More</a>
+        <a href="/products?category=670821944b7371a0e09fb4a4" class="explore-more-btn">Explore More</a>
       </div>
     </div>
   </section>
 
-  <!-- Road Bikes Section -->
+  <!-- Hybrid Bikes Section -->
   <section class="hybrid-bikes-section">
     <div class="hybrid-bikes-background">
       <div class="gradient-overlay"></div>
@@ -240,7 +232,7 @@
             <li class="bullet"><i class="fas fa-bullseye"></i> Wide Gear Range</li>
           </ul>
         </div>
-        <a href="#" class="explore-more-btn">Explore More</a>
+        <a href="/products?category=670823dd4b7371a0e09fb515" class="explore-more-btn">Explore More</a>
       </div>
     </div>
   </section>

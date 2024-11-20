@@ -1,0 +1,94 @@
+<%- include('../partials/user/header.ejs') %>
+<link rel="stylesheet" href="order-styles.css">
+<div class="wrapper">
+    
+    <div class="order-detail-container">
+        <div class="header-container">
+            <h1>Order Details</h1>
+            <button class="btn btn-warning" onclick="window.location.href='/orders';">Go to Orders</button>
+        </div>
+        <h3 class="order-title">Order ID: <%= order.orderId %></h3>
+        <div class="order-summary">
+            <div class="summary-item">
+                <span class="strong-text">Total Price:</span> ₹<%= order .totalPrice.toFixed(2) %>
+            </div>
+            <div class="summary-item">
+                <span class="strong-text">Payment Status:</span> <span class="payment-status <%= order.paymentStatus.toLowerCase() %>"><%= order.paymentStatus %></span>
+            </div>
+            <div class="summary-item">
+                <span class="strong-text">Payment Method:</span> <span class="payment-status <%= order.paymentStatus.toLowerCase() %>"><%= order.paymentMethod %></span>
+            </div>
+            <% if(order.items[0].status !== "Pending"){ %><div class="invoice-download">
+                <a href="/invoice?id=<%= order._id %>" class="btn btn-primary">Download Invoice</a>
+            </div>
+            <% } %>
+        </div>
+        <br>
+
+        <h3 class="order-title">Delivery Address</h3>
+        <div class="address-details">
+            <p><span class="strong-text">Name:</span> <%= order.address.name %></p>
+            <p><span class="strong-text">Address:</span> <%= order.address.houseName %>, <%= order.address.streetName %>, <%= order.address.landmark %>, <%= order.address.locality %>, <%= order.address.city %>, <%= order.address.state %> - <%= order.address.pin %></p>
+            <p><span class="strong-text">Contact No:</span> <%= order.address.contactNo %></p>
+            <p><span class="strong-text">Invoice Date:</span> <%= order.invoiceDate.toLocaleDateString() %></p>
+        </div><br>
+
+        
+
+        <h3 class="order-title">Order Items</h3>
+        <ul class="order-items-list">
+            <% order.items.forEach(item => { %>
+                <li class="order-item">
+                    <div class="order-item-detail">
+                    <img src="/uploads/product-images/<%= item.product.image[0] %>" alt="<%= item.product.productName %>" class="product-image">
+                    <div class="item-details">
+                        <span class="strong-text">Product Name:</span> <%= item.product.productName %><br>
+                        <span class="strong-text">Quantity:</span> <%= item.quantity %><br>
+                        <span class="strong-text">Status:</span> <%= item.status %> <br>
+                        <span class="strong-text">Price:</span> <%= item.priceApplied %>
+                    </div>
+                
+                    <div class="action-container">
+                        <% if (item.status === "Placed" || item.status === "Processing" || item.status === "Shipped") { %>
+                            <form action="/cancel-order" method="POST" class="action-form">
+                                <input type="hidden" name="orderId" value="<%= order._id %>">
+                                <input type="hidden" name="itemId" value="<%= item._id %>">
+                                <input type="hidden" name="quantity" value="<%= item.quantity %>">
+                                <input type="text" name="reason" placeholder="Cancel reason" required class="reason-input">
+                                <button type="submit" class="btn btn-danger">Cancel</button>
+                            </form>
+                        <% } %>
+                        
+                        <% if (item.status === 'Delivered') { %>
+                            <form action="/return-order" method="POST" class="action-form">
+                                <input type="hidden" name="orderId" value="<%= order._id %>">
+                                <input type="hidden" name="itemId" value="<%= item._id %>">
+                                <input type="hidden" name="quantity" value="<%= item.quantity %>">
+                                <input type="text" name="reason" placeholder="Return reason" required class="reason-input">
+                                <button type="submit" class="btn btn-warning">Request Return</button>
+                            </form>
+                        <% } %>
+                    </div>
+                    </div>
+                    <!-- Move the progress bar to the bottom -->
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress <%= item.status.toLowerCase() %>" style="width: <%= item.status === 'Pending' ? '0%' : item.status === 'Placed' ? '33%' : item.status === 'Shipped' ? '66%' : '100%' %>;"></div>
+                        </div>
+                        <div class="progress-labels">
+                            <span class="label <%= item.status === 'Pending' ? 'active' : '' %>">Pending</span>
+                            <span class="label <%= item.status === 'Placed' ? 'active' : '' %>">Placed</span>
+                            <span class="label <%= item.status === 'Shipped' ? 'active' : '' %>">Shipped</span>
+                            <span class="label <%= item.status === 'Delivered' ? 'active' : '' %>">Delivered</span>
+                        </div>
+                    </div>
+                </li>
+                
+            <% }); %>
+        </ul>
+
+        
+    </div>
+</div>
+<%- include('../partials/user/footer.ejs') %>
+

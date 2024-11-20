@@ -115,6 +115,37 @@ const removeAddress = async (req, res) => {
     }
 };
 
+const addCheckoutAddress = async (req, res) => {
+    try {
+        const { name, houseName, streetName, landmark, locality, city, state, pin, contactNo } = req.body;
+        const user = req.session.user || req.user;
+        if(!user){
+            res.redirect('/login');
+        }
+
+        const userId = user._id;
+
+        const newAddress = new Address({
+            userId,
+            name,
+            houseName,
+            streetName,
+            landmark,
+            locality,
+            city,
+            state,
+            pin,
+            contactNo
+        });
+
+        await newAddress.save();
+        res.json({ success: true, message: 'Address added successfully.' });
+    } catch (error) {
+        console.error("Error adding address:", error);
+        res.status(500).json({ success: false, message: 'Failed to add address. Please try again.' });
+    }
+};
+
 module.exports = {
     loadAddressPage,
     loadAddAddressPage,
@@ -122,4 +153,5 @@ module.exports = {
     editAddress,
     updateAddress,
     removeAddress,
+    addCheckoutAddress
 };

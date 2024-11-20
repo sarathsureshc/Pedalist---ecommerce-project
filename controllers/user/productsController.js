@@ -188,7 +188,8 @@ const loadProductPage = async (req, res) => {
               sortBy,
               selectedCategory: category,
               currentPage: page,
-              totalPages: totalPages, // Pass total pages to the view
+              totalPages: totalPages,
+              search,
           });
       } else {
           return res.render("product", {
@@ -201,7 +202,8 @@ const loadProductPage = async (req, res) => {
               sortBy,
               selectedCategory: category,
               currentPage: page,
-              totalPages: totalPages, // Pass total pages to the view
+              totalPages: totalPages,
+              search,
           });
       }
   } catch (error) {

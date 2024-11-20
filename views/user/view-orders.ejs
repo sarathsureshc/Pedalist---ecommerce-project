@@ -1,162 +1,61 @@
 <%- include('../partials/user/header.ejs') %>
-<link rel="stylesheet" href="order-styles.css">
-<div class="wrapper">
-    <div class="user-profile-container">
-        <div class="user-details">
-            <h1>Your Orders</h1>
-            <div class="order-info">
-                <% if (orders.length > 0) { %>
-                    <% orders.forEach(order => { %>
-                        <div class="order-card">
-                            <h2>Order ID: <%= order.orderId %></h2>
-                            <p><span class="price-text">Total Price:</span> <span class="price-amount">₹<%= order.totalPrice.toFixed(2) %></span></p>
-                            <p><span class="strong-text">Payment Status:</span> <%= order.paymentStatus %></p>
-                            
-                            <ul>
-                                <h3>Delivery Address</h3>
-                                <p><span class="strong-text">Name:</span> <%= order.address.name %></p>
-                                <p><span class="strong-text">Address:</span> <%= order.address.houseName %>, <%= order.address.streetName %>, <%= order.address.landmark %>, <%= order.address.locality %>, <%= order.address.city %>, <%= order.address.state %> - <%= order.address.pin %></p>
-                                <p><span class="strong-text">Contact No:</span> <%= order.address.contactNo %></p>
-                            <p><span class="strong-text">Invoice Date:</span> <%= order.invoiceDate.toLocaleDateString() %></p>
-                            <ul>
-                                <% order.items.forEach(item => { %>
-                                    <li class="item">
-                                        <span class="strong-text">Product Name:</span> <%= item.product.productName %><br>
-                                        <span class="strong-text">Quantity:</span> <%= item.quantity %><br>
-                                        <span class="strong-text">Unit Price:</span>₹<%= item.priceApplied.toFixed(2) %><br>
-                                        <span class="strong-text">Status:</span> <%= item.status %>
-                                        <% if (item.status === "Placed" || item.status === "Processing" || item.status === "Shipped") { %>
-                                            <form class="product-set" action="/cancel-order" method="POST" style="margin-top: 5px;">
-                                                <input type="hidden" name="orderId" value="<%= order._id %>">
-                                                <input type="hidden" name="itemId" value="<%= item._id %>">
-                                                <input type="hidden" name="quantity" value="<%= item.quantity %>">
-                                                <input type="text" name="reason" placeholder="Cancel reason" required>
-                                                <button type="submit" class="btn btn-danger">Cancel</button>
-                                            </form>
-                                        <% } %>
-                                        <% if (item.status === 'Delivered') { %>
-                                            <form class="product-set" action="/return-order" method="POST" style="margin-top: 5px;">
-                                                <input type="hidden" name="orderId" value="<%= order._id %>">
-                                                <input type="hidden" name="itemId" value="<%= item._id %>">
-                                                <input type="hidden" name="quantity" value="<%= item.quantity %>">
-                                                <input type="text" name="reason" placeholder="Return reason" required>
-                                                <button type="submit" class="btn btn-warning">Request Return</button>
-                                            </form>
-                                        <% } %>
-                                    </li>
-                                <% }); %>
-                            </ul>
-                            <% if (order.paymentMethod === "Pending" && order.paymentStatus === "Pending") { %>
-                                <form action="/continue-payment" method="POST" style="margin-top: 10px;">
-                                    <input type="hidden" name="orderId" value="<%= order._id %>">
-                                    <button type="submit" class="btn btn-danger">Retry Payment</button>
-                                </form>
+    <link rel="stylesheet" href="order-styles.css">
+    <div class="wrapper">
+        <div class="user-profile-container">
+            <div class="user-details">
+                <div class="header-container">
+                    <h1>Your Orders</h1>
+                <button class="btn btn-warning" onclick="window.location.href='/profile';">Go to Profiles</button>
+                </div>
+                
+                <div class="order-info">
+                    <% if (orders.length> 0) { %>
+                        <% orders.forEach(order=> { %>
+                            <div class="order-card">
+                                <a href="/order-detail?id=<%= order._id %>" class="order-link">
+                                    <h2>Order ID: <%= order.orderId %>
+                                    </h2>
+                                    <p class="price-text">Total Price: <span class="price-amount">₹<%=
+                                                order.totalPrice.toFixed(2) %></span></p>
+                                    <p><span class="strong-text">Payment Status:</span> <span
+                                            class="payment-status <%= order.paymentStatus.toLowerCase() %>">
+                                            <%= order.paymentStatus %>
+                                        </span></p>
+                                    <div class="order-items">
+                                        <% order.items.forEach(item=> { %>
+                                            <div class="order-item-detail">
+                                                <img src="/uploads/product-images/<%= item.product.image[0] %>"
+                                                    alt="<%= item.product.productName %>" class="product-image">
+                                                <div>
+                                                    <span class="strong-text product-name"><%= item.product.productName %></span>
+                                                    <br>
+                                                        <span class="strong-text">Quantity:</span>
+                                                        <%= item.quantity %><br>
+                                                            <span class="strong-text">Status:</span>
+                                                            <%= item.status %>
+                                                </div>
+                                            </div>
+                                            <% }); %>
+                                    </div>
+                                </a>
+                            </div>
+                            <% }); %>
+                                <% } else { %>
+                                    <p>No orders found.</p>
+                                    <% } %>
+                </div>
+                <div class="pagination">
+                    <% if (totalPages> 1) { %>
+                        <% for (let i=1; i <=totalPages; i++) { %>
+                            <a href="?page=<%= i %>" class="<%= i === page ? 'active' : '' %>">
+                                <%= i %>
+                            </a>
                             <% } %>
-                        </div>
-                    <% }); %>
-                <% } else { %>
-                    <p>No orders found.</p>
-                <% } %>
+                                <% } %>
+                </div>
             </div>
-            <div class="pagination">
-                <% if (totalPages > 1) { %>
-                    <% for (let i = 1; i <= totalPages; i++) { %>
-                        <a href="?page=<%= i %>" class="<%= i === page ? 'active' : '' %>"><%= i %></a>
-                    <% } %>
-                <% } %>
-            </div>
-        </div>
 
-        <div class="right-sidebar">
-            <h3>Profile Navigation</h3>
-            <ul>
-                <li><a href="/profile">View Profile</a></li>
-                <li><a href="/address">Manage Address</a></li>
-                <li><a href="/wishlist">Wishlist</a></li>
-                <li class="selected">Orders</li>
-                <li><a href="/wallet">Wallet</a></li>
-                <li><a href="/logout">Logout</a></li>
-            </ul>
         </div>
     </div>
-</div>
-<%- include('../partials/user/footer.ejs') %>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Handle the continue payment form submission
-        const continuePaymentForms = document.querySelectorAll('form[action="/continue-payment"]');
-        
-        continuePaymentForms.forEach(form => {
-            form.addEventListener('submit', async function(event) {
-                event.preventDefault(); // Prevent default form submission
-
-                const orderId = form.querySelector('input[name="orderId"]').value;
-
-                try {
-                    const response = await fetch('/continue-payment', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ orderId }),
-                    });
-
-                    const data = await response.json();
-
-                    if (data.success) {
-                        const options = {
-                            "key": data.keyId,
-                            "amount": data.amount * 100,
-                            "currency": data.currency,
-                            "order_id": data.razorpayOrderId,
-                            "handler": function(response) {
-                                verifyPayment(response, orderId);
-                            }
-                        };
-
-                        const razorpay = new Razorpay(options);
-                        razorpay.open(); // Open Razorpay payment modal
-                    } else {
-                        alert(data.message); // Show error message
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('An error occurred while processing the payment.');
-                }
-            });
-        });
-    });
-
-    // Function to verify payment
-    async function verifyPayment(paymentResponse, orderId) {
-        try {
-            const response = await fetch('/verify-payment', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    razorpayOrderId: paymentResponse.razorpay_order_id,
-                    paymentId: paymentResponse.razorpay_payment_id,
-                    signature: paymentResponse.razorpay_signature,
-                    orderId: orderId,
-                }),
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                alert('Payment verified successfully!'); // Show success message
-                // Optionally, redirect to order details or success page
-                window.location.href = '/orders'; // Redirect to orders page
-            } else {
-                alert(data.message); // Show error message
-            }
-        } catch (error) {
-            console.error('Error verifying payment:', error);
-            alert('An error occurred while verifying the payment.');
-        }
-    }
-</script>
+    <%- include('../partials/user/footer.ejs') %>
