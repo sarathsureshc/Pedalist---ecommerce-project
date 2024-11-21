@@ -246,12 +246,10 @@ const editProduct = async (req, res) => {
     console.log(product);
 
     if (existingProduct) {
-      return res
-        .status(400)
-        .json({
-          error:
-            "Product with this name already exists. Please try another name.",
-        });
+      return res.status(400).json({
+        error:
+          "Product with this name already exists. Please try another name.",
+      });
     }
 
     var images = [];

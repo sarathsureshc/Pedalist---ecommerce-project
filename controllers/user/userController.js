@@ -169,12 +169,10 @@ const verifyOtp = async (req, res) => {
     const { otp } = req.body;
 
     if (Date.now() > req.session.otpExpiry) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "OTP has expired. Please request a new one.",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "OTP has expired. Please request a new one.",
+      });
     }
 
     if (otp === req.session.userOtp) {
@@ -328,87 +326,6 @@ const resendOtp = async (req, res) => {
     });
   }
 };
-
-// const loadForgotPassword = async (req, res) => {
-//   try {
-//     const user = req.session.user || req.user;
-//     if (!user) {
-//       return res.render("forgot-password");
-//     } else {
-//       res.redirect("/");
-//     }
-
-//   } catch (error) {
-//     console.log("Forgot password page not found");
-//     res.render("pageNotFound");
-
-//   }
-// }
-
-// const forgotPassword = async (req, res) => {
-//   try {
-//     const user = req.session.user || req.user;
-//     if (!user) {
-
-//         const email = req.body;
-//         const user = await User.findOne({ email: email });
-//         if (!user) {
-//           return res.render("forgot-password", { message: "User not found" });
-//         }
-//         const otp = generateOtp();
-//         const otpExpiry = Date.now() + 10 * 60 * 1000;
-//         req.session.userOtp = otp;
-//         req.session.otpExpiry = otpExpiry;
-//         const emailSent = await sendVerificationEmail(email, otp);
-//         if (emailSent) {
-//           console.log("Forgot Password OTP:", otp);
-//           res.render("forgot-password-verify-otp");
-//         } else {
-//           res.render("forgot-password", {
-//             message: "Failed to send OTP. Please try again",
-//           });
-//         }
-//     } else {
-//       res.redirect("/");
-//     }
-
-//   } catch (error) {
-//     console.error("Forgot password error", error);
-//     res.render("pageNotFound");
-//   }
-// }
-
-// const verifyPasswordResetOtp = async (req, res) => {
-//   try {
-//     const { otp } = req.body;
-
-//     if (Date.now() > req.session.otpExpiry) {
-//       console.log("OTP expired");
-//       return res
-//         .status(400)
-//         .json({
-//           success: false,
-//           message: "OTP has expired. Please request a new one.",
-//         });
-//     }
-
-//     if (otp === req.session.userOtp) {
-//       const user = await User.findOne({email:email})
-
-//       req.session.userOtp = null;
-//       req.session.otpExpiry = null;
-
-//       res.json({ success: true, redirectUrl: "/login" });
-//     } else {
-//       res
-//         .status(400)
-//         .json({ success: false, message: "Invalid OTP, Please try again" });
-//     }
-//   } catch (error) {
-//     console.error("Error verifying OTP", error);
-//     res.status(500).json({ success: false, message: "An error occurred" });
-//   }
-// };
 
 const loadLoginpage = async (req, res) => {
   try {

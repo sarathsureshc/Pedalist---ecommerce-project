@@ -206,12 +206,10 @@ const addCheckoutAddress = async (req, res) => {
     res.json({ success: true, message: "Address added successfully." });
   } catch (error) {
     console.error("Error adding address:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "Failed to add address. Please try again.",
-      });
+    res.status(500).json({
+      success: false,
+      message: "Failed to add address. Please try again.",
+    });
   }
 };
 

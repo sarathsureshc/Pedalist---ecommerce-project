@@ -32,12 +32,10 @@ const addToCart = async (req, res) => {
     console.log(maxQuantity);
 
     if (quantity > maxQuantity) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: `Maximum allowed quantity is ${maxQuantity}.`,
-        });
+      return res.status(404).json({
+        success: false,
+        message: `Maximum allowed quantity is ${maxQuantity}.`,
+      });
     }
 
     const user = req.session.user || req.user;
@@ -216,12 +214,10 @@ const updateCart = async (req, res) => {
       const maxQuantity = product.quantity <= 10 ? 1 : 5;
 
       if (quantity > maxQuantity) {
-        return res
-          .status(400)
-          .json({
-            success: false,
-            message: `Maximum allowed quantity is ${maxQuantity}.`,
-          });
+        return res.status(400).json({
+          success: false,
+          message: `Maximum allowed quantity is ${maxQuantity}.`,
+        });
       }
 
       const cart = await Cart.findOneAndUpdate(

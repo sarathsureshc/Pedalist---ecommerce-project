@@ -167,11 +167,9 @@ const editOffer = async (req, res) => {
     });
 
     if (existingOffer) {
-      return res
-        .status(400)
-        .send({
-          message: "An active offer with the same name already exists.",
-        });
+      return res.status(400).send({
+        message: "An active offer with the same name already exists.",
+      });
     }
 
     if (offerGroup === "Referral" && !offerValue) {

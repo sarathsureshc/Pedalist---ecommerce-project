@@ -23,12 +23,10 @@ const addToWishlist = async (req, res) => {
       );
 
       if (isProductInWishlist) {
-        return res
-          .status(400)
-          .json({
-            success: false,
-            message: "Product is already in the wishlist.",
-          });
+        return res.status(400).json({
+          success: false,
+          message: "Product is already in the wishlist.",
+        });
       }
 
       wishlist.products.push({ productId });
@@ -41,12 +39,10 @@ const addToWishlist = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "An error occurred while adding to wishlist.",
-      });
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while adding to wishlist.",
+    });
   }
 };
 
@@ -97,12 +93,10 @@ const loadWishlist = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "An error occurred while fetching the wishlist.",
-      });
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while fetching the wishlist.",
+    });
   }
 };
 
@@ -136,12 +130,10 @@ const removeFromWishlist = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in removeFromWishlist:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "An error occurred while removing from wishlist.",
-      });
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while removing from wishlist.",
+    });
   }
 };
 
