@@ -151,13 +151,16 @@ const downloadSalesReportPDF = async (req, res) => {
     doc.fontSize(20).text("Sales Report", { align: "center" }).moveDown();
 
     const currentDate = new Date().toLocaleDateString();
-    doc.fontSize(12).text(`Date: ${currentDate}`, { align: "center" }).moveDown();
+    doc
+      .fontSize(12)
+      .text(`Date: ${currentDate}`, { align: "center" })
+      .moveDown();
 
     let salesDateRange =
       filters.filterType === "custom"
         ? `Sales Date: ${new Date(filters.startDate).toLocaleDateString()} - ${new Date(filters.endDate).toLocaleDateString()}`
         : `Sales Date: ${filters.filterType.charAt(0).toUpperCase() + filters.filterType.slice(1)}`;
-    
+
     doc.fontSize(12).text(salesDateRange, { align: "center" }).moveDown();
 
     doc.fontSize(12).text(`Total Sales Count: ${totalSalesCount}`);
@@ -167,20 +170,48 @@ const downloadSalesReportPDF = async (req, res) => {
     const tableTop = doc.y + 20;
     const tableWidth = 500;
     const columnWidths = [200, 100, 100, 100];
-    const headers = ["Product Name", "Total Sales Count", "Total Revenue", "Discounts"];
+    const headers = [
+      "Product Name",
+      "Total Sales Count",
+      "Total Revenue",
+      "Discounts",
+    ];
 
     doc.fontSize(12).font("Helvetica-Bold");
     headers.forEach((header, index) => {
-      doc.text(header, 10 + columnWidths.slice(0, index).reduce((a, b) => a + b, 0) + 10, tableTop, { width: columnWidths[index], align: "center" });
+      doc.text(
+        header,
+        10 + columnWidths.slice(0, index).reduce((a, b) => a + b, 0) + 10,
+        tableTop,
+        { width: columnWidths[index], align: "center" },
+      );
     });
 
     doc.font("Helvetica");
     salesData.forEach((sale, index) => {
       const rowY = tableTop + 40 + index * 20;
-      doc.text(sale.productName, 10 + 10, rowY, { width: columnWidths[0], align: "left" });
-      doc.text(sale.totalSalesCount.toString(), 10 + columnWidths[0] + 10, rowY, { width: columnWidths[1], align: "center" });
-      doc.text(`₹${sale.totalRevenue.toFixed(2)}`, 10 + columnWidths[0] + columnWidths[1] + 10, rowY, { width: columnWidths[2], align: "right" });
-      doc.text(`₹${sale.productDiscount ? sale.productDiscount.toFixed(2) : "0.00"}`, 10 + columnWidths[0] + columnWidths[1] + columnWidths[2] + 10, rowY, { width: columnWidths[3], align: "right" });
+      doc.text(sale.productName, 10 + 10, rowY, {
+        width: columnWidths[0],
+        align: "left",
+      });
+      doc.text(
+        sale.totalSalesCount.toString(),
+        10 + columnWidths[0] + 10,
+        rowY,
+        { width: columnWidths[1], align: "center" },
+      );
+      doc.text(
+        `₹${sale.totalRevenue.toFixed(2)}`,
+        10 + columnWidths[0] + columnWidths[1] + 10,
+        rowY,
+        { width: columnWidths[2], align: "right" },
+      );
+      doc.text(
+        `₹${sale.productDiscount ? sale.productDiscount.toFixed(2) : "0.00"}`,
+        10 + columnWidths[0] + columnWidths[1] + columnWidths[2] + 10,
+        rowY,
+        { width: columnWidths[3], align: "right" },
+      );
     });
 
     const lastRowY = tableTop + 40 + salesData.length * 20;
@@ -188,7 +219,10 @@ const downloadSalesReportPDF = async (req, res) => {
     // Footer section
     doc.moveDown(10);
     doc.fontSize(10).text("Thank you for your business!", { align: "left" });
-    doc.text("For any inquiries, please contact us at support@pedalistbikes.com", { align: "left" });
+    doc.text(
+      "For any inquiries, please contact us at support@pedalistbikes.com",
+      { align: "left" },
+    );
 
     doc.end();
   } catch (error) {
