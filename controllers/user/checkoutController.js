@@ -16,12 +16,12 @@ const calculateDiscountedPrice = (product, offers) => {
     switch (offer.offerGroup) {
       case "Brand":
         isApplicable = offer.brandsIncluded.includes(
-          product.brand._id.toString()
+          product.brand._id.toString(),
         );
         break;
       case "Category":
         isApplicable = offer.categoriesIncluded.includes(
-          product.category._id.toString()
+          product.category._id.toString(),
         );
         break;
       case "Product":
@@ -45,7 +45,7 @@ const calculateDiscountedPrice = (product, offers) => {
       if (offer.maxDiscountAmount) {
         effectiveDiscount = Math.min(
           effectiveDiscount,
-          offer.maxDiscountAmount
+          offer.maxDiscountAmount,
         );
       }
 
@@ -79,16 +79,14 @@ const getCheckoutPage = async (req, res) => {
     cart = await Cart.findOne({ userId: user._id }).populate("items.productId");
 
     if (!cart) {
-      return res
-        .status(404)
-        .render("checkout", {
-          orderItems: [],
-          totalPrice: 0,
-          discount: 0,
-          addresses: [],
-          deliveryCharge: 50,
-          coupons: [],
-        });
+      return res.status(404).render("checkout", {
+        orderItems: [],
+        totalPrice: 0,
+        discount: 0,
+        addresses: [],
+        deliveryCharge: 50,
+        coupons: [],
+      });
     }
 
     if (cart) {
@@ -117,7 +115,7 @@ const getCheckoutPage = async (req, res) => {
     });
 
     const globalOffers = offers.filter(
-      (offer) => offer.offerGroup === "Global"
+      (offer) => offer.offerGroup === "Global",
     );
     let totalDiscount = 0;
     globalOffers.forEach((offer) => {

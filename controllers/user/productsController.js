@@ -7,208 +7,217 @@ const Offer = require("../../models/offerSchema");
 
 const loadProductPage = async (req, res) => {
   try {
-      const {
-          sortBy,
-          showOutOfStock = "false",
-          category,
-          search,
-          minPrice,
-          maxPrice,
-          page = 1, // Default to page 1
-      } = req.query;
+    const {
+      sortBy,
+      showOutOfStock = "false",
+      category,
+      search,
+      minPrice,
+      maxPrice,
+      page = 1, // Default to page 1
+    } = req.query;
 
-      const filterConditions = { isListed: true };
+    const filterConditions = { isListed: true };
 
-      if (showOutOfStock === "false") {
-          filterConditions.quantity = { $gt: 0 };
-      }
+    if (showOutOfStock === "false") {
+      filterConditions.quantity = { $gt: 0 };
+    }
 
-      if (category) {
-          filterConditions.category = category;
-      }
+    if (category) {
+      filterConditions.category = category;
+    }
 
-      if (search) {
-          filterConditions.$or = [
-              { productName: { $regex: search, $options: "i" } },
-              { "brand.brandName": { $regex: search, $options: "i" } },
-              { "category.name": { $regex: search, $options: "i" } },
-          ];
-      }
+    if (search) {
+      filterConditions.$or = [
+        { productName: { $regex: search, $options: "i" } },
+        { "brand.brandName": { $regex: search, $options: "i" } },
+        { "category.name": { $regex: search, $options: "i" } },
+      ];
+    }
 
-      if (minPrice) {
-          filterConditions.price = {
-              ...filterConditions.price,
-              $gte: parseFloat(minPrice),
-          };
-      }
-      if (maxPrice) {
-          filterConditions.price = {
-              ...filterConditions.price,
-              $lte: parseFloat(maxPrice),
-          };
-      }
+    if (minPrice) {
+      filterConditions.price = {
+        ...filterConditions.price,
+        $gte: parseFloat(minPrice),
+      };
+    }
+    if (maxPrice) {
+      filterConditions.price = {
+        ...filterConditions.price,
+        $lte: parseFloat(maxPrice),
+      };
+    }
 
-      // Fetch all active offers
-      const offers = await Offer.find({ isActive: true, isDeleted: false });
+    // Fetch all active offers
+    const offers = await Offer.find({ isActive: true, isDeleted: false });
 
-      // Count total products matching the filter
-      const totalProducts = await Product.countDocuments(filterConditions);
-      const totalPages = Math.ceil(totalProducts / 6); // Calculate total pages
+    // Count total products matching the filter
+    const totalProducts = await Product.countDocuments(filterConditions);
+    const totalPages = Math.ceil(totalProducts / 6); // Calculate total pages
 
-      // Build the sort object based on the sortBy parameter
-      let sortOptions = {};
-      switch (sortBy) {
-          case "popularity":
-              sortOptions.popularity = -1;
-              break;
-          case "priceLowToHigh":
-              sortOptions.price = 1;
-              break;
-          case "priceHighToLow":
-              sortOptions.price = -1;
-              break;
-          case "averageRating":
-              sortOptions.rating = -1;
-              break;
-          case "featured":
-              sortOptions.isFeatured = -1;
-              break;
-          case "newArrivals":
-              sortOptions.createdOn = -1;
-              break;
-          case "aToZ":
-              sortOptions.productName = 1;
-              break;
-          case "zToA":
-              sortOptions.productName = -1;
-              break;
-          default:
-              break;
-      }
+    // Build the sort object based on the sortBy parameter
+    let sortOptions = {};
+    switch (sortBy) {
+      case "popularity":
+        sortOptions.popularity = -1;
+        break;
+      case "priceLowToHigh":
+        sortOptions.price = 1;
+        break;
+      case "priceHighToLow":
+        sortOptions.price = -1;
+        break;
+      case "averageRating":
+        sortOptions.rating = -1;
+        break;
+      case "featured":
+        sortOptions.isFeatured = -1;
+        break;
+      case "newArrivals":
+        sortOptions.createdOn = -1;
+        break;
+      case "aToZ":
+        sortOptions.productName = 1;
+        break;
+      case "zToA":
+        sortOptions.productName = -1;
+        break;
+      default:
+        break;
+    }
 
-      // Fetch products for the current page with sorting
-      const products = await Product.find(filterConditions)
-          .populate({
-              path: "brand",
-              match: { isBlocked: false },
-              select: "brandName",
-          })
-          .populate({
-              path: "category",
-              match: { isListed: true },
-              select: "name",
-          })
-          .sort(sortOptions) // Apply sorting here
-          .limit(6) // Limit to 6 products per page
-          .skip((page - 1) * 6) // Skip products for previous pages
-          .exec();
+    // Fetch products for the current page with sorting
+    const products = await Product.find(filterConditions)
+      .populate({
+        path: "brand",
+        match: { isBlocked: false },
+        select: "brandName",
+      })
+      .populate({
+        path: "category",
+        match: { isListed: true },
+        select: "name",
+      })
+      .sort(sortOptions) // Apply sorting here
+      .limit(6) // Limit to 6 products per page
+      .skip((page - 1) * 6) // Skip products for previous pages
+      .exec();
 
-      const filteredProducts = products.filter(
-          (product) => product.brand !== null && product.category !== null
-      );
+    const filteredProducts = products.filter(
+      (product) => product.brand !== null && product.category !== null,
+    );
 
-      // Apply offers to each product
-      const productsWithOffers = filteredProducts.map(product => {
-          let bestOffer = null;
+    // Apply offers to each product
+    const productsWithOffers = filteredProducts.map((product) => {
+      let bestOffer = null;
 
-          // Check applicable offers
-          offers.forEach(offer => {
-              let isApplicable = false;
+      // Check applicable offers
+      offers.forEach((offer) => {
+        let isApplicable = false;
 
-              // Determine if the offer is applicable based on the offerGroup
-              switch (offer.offerGroup) {
-                  case 'Brand':
-                      isApplicable = offer.brandsIncluded.includes(product.brand._id.toString());
-                      break;
-                  case 'Category':
-                      isApplicable = offer.categoriesIncluded.includes(product.category._id.toString());
-                      break;
-                  case 'Product':
-                      isApplicable = offer.productsIncluded.includes(product._id.toString());
-                      break;
-              }
+        // Determine if the offer is applicable based on the offerGroup
+        switch (offer.offerGroup) {
+          case "Brand":
+            isApplicable = offer.brandsIncluded.includes(
+              product.brand._id.toString(),
+            );
+            break;
+          case "Category":
+            isApplicable = offer.categoriesIncluded.includes(
+              product.category._id.toString(),
+            );
+            break;
+          case "Product":
+            isApplicable = offer.productsIncluded.includes(
+              product._id.toString(),
+            );
+            break;
+        }
 
-              // If the offer is applicable, calculate the effective discount
-              if (isApplicable) {
-                  let effectiveDiscount = 0;
+        // If the offer is applicable, calculate the effective discount
+        if (isApplicable) {
+          let effectiveDiscount = 0;
 
-                  if (offer.offerType === 'Percentage') {
-                      effectiveDiscount = (product.price * offer.offerValue) / 100;
-                  } else if (offer.offerType === 'Flat') {
-                      effectiveDiscount = offer.offerValue;
-                  }
+          if (offer.offerType === "Percentage") {
+            effectiveDiscount = (product.price * offer.offerValue) / 100;
+          } else if (offer.offerType === "Flat") {
+            effectiveDiscount = offer.offerValue;
+          }
 
-                  // Ensure the effective discount does not exceed the max discount amount
-                  if (offer.maxDiscountAmount) {
-                      effectiveDiscount = Math.min(effectiveDiscount, offer.maxDiscountAmount);
-                  }
+          // Ensure the effective discount does not exceed the max discount amount
+          if (offer.maxDiscountAmount) {
+            effectiveDiscount = Math.min(
+              effectiveDiscount,
+              offer.maxDiscountAmount,
+            );
+          }
 
-                  // Determine if this is the best offer
-                  if (!bestOffer || effectiveDiscount > bestOffer.effectiveDiscount) {
-                      bestOffer = {
-                          offerName: offer.offerName,
-                          effectiveDiscount,
-                      };
-                  }
-              }
-          });
-
-          // Attach the best offer to the product
-          return {
-              ...product.toObject(),
-              bestOffer,
-          };
+          // Determine if this is the best offer
+          if (!bestOffer || effectiveDiscount > bestOffer.effectiveDiscount) {
+            bestOffer = {
+              offerName: offer.offerName,
+              effectiveDiscount,
+            };
+          }
+        }
       });
 
-      const count = productsWithOffers.length;
-      const user = req.session.user || req.user;
+      // Attach the best offer to the product
+      return {
+        ...product.toObject(),
+        bestOffer,
+      };
+    });
 
-      const categories = await Category.find({ isListed: true });
-      let cartCount = 0;
+    const count = productsWithOffers.length;
+    const user = req.session.user || req.user;
 
-      if (user) {
-          const userData = await User.findOne({ _id: user._id });
-          const cart = await Cart.findOne({ userId: user._id });
+    const categories = await Category.find({ isListed: true });
+    let cartCount = 0;
 
-          if (cart) {
-              cartCount = cart.items.reduce(
-                  (total, item) => total + item.quantity,
-                  0
-              );
-          }
-          return res.render("product", {
-              products: productsWithOffers,
-              categories,
-              user: userData,
-              count,
-              showOutOfStock,
-              minPrice: minPrice || 20,
-              maxPrice: maxPrice || 100000,
-              cartCount,
-              sortBy,
-              selectedCategory: category,
-              currentPage: page,
-              totalPages: totalPages,
-              search,
-          });
-      } else {
-          return res.render("product", {
-              products: productsWithOffers,
-              categories,
-              count,
-              showOutOfStock,
-              minPrice: minPrice || 20,
-              maxPrice: maxPrice || 100000,
-              sortBy,
-              selectedCategory: category,
-              currentPage: page,
-              totalPages: totalPages,
-              search,
-          });
+    if (user) {
+      const userData = await User.findOne({ _id: user._id });
+      const cart = await Cart.findOne({ userId: user._id });
+
+      if (cart) {
+        cartCount = cart.items.reduce(
+          (total, item) => total + item.quantity,
+          0,
+        );
       }
+      return res.render("product", {
+        products: productsWithOffers,
+        categories,
+        user: userData,
+        count,
+        showOutOfStock,
+        minPrice: minPrice || 20,
+        maxPrice: maxPrice || 100000,
+        cartCount,
+        sortBy,
+        selectedCategory: category,
+        currentPage: page,
+        totalPages: totalPages,
+        search,
+      });
+    } else {
+      return res.render("product", {
+        products: productsWithOffers,
+        categories,
+        count,
+        showOutOfStock,
+        minPrice: minPrice || 20,
+        maxPrice: maxPrice || 100000,
+        sortBy,
+        selectedCategory: category,
+        currentPage: page,
+        totalPages: totalPages,
+        search,
+      });
+    }
   } catch (error) {
-      console.log("Product page not found", error);
-      return res.status(500).render("pageNotFound", { message: error.message });
+    console.log("Product page not found", error);
+    return res.status(500).render("pageNotFound", { message: error.message });
   }
 };
 
@@ -230,19 +239,25 @@ const loadProductDetailPage = async (req, res) => {
     // Determine the best offer for the product
     let bestOffer = null;
 
-    offers.forEach(offer => {
+    offers.forEach((offer) => {
       let isApplicable = false;
 
       // Check if the offer is applicable based on the offerGroup
       switch (offer.offerGroup) {
-        case 'Brand':
-          isApplicable = offer.brandsIncluded.includes(product.brand._id.toString());
+        case "Brand":
+          isApplicable = offer.brandsIncluded.includes(
+            product.brand._id.toString(),
+          );
           break;
-        case 'Category':
-          isApplicable = offer.categoriesIncluded.includes(product.category._id.toString());
+        case "Category":
+          isApplicable = offer.categoriesIncluded.includes(
+            product.category._id.toString(),
+          );
           break;
-        case 'Product':
-          isApplicable = offer.productsIncluded.includes(product._id.toString());
+        case "Product":
+          isApplicable = offer.productsIncluded.includes(
+            product._id.toString(),
+          );
           break;
       }
 
@@ -250,15 +265,18 @@ const loadProductDetailPage = async (req, res) => {
       if (isApplicable) {
         let effectiveDiscount = 0;
 
-        if (offer.offerType === 'Percentage') {
+        if (offer.offerType === "Percentage") {
           effectiveDiscount = (product.price * offer.offerValue) / 100;
-        } else if (offer.offerType === 'Flat') {
+        } else if (offer.offerType === "Flat") {
           effectiveDiscount = offer.offerValue;
         }
 
         // Ensure the effective discount does not exceed the max discount amount
         if (offer.maxDiscountAmount) {
-          effectiveDiscount = Math.min(effectiveDiscount, offer.maxDiscountAmount);
+          effectiveDiscount = Math.min(
+            effectiveDiscount,
+            offer.maxDiscountAmount,
+          );
         }
 
         // Determine if this is the best offer
@@ -292,7 +310,7 @@ const loadProductDetailPage = async (req, res) => {
       if (cart) {
         cartCount = cart.items.reduce(
           (total, item) => total + item.quantity,
-          0
+          0,
         );
       }
       return res.render("product-detail", {

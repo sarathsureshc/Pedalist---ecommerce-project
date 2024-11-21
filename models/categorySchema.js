@@ -18,7 +18,7 @@ const categorySchema = new Schema({
   isDeleted: {
     type: Boolean,
     default: false,
-    required : true
+    required: true,
   },
 
   createdAt: {

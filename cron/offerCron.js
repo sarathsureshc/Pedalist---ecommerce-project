@@ -7,7 +7,7 @@ const scheduleOfferExpiry = () => {
       const currentDate = new Date();
       await Offer.updateMany(
         { endDate: { $lt: currentDate }, isActive: true },
-        { isActive: false, isDeleted: true }
+        { isActive: false, isDeleted: true },
       );
       console.log("Updated offers to inactive where endDate has passed.");
     } catch (error) {

@@ -46,7 +46,7 @@ router.get("/edit-brand", brandController.getEditBrand);
 router.post(
   "/edit-brand/:id",
   uploads.single("image"),
-  brandController.editBrand
+  brandController.editBrand,
 );
 router.post("/delete-brand", brandController.deleteBrand);
 router.post("/restore-brand", brandController.restoreBrand);
@@ -56,7 +56,7 @@ router.get("/add-product", productController.getProductAddPage);
 router.post(
   "/add-product",
   uploads.array("images", 4),
-  productController.addProducts
+  productController.addProducts,
 );
 router.get("/list-product", productController.getListProduct);
 router.get("/unlist-product", productController.getUnlistProduct);
@@ -64,7 +64,7 @@ router.get("/edit-product", productController.getEditProduct);
 router.post(
   "/edit-product/:id",
   uploads.array("images", 4),
-  productController.editProduct
+  productController.editProduct,
 );
 router.post("/delete-image", productController.deleteSingleImage);
 router.post("/delete-product", productController.deleteProduct);

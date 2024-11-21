@@ -118,7 +118,7 @@ html {
 
 /* Background image styling */
 .background-image {
-  background-image: url('https://static.wixstatic.com/media/nsplsh_749918c29e0145af91d65853101d2040~mv2.jpg/v1/fill/w_1899,h_1155,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/nsplsh_749918c29e0145af91d65853101d2040~mv2.jpg');
+  background-image: url("https://static.wixstatic.com/media/nsplsh_749918c29e0145af91d65853101d2040~mv2.jpg/v1/fill/w_1899,h_1155,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/nsplsh_749918c29e0145af91d65853101d2040~mv2.jpg");
   background-size: cover;
   background-position: center;
   height: 100vh;
@@ -135,7 +135,11 @@ html {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to right, rgba(22, 22, 22, 0.67) 50%, rgba(223, 69, 62, 0.67) 50%);
+  background: linear-gradient(
+    to right,
+    rgba(22, 22, 22, 0.67) 50%,
+    rgba(223, 69, 62, 0.67) 50%
+  );
   z-index: 2;
 }
 
@@ -156,7 +160,7 @@ html {
 /* Subheading styles */
 .subheading {
   font-size: 1.5rem;
-  font-family: 'Racing Sans One', sans-serif;
+  font-family: "Racing Sans One", sans-serif;
   font-weight: 500;
   color: #f1f1f1;
 }
@@ -164,7 +168,7 @@ html {
 /* Main heading styles */
 .main-heading {
   font-size: 3.5rem;
-  font-family: 'Racing Sans One', sans-serif;
+  font-family: "Racing Sans One", sans-serif;
   font-weight: bold;
   color: white;
 }
@@ -172,7 +176,7 @@ html {
 /* Small heading for specifications */
 .small-heading {
   font-size: 1.2rem;
-  font-family: 'Racing Sans One', sans-serif;
+  font-family: "Racing Sans One", sans-serif;
   font-weight: 400;
   margin-bottom: 20px;
 }
@@ -232,11 +236,10 @@ body {
   display: flex;
   align-items: center;
   /* Center vertically */
-
 }
 
 .new-arrivals h2 {
-  font-family: 'Racing Sans One', sans-serif;
+  font-family: "Racing Sans One", sans-serif;
   padding-bottom: 100px;
 }
 
@@ -262,7 +265,7 @@ body {
 }
 
 .mountain-bikes-background {
-  background-image: url('https://a.storyblok.com/f/126392/3043x1679/ac89eb89f5/2022-kt-project-banner-bdiamond.jpg/m/1024x0/filters:format(webp):quality(90)');
+  background-image: url("https://a.storyblok.com/f/126392/3043x1679/ac89eb89f5/2022-kt-project-banner-bdiamond.jpg/m/1024x0/filters:format(webp):quality(90)");
   /* Replace with your background image */
   background-size: cover;
   background-position: center;
@@ -283,7 +286,11 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(to bottom, rgba(22, 22, 22, 0) 0%, rgba(22, 22, 22, 1) 100%);
+  background: linear-gradient(
+    to bottom,
+    rgba(22, 22, 22, 0) 0%,
+    rgba(22, 22, 22, 1) 100%
+  );
   /* Gradient overlay */
   z-index: 1;
   /* On top of the background */
@@ -292,7 +299,6 @@ body {
 .new-arrivals a {
   text-decoration: none;
   color: #000;
-
 }
 
 .content {
@@ -311,8 +317,7 @@ body {
   /* Font size */
   margin-bottom: 10px;
   /* Spacing */
-  font-family: 'Racing Sans One', sans-serif;
-
+  font-family: "Racing Sans One", sans-serif;
 }
 
 .mountain-bikes-heading {
@@ -320,7 +325,7 @@ body {
   /* Font size */
   margin: 10px 0;
   /* Spacing */
-  font-family: 'Racing Sans One', sans-serif;
+  font-family: "Racing Sans One", sans-serif;
 }
 
 .description {
@@ -414,7 +419,7 @@ body {
 }
 
 .road-bikes-background {
-  background-image: url('https://c0.wallpaperflare.com/preview/1024/195/816/black-bike-bicycle-product.jpg');
+  background-image: url("https://c0.wallpaperflare.com/preview/1024/195/816/black-bike-bicycle-product.jpg");
   /* Replace with your background image */
   background-size: cover;
   background-position: center;
@@ -440,7 +445,7 @@ body {
 }
 
 .hybrid-bikes-background {
-  background-image: url('https://e1.pxfuel.com/desktop-wallpaper/791/241/desktop-wallpaper-bike-sport-bike-bicycle-carbon-sport-road-love-on-the-bike-pinarello-section-%D1%80%D0%B0%D0%B7%D0%BD%D0%BE%D0%B5-pinarello.jpg');
+  background-image: url("https://e1.pxfuel.com/desktop-wallpaper/791/241/desktop-wallpaper-bike-sport-bike-bicycle-carbon-sport-road-love-on-the-bike-pinarello-section-%D1%80%D0%B0%D0%B7%D0%BD%D0%BE%D0%B5-pinarello.jpg");
   /* Replace with your background image */
   background-size: cover;
   background-position: center;
@@ -462,14 +467,14 @@ body {
 }
 
 .why-choose-us h2 {
-  font-family: 'Racing Sans One', sans-serif;
+  font-family: "Racing Sans One", sans-serif;
   margin-bottom: 40px;
   /* Spacing below heading */
 }
 
 .why-choose-us p {
   text-align: left;
-  font-family: 'Racing Sans One', sans-serif;
+  font-family: "Racing Sans One", sans-serif;
   font-size: 4vh;
 }
 
@@ -495,7 +500,11 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(to bottom, rgba(22, 22, 22, 0) 0%, rgba(22, 22, 22, 1) 100%);
+  background: linear-gradient(
+    to bottom,
+    rgba(22, 22, 22, 0) 0%,
+    rgba(22, 22, 22, 1) 100%
+  );
   padding: 20px;
   color: white;
   font-size: 18px;
@@ -519,7 +528,7 @@ body {
 .media-section h2 {
   font-size: 2.5rem;
   font-weight: bold;
-  font-family: 'Racing Sans One', sans-serif;
+  font-family: "Racing Sans One", sans-serif;
 }
 
 .media-section img {
@@ -532,7 +541,7 @@ body {
   font-size: 1.75rem;
   font-weight: bold;
   margin-bottom: 15px;
-  font-family: 'Racing Sans One', sans-serif;
+  font-family: "Racing Sans One", sans-serif;
   letter-spacing: 0.1vw;
 }
 
@@ -549,7 +558,8 @@ body {
 /* Image Background Section */
 .image-bg-section {
   position: relative;
-  background: url('https://static.wixstatic.com/media/nsplsh_749918c29e0145af91d65853101d2040~mv2.jpg/v1/fill/w_1899,h_1155,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/nsplsh_749918c29e0145af91d65853101d2040~mv2.jpg') no-repeat center center/cover;
+  background: url("https://static.wixstatic.com/media/nsplsh_749918c29e0145af91d65853101d2040~mv2.jpg/v1/fill/w_1899,h_1155,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/nsplsh_749918c29e0145af91d65853101d2040~mv2.jpg")
+    no-repeat center center/cover;
   height: 100vh;
   display: flex;
   align-items: center;
@@ -577,7 +587,6 @@ body {
   font-weight: 500;
   margin-bottom: 50px;
   margin-top: 100px;
-
 }
 
 .main-heading {
@@ -607,7 +616,7 @@ body {
 .footer h5 {
   font-size: 1.25rem;
   margin-bottom: 15px;
-  font-family: 'Racing Sans One', sans-serif;
+  font-family: "Racing Sans One", sans-serif;
 }
 
 .footer img {
@@ -642,144 +651,6 @@ body {
 .footer-bottom a {
   font-size: 1.25rem;
 }
-
-
-/* Login page styles */
-
-.login-form {
-  background-color: white;
-  border-radius: 0px 8px 0 0;
-  padding: 21px;
-  width: 400px;
-  max-width: 90%;
-  /* For responsiveness */
-  position: absolute;
-  top: 20%;
-  left: 50%;
-  z-index: 10;
-}
-
-.login-form h2 {
-  text-align: left;
-  margin-bottom: 20px;
-  margin-top: 20px;
-  font-size: 20px;
-}
-
-/***** Section *****/
-
-.login {
-  background-color: #fff;
-  padding: 30px 10px;
-  width: 90%;
-}
-
-.input-group {
-  margin-bottom: 25px;
-  position: relative;
-}
-
-.input-group label {
-  position: absolute;
-  top: -10px;
-  left: 15px;
-  background-color: #fff;
-  padding: 0 5px;
-  font-size: 12px;
-  color: #333;
-}
-
-.input-group input {
-  width: 100%;
-  padding: 15px;
-  border: 1px solid #ccc;
-  font-size: 16px;
-  transition: border-color 0.3s;
-  border-radius: 5px;
-}
-
-.input-group input:focus {
-  border-color: #000;
-  outline: none;
-}
-
-.input-group input[type="password"] {
-  font-family: 'Courier New', Courier, monospace;
-}
-
-.button {
-  width: 100%;
-  padding: 15px;
-  background-color: #000;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.button:hover {
-  background-color: #333;
-}
-
-/***** End Section *****/
-
-
-.login-form .separator {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  margin-top: 10px;
-}
-
-.login-form .separator span {
-  flex-grow: 1;
-  border-bottom: 1px solid #ccc;
-  line-height: 1px;
-  position: relative;
-}
-
-.login-form .separator span:before {
-  left: -15px;
-}
-
-.login-form .separator span:after {
-  right: -15px;
-}
-
-.login-form .btn-outline-dark {
-  border-color: #333;
-  color: #333;
-}
-
-.login-form .btn-outline-dark:hover {
-  background-color: #333;
-  color: white;
-}
-
-/* ... Add styles for Facebook and Apple buttons */
-
-.login-form .forgot-password {
-  color: #d9534f;
-}
-
-@media (max-width: 768px) {
-  .login-form {
-
-    align-items: center;
-    left: auto;
-  }
-
-  .login-form h2 {
-    text-align: center;
-    margin-bottom: 20px;
-
-  }
-}
-
-
-
 
 /**  Signup page  **/
 
@@ -840,7 +711,7 @@ body {
 }
 
 .input-group input[type="password"] {
-  font-family: 'Courier New', Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
 }
 
 .button {
@@ -860,7 +731,6 @@ body {
 }
 
 /***** End Section *****/
-
 
 .signup-form .separator {
   display: flex;
@@ -893,7 +763,6 @@ body {
 
 @media (max-width: 768px) {
   .signup-form {
-
     align-items: center;
     left: auto;
   }
@@ -901,7 +770,6 @@ body {
   .signup-form h2 {
     text-align: center;
     margin-bottom: 20px;
-
   }
 }
 
@@ -911,13 +779,11 @@ body {
   display: none;
 }
 
-
 /** End of sign up page **/
 
 /***** Page not found *****/
 
 /* General Reset */
-
 
 .not-found-wrapper {
   display: flex;
@@ -977,9 +843,7 @@ body {
   }
 }
 
-
 /***** End Page not found *****/
-
 
 /***** OTP PAGE *****/
 
@@ -996,7 +860,6 @@ body {
   margin-top: 20vh;
   margin-left: 25vw;
   position: absolute;
-
 }
 
 .otp img {
@@ -1055,13 +918,10 @@ body {
 }
 
 @media (max-width: 768px) {
-
   .otp {
     margin-inline: auto;
     width: 100vw;
   }
-
 }
 
 /***** End OTP PAGE *****/
-

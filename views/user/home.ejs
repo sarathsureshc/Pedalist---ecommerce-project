@@ -39,13 +39,13 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav mx-auto"> 
+        <ul class="navbar-nav mx-auto">
           <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
           <li class="nav-item"><a class="nav-link" href="/products">Products</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+          <li class="nav-item"><a class="nav-link" href="/about-us">About Us</a></li>
+          <li class="nav-item"><a class="nav-link" href="/contact-us">Contact</a></li>
           <li class="nav-item">
-      
+
             <% if(locals.user){ %>
               <div class="dropdown">
                 <a href="#" class="nav-link">
@@ -59,18 +59,20 @@
               <% } else { %>
                 <a class="nav-link" href="/login">Login</a>
                 <% } %>
-                
+
           </li>
         </ul>
         <ul class="navbar-nav ms-auto">
           <% if(locals.user){ %>
-          <li class="nav-item">
-            <a href="/cart" class="nav-link cart-link">
-              <i class="bi bi-cart-fill"></i>
-              <span class="cart-badge"><%= cartCount %></span>
-            </a>
-          </li>
-          <% } %>
+            <li class="nav-item">
+              <a href="/cart" class="nav-link cart-link">
+                <i class="bi bi-cart-fill"></i>
+                <span class="cart-badge">
+                  <%= cartCount %>
+                </span>
+              </a>
+            </li>
+            <% } %>
         </ul>
       </div>
     </div>
@@ -83,13 +85,23 @@
 
     <div class="container text-white overlay-text">
       <h5 class="subheading">Newly Launched</h5>
-      <h1 class="main-heading"><%= newArrivals[0].productName %></h1>
+      <h1 class="main-heading">
+        <%= newArrivals[0].productName %>
+      </h1>
       <h6 class="small-heading mt-4">Specifications</h6>
       <ul class="specifications-list">
-        <li><i class="fas fa-bullseye"></i> <%= newArrivals[0].specification1 %></li>
-        <li><i class="fas fa-bullseye"></i> <%= newArrivals[0].specification2 %></li>
-        <li><i class="fas fa-bullseye"></i> <%= newArrivals[0].specification3 %></li>
-        <li><i class="fas fa-bullseye"></i> <%= newArrivals[0].specification4 %></li>
+        <li><i class="fas fa-bullseye"></i>
+          <%= newArrivals[0].specification1 %>
+        </li>
+        <li><i class="fas fa-bullseye"></i>
+          <%= newArrivals[0].specification2 %>
+        </li>
+        <li><i class="fas fa-bullseye"></i>
+          <%= newArrivals[0].specification3 %>
+        </li>
+        <li><i class="fas fa-bullseye"></i>
+          <%= newArrivals[0].specification4 %>
+        </li>
       </ul>
       <a href="/product-detail?id=<%= newArrivals[0]._id %>" class="btn buy-now-btn">Explore More</a>
     </div>
@@ -97,67 +109,75 @@
   </div>
 
   <!-- New Arrivals Section -->
-<section class="new-arrivals">
-  <div class="container">
-    <h2 class="text-center my-4">New Arrivals</h2>
-    
-    <!-- Carousel for New Arrivals -->
-    <div id="newArrivalsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
-      <div class="carousel-inner">
-        <!-- Dynamic Carousel Items -->
-        <% for (let i = 0; i < newArrivals.length; i += 4) { %>
-          <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
-            <div class="row">
-              <% for (let j = 0; j < 4 && (i + j) < newArrivals.length; j++) { %>
-                <div class="col-md-3 mb-4">
-                  <a href="/product-detail?id=<%= newArrivals[i + j]._id %>">
-                    <div class="card">
-                      <img src="./uploads/product-images/<%= newArrivals[i + j].image[0] %>" class="card-img-top" alt="<%= newArrivals[i + j].productName %>">
-                      <div class="card-body">
-                        <h5 class="card-title"><%= newArrivals[i + j].productName %></h5>
-                        <p class="card-text">&#8377;<%= newArrivals[i + j].price %></p>
+  <section class="new-arrivals">
+    <div class="container">
+      <h2 class="text-center my-4">New Arrivals</h2>
+
+      <!-- Carousel for New Arrivals -->
+      <div id="newArrivalsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+        <div class="carousel-inner">
+          <!-- Dynamic Carousel Items -->
+          <% for (let i=0; i < newArrivals.length; i +=4) { %>
+            <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
+              <div class="row">
+                <% for (let j=0; j < 4 && (i + j) < newArrivals.length; j++) { %>
+                  <div class="col-md-3 mb-4">
+                    <a href="/product-detail?id=<%= newArrivals[i + j]._id %>">
+                      <div class="card">
+                        <img src="./uploads/product-images/<%= newArrivals[i + j].image[0] %>" class="card-img-top"
+                          alt="<%= newArrivals[i + j].productName %>">
+                        <div class="card-body">
+                          <h5 class="card-title">
+                            <%= newArrivals[i + j].productName %>
+                          </h5>
+                          <p class="card-text">&#8377;<%= newArrivals[i + j].price %>
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  </a>
-                </div>
-              <% } %>
+                    </a>
+                  </div>
+                  <% } %>
+              </div>
+            </div>
+            <% } %>
+        </div>
+
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Carousel for small screens -->
+  <div id="newArrivalsCarousel" class="carousel slide d-lg-none" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <!-- Dynamic Carousel Items -->
+      <% newArrivals.forEach((product, index)=> { %>
+        <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+          <div class="card">
+            <img src="./uploads/product-images/<%= product.image[0] %>" class="card-img-top"
+              alt="<%= product.productName %>">
+            <div class="card-body">
+              <h5 class="card-title">
+                <%= product.productName %>
+              </h5>
+              <p class="card-text">&#8377;<%= product.price %>
+              </p>
             </div>
           </div>
-        <% } %>
-      </div>
-
-      
+        </div>
+        <% }); %>
     </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#newArrivalsCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#newArrivalsCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
   </div>
-</section>
-
-      <!-- Carousel for small screens -->
-      <div id="newArrivalsCarousel" class="carousel slide d-lg-none" data-bs-ride="carousel">
-          <div class="carousel-inner">
-              <!-- Dynamic Carousel Items -->
-              <% newArrivals.forEach((product, index) => { %>
-                  <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
-                      <div class="card">
-                          <img src="./uploads/product-images/<%= product.image[0] %>" class="card-img-top" alt="<%= product.productName %>">
-                          <div class="card-body">
-                              <h5 class="card-title"><%= product.productName %></h5>
-                              <p class="card-text">&#8377;<%= product.price %></p>
-                          </div>
-                      </div>
-                  </div>
-              <% }); %>
-          </div>
-          <button class="carousel-control-prev" type="button" data-bs-target="#newArrivalsCarousel" data-bs-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Previous</span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#newArrivalsCarousel" data-bs-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Next</span>
-          </button>
-      </div>
   </div>
-</section>
+  </section>
 
 
   <!-- Mountain Bikes Section -->

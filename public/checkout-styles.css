@@ -1,232 +1,262 @@
 .separator {
-    width: 2px; /* Width of the separator */
-    background-color: #ddd; /* Color of the separator */
-    margin: 0 20px; /* Spacing on the left and right */
-    height: auto; /* Height will adjust based on content */
+  width: 2px; /* Width of the separator */
+  background-color: #bbb; /* Color of the separator */
+  margin: 0 20px; /* Spacing on the left and right */
+  height: auto; /* Height will adjust based on content */
 }
 
 .checkout-container {
-    max-width: 1300px;
-    margin: 130px auto;
-    padding: 20px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    min-height: 60vh;
+  max-width: 1300px;
+  margin: 130px auto;
+  margin-bottom: 30px;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #eee;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  min-height: 60vh;
 }
 
 .checkout-layout {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
 
 .address-selection-container {
-    flex: 1;
-    margin-right: 20px; /* Space between address and summary */
+  flex: 1;
+  margin-right: 20px; /* Space between address and summary */
+}
+
+.address-selection-container .btn {
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .order-summary-container {
-    flex: 1;
+  flex: 1;
 }
 
 h3 {
-    margin-bottom: 15px;
-    color: #333;
-    font-size: 1.5em;
-    text-align: center;
-    font-weight: 500;
-    line-height: 1.5;
-    margin-top: 20px;
-    text-transform: uppercase;
-    margin-bottom: 20px;
+  margin-bottom: 15px;
+  color: #1a1a1a;
+  font-size: 1.5em;
+  text-align: center;
+  font-weight: 500;
+  line-height: 1.5;
+  margin-top: 20px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
 }
 
 .address-selection {
-    display: flex;
-    flex-wrap: wrap; 
-    gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(200px, 1fr)
+  ); /* Flexible grid layout */
+
+  gap: 15px;
 }
 
 .address-option {
-    flex: 1 1 calc(33.33% - 15px); /* Three items per row with space */
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
 }
 
 .address-option:hover {
-    transform: scale(1.02); /* Slightly enlarge on hover */
+  transform: scale(1.02); /* Slightly enlarge on hover */
 }
 
-
-
 .order-summary {
-    margin-bottom: 30px;
+  margin-bottom: 30px;
 }
 
 .order-item {
-    border-bottom: 1px solid #ddd;
-    padding: 10px 0;
-    margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between; /* Align product details in one line */
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  padding: 15px 0;
+  margin-bottom: 15px; /* Increased margin between items */
 }
 
 .order-item h5 {
-    margin: 0;
-    font-size: 16px;
-    color: #555;
+  margin: 0;
+  font-size: 18px;
+  color: #1a1a1a;
+  flex: 1; /* Ensure the title takes the first available space */
 }
 
 .order-item p {
-    margin: 4px 0;
-    color: #777;
-    font-size: 14px;
+  margin: 5px 0;
+  color: #3e3e3e;
+  font-size: 16px;
+  flex: 1; /* Align description in the same line */
 }
 
-#orderBill h4, #orderBill p {
-    margin: 8px 0;
-    font-weight: normal;
-    color: #444;
+.order-item .product-price {
+  font-size: 18px;
+  color: #333;
+  text-align: right; /* Price will align to the right */
+  flex: 1; /* Ensure price takes the remaining space */
+}
+
+#orderBill {
+  margin-top: 30px;
+  text-align: right;
+}
+
+#orderBill h4,
+#orderBill p {
+  margin: 8px 0;
+  font-weight: normal;
+  color: #444;
+  font-size: 16px;
 }
 
 #orderBill h4 {
-    font-size: 18px;
+  font-size: 18px;
 }
 
 .payment-options {
-    margin-top: 20px;
-    text-align: center;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 20px;
+  text-align: center;
 }
 
 .payment-options .btn {
-    margin: 5px;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 5px;
+  margin: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
 }
 
 .btn-success {
-    background-color: #28a745;
-    color: #fff;
-    border: none;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
 }
 
 .btn-danger {
-    background-color: #dc3545;
-    color: #fff;
-    border: none;
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
 }
 
 .btn-info {
-    background-color: #17a2b8;
-    color: #fff;
-    border: none;
+  background-color: #17a2b8;
+  color: #fff;
+  border: none;
 }
 
 .btn-primary {
-    background-color: #007bff;
-    color: #fff;
+  background-color: #007bff;
+  color: #fff;
 }
 
 .btn:hover {
-    opacity: 0.9;
+  opacity: 0.9;
 }
 
 .order-actions {
-    text-align: center;
-    margin-top: 20px;
+  text-align: center;
+  margin-top: 20px;
 }
 
 #couponModal {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 #couponModal .modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 600px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 600px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 #couponModal .close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
 }
 
 #couponModal .close:hover,
 #couponModal .close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .coupon-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .coupon-item {
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 15px;
-    margin: 10px;
-    text-align: center;
-    background-color: #f9f9f9;
-    transition: transform 0.2s;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  margin: 10px;
+  text-align: center;
+  background-color: #f9f9f9;
+  transition: transform 0.2s;
 }
 
 .coupon-item:hover {
-    transform: scale(1.05);
+  transform: scale(1.05);
 }
 
 .coupon-item h5 {
-    margin: 0;
-    font-size: 18px;
+  margin: 0;
+  font-size: 18px;
 }
 
 .coupon-item p {
-    margin: 5px 0;
-    font-size: 14px;
-    color: #555;
+  margin: 5px 0;
+  font-size: 14px;
+  color: #555;
 }
 
 .coupon-item button {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 @media (max-width: 768px) {
-    .address-option {
-        flex: 1 1 100%; /* Full width on small screens */
-    }
+  .address-option {
+    flex: 1 1 100%; /* Full width on small screens */
+  }
 
-    .coupon-item {
-        flex: 1 1 calc(50% - 20px); /* Two items per row on smaller screens */
-    }
+  .coupon-item {
+    flex: 1 1 calc(50% - 20px); /* Two items per row on smaller screens */
+  }
 }
 
 @media (max-width: 480px) {
-    .coupon-item {
-        flex: 1 1 100%; /* Full width on extra small screens */
-    }
+  .coupon-item {
+    flex: 1 1 100%; /* Full width on extra small screens */
+  }
 }

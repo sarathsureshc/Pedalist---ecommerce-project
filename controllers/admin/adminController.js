@@ -97,78 +97,87 @@ const loadDashboard = async (req, res) => {
 };
 
 const getSalesData = async (req, res) => {
-    const { timeframe } = req.query;
-    let match;
-  
-    const validStatuses = ['Placed', 'Shipped', 'Delivered'];
-  
-    // Define the match criteria based on the timeframe
+  const { timeframe } = req.query;
+  let match;
+
+  const validStatuses = ["Placed", "Shipped", "Delivered"];
+
+  // Define the match criteria based on the timeframe
+  if (timeframe === "monthly") {
+    match = {
+      $match: {
+        createdOn: {
+          $gte: new Date(
+            new Date().setFullYear(new Date().getFullYear(), 0, 1),
+          ),
+        },
+      },
+    };
+  } else if (timeframe === "yearly") {
+    match = {
+      $match: {
+        createdOn: {
+          $gte: new Date(new Date().setFullYear(new Date().getFullYear() - 10)),
+        },
+      },
+    };
+  } else {
+    return res.status(400).json({ error: "Invalid timeframe" });
+  }
+
+  try {
+    const salesData = await Order.aggregate([
+      match,
+      { $unwind: "$items" }, // Unwind the items array
+      { $match: { "items.status": { $in: validStatuses } } }, // Filter items by status
+      {
+        $group: {
+          _id:
+            timeframe === "monthly"
+              ? {
+                  $dateToString: { format: "%Y-%m", date: "$createdOn" },
+                }
+              : {
+                  $dateToString: { format: "%Y", date: "$createdOn" },
+                },
+          totalSales: {
+            $sum: { $multiply: ["$items.priceApplied", "$items.quantity"] },
+          }, // Calculate total sales
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+
+    // Prepare labels and sales data
+    let labels, sales;
+
     if (timeframe === "monthly") {
-      match = {
-        $match: {
-          createdOn: { $gte: new Date(new Date().setFullYear(new Date().getFullYear(), 0, 1)) },
-        },
-      };
+      labels = Array.from({ length: 12 }, (_, i) => {
+        const date = new Date();
+        date.setMonth(i);
+        return date.toISOString().slice(0, 7); // Format YYYY-MM
+      });
+      sales = labels.map((month) => {
+        const found = salesData.find((data) => data._id === month);
+        return found ? found.totalSales : 0; // Default to 0 if no sales
+      });
     } else if (timeframe === "yearly") {
-      match = {
-        $match: {
-          createdOn: {
-            $gte: new Date(new Date().setFullYear(new Date().getFullYear() - 10)),
-          },
-        },
-      };
-    } else {
-      return res.status(400).json({ error: "Invalid timeframe" });
+      labels = Array.from({ length: 11 }, (_, i) => {
+        const year = new Date().getFullYear() - i;
+        return year.toString(); // Format YYYY
+      }).reverse();
+      sales = labels.map((year) => {
+        const found = salesData.find((data) => data._id === year);
+        return found ? found.totalSales : 0; // Default to 0 if no sales
+      });
     }
-  
-    try {
-      const salesData = await Order.aggregate([
-        match,
-        { $unwind: "$items" }, // Unwind the items array
-        { $match: { 'items.status': { $in: validStatuses } } }, // Filter items by status
-        {
-          $group: {
-            _id: timeframe === "monthly" ? {
-              $dateToString: { format: "%Y-%m", date: "$createdOn" }
-            } : {
-              $dateToString: { format: "%Y", date: "$createdOn" }
-            },
-            totalSales: { $sum: { $multiply: ["$items.priceApplied", "$items.quantity"] } }, // Calculate total sales
-          },
-        },
-        { $sort: { _id: 1 } },
-      ]);
-  
-      // Prepare labels and sales data
-      let labels, sales;
-  
-      if (timeframe === "monthly") {
-        labels = Array.from({ length: 12 }, (_, i) => {
-          const date = new Date();
-          date.setMonth(i);
-          return date.toISOString().slice(0, 7); // Format YYYY-MM
-        });
-        sales = labels.map(month => {
-          const found = salesData.find(data => data._id === month);
-          return found ? found.totalSales : 0; // Default to 0 if no sales
-        });
-      } else if (timeframe === "yearly") {
-        labels = Array.from({ length: 11 }, (_, i) => {
-          const year = new Date().getFullYear() - i;
-          return year.toString(); // Format YYYY
-        }).reverse();
-        sales = labels.map(year => {
-          const found = salesData.find(data => data._id === year);
-          return found ? found.totalSales : 0; // Default to 0 if no sales
-        });
-      }
-  
-      res.json({ labels, sales });
-    } catch (error) {
-      console.error("Error fetching sales data:", error);
-      return res.status(500).json({ error: "Internal Server Error" });
-    }
-  };
+
+    res.json({ labels, sales });
+  } catch (error) {
+    console.error("Error fetching sales data:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
 const getBestSellingProducts = async () => {
   const results = await Order.aggregate([
@@ -276,13 +285,13 @@ const generateLedger = async (req, res) => {
   let filename = "ledger.pdf";
   res.setHeader(
     "Content-disposition",
-    'attachment; filename="' + filename + '"'
+    'attachment; filename="' + filename + '"',
   );
   res.setHeader("Content-type", "application/pdf");
 
   doc.pipe(res);
 
-  doc.font("C:/Windows/Fonts/Arial.ttf"); 
+  doc.font("C:/Windows/Fonts/Arial.ttf");
 
   // Title
   doc.fontSize(25).text("Ledger Book", { align: "center" });
@@ -327,7 +336,7 @@ const generateLedger = async (req, res) => {
         `₹${order.totalPrice.toFixed(2)}`,
         startX + headerWidths[0],
         doc.y,
-        { width: headerWidths[1], align: "center" }
+        { width: headerWidths[1], align: "center" },
       ) // Total Price
       .text(formattedDate, startX + headerWidths[0] + headerWidths[1], doc.y, {
         width: headerWidths[2],
@@ -350,7 +359,7 @@ const generateLedger = async (req, res) => {
       startX,
       startY,
       headerWidths.reduce((a, b) => a + b, 0),
-      doc.y - startY
+      doc.y - startY,
     )
     .stroke(); // Adjust the height as needed
 

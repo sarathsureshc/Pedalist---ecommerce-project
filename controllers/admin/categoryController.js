@@ -29,9 +29,11 @@ const categoryInfo = async (req, res) => {
 const addCategory = async (req, res) => {
   const { name, description } = req.body;
   try {
-    const existingCategory = await Category.findOne({ name: { $regex: new RegExp(`^${name}$`, 'i') } });
+    const existingCategory = await Category.findOne({
+      name: { $regex: new RegExp(`^${name}$`, "i") },
+    });
     if (existingCategory) {
-      console.log("Category exists")
+      console.log("Category exists");
       return res.status(400).json({ message: "Category already exists" });
     }
 
@@ -42,11 +44,10 @@ const addCategory = async (req, res) => {
     await newCategory.save();
     return res.json({ message: "Category added successfully" });
   } catch (error) {
-    console.log("Error occured")
+    console.log("Error occured");
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
 
 const getListCategory = async (req, res) => {
   try {
@@ -82,12 +83,17 @@ const editCategory = async (req, res) => {
   try {
     const id = req.params.id;
     const { categoryName, description } = req.body;
-    const existingCategory = await Category.findOne({ name: { $regex: new RegExp(`^${categoryName}$`, 'i') },_id: { $ne: id }  });
+    const existingCategory = await Category.findOne({
+      name: { $regex: new RegExp(`^${categoryName}$`, "i") },
+      _id: { $ne: id },
+    });
 
     if (existingCategory) {
-
       const category = await Category.findById(id);
-      return res.render('edit-category',{category,error:"Category already exists"});
+      return res.render("edit-category", {
+        category,
+        error: "Category already exists",
+      });
     }
 
     const updateCategory = await Category.findByIdAndUpdate(
@@ -96,7 +102,7 @@ const editCategory = async (req, res) => {
         name: categoryName,
         description: description,
       },
-      { new: true }
+      { new: true },
     );
 
     if (updateCategory) {
@@ -115,32 +121,47 @@ const deleteCategory = async (req, res) => {
   const { categoryId } = req.body;
 
   if (!categoryId) {
-    console.log("category not found")
-    return res.status(400).json({ status: false, message: "Category ID is required" });
-}
+    console.log("category not found");
+    return res
+      .status(400)
+      .json({ status: false, message: "Category ID is required" });
+  }
 
-try {
-  
-  const result = await Category.findByIdAndUpdate(categoryId, { isDeleted: true ,isListed: false}, { new: true });
+  try {
+    const result = await Category.findByIdAndUpdate(
+      categoryId,
+      { isDeleted: true, isListed: false },
+      { new: true },
+    );
 
     if (!result) {
-        return res.status(404).json({ status: false, message: "Category not found" });
+      return res
+        .status(404)
+        .json({ status: false, message: "Category not found" });
     }
-    res.status(200).json({ status: true, message: "Category deleted successfully" });
-} catch (error) {
-    console.error("Error deleting category:", error); 
-    res.status(500).json({ status: false, message: "Failed to delete category" });
-}
+    res
+      .status(200)
+      .json({ status: true, message: "Category deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting category:", error);
+    res
+      .status(500)
+      .json({ status: false, message: "Failed to delete category" });
+  }
 };
 
 const restoreCategory = async (req, res) => {
   const { categoryId } = req.body;
 
   try {
-      await Category.findByIdAndUpdate(categoryId, { isDeleted: false });
-      res.status(200).json({ status: true, message: "Category restored successfully" });
+    await Category.findByIdAndUpdate(categoryId, { isDeleted: false });
+    res
+      .status(200)
+      .json({ status: true, message: "Category restored successfully" });
   } catch (error) {
-      res.status(500).json({ status: false, message: "Failed to restore category" });
+    res
+      .status(500)
+      .json({ status: false, message: "Failed to restore category" });
   }
 };
 
@@ -152,5 +173,5 @@ module.exports = {
   getEditCategory,
   editCategory,
   deleteCategory,
-  restoreCategory
+  restoreCategory,
 };

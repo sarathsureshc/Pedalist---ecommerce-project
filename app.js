@@ -26,7 +26,7 @@ app.use(
       httpOnly: true,
       maxAge: 72 * 60 * 60 * 1000,
     },
-  })
+  }),
 );
 
 app.use(passport.initialize());

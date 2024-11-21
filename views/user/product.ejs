@@ -77,8 +77,7 @@
                                 <span class="discounted-price">₹<%= product.price.toFixed(2) %></span>
                             <% } %>
                         </p>
-                        <p>Status: <%= product.quantity > 0 ? 'Available' : 'Out of Stock' %></p>
-                        <strong>Stock left: </strong><%= product.quantity %>
+                        <p> <%= product.quantity > 0 ? 'Available' : 'Out of Stock' %></p>
                     </div>
                 </a>
             <% }); %>

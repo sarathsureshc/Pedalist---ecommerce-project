@@ -1,110 +1,114 @@
 .order-confirmation-container {
-    max-width: 800px;
-    margin: 100px auto;
-    padding: 30px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 100px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
 }
 
 .order-header {
-    text-align: center;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #ddd;
-    margin-bottom: 20px;
+  text-align: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
 }
 
 .order-success-message {
-    color: #28a745;
-    font-size: 1.8em;
-    margin-bottom: 10px;
+  color: #28a745;
+  font-size: 1.8em;
+  margin-bottom: 10px;
 }
 
 .thank-you-message {
-    color: #555;
-    font-size: 1.1em;
+  color: #555;
+  font-size: 1.1em;
 }
 
-.order-details, .order-items, .delivery-address {
-    margin-bottom: 20px;
-    padding: 20px;
-    background-color: #f8f8f8;
-    border-radius: 5px;
-    border: 1px solid #ddd;
+.order-details,
+.order-items,
+.delivery-address {
+  margin-bottom: 20px;
+  padding: 20px;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+  border: 1px solid #ddd;
 }
 
-.order-details h3, .order-items h3, .delivery-address h3 {
-    font-size: 1.3em;
-    color: #333;
-    margin-bottom: 10px;
-    border-bottom: 2px solid #007bff;
-    padding-bottom: 5px;
+.order-details h3,
+.order-items h3,
+.delivery-address h3 {
+  font-size: 1.3em;
+  color: #333;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 5px;
 }
 
 .order-details ul {
-    list-style: none;
-    padding: 0;
+  list-style: none;
+  padding: 0;
 }
 
 .order-details li {
-    font-size: 1em;
-    margin-bottom: 5px;
-    color: #444;
+  font-size: 1em;
+  margin-bottom: 5px;
+  color: #444;
 }
 
 .item {
-    padding: 15px;
-    border-top: 1px solid #b7b7b7;
+  padding: 15px;
+  border-top: 1px solid #b7b7b7;
 }
 
 .item:first-child {
-    border-top: none;
+  border-top: none;
 }
 
 .item h5 {
-    font-size: 1.2em;
-    font-weight: 550;
-    color: #333;
-    margin-bottom: 5px;
+  font-size: 1.2em;
+  font-weight: 550;
+  color: #333;
+  margin-bottom: 5px;
 }
 
 .order-actions {
-    text-align: center;
-    margin-top: 30px;
+  text-align: center;
+  margin-top: 30px;
 }
 
 .btn {
-    padding: 10px 25px;
-    font-size: 1em;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    text-decoration: none;
-    color: #fff;
-    transition: background-color 0.3s ease;
+  padding: 10px 25px;
+  font-size: 1em;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  color: #fff;
+  transition: background-color 0.3s ease;
 }
 
 .btn-primary {
-    background-color: #007bff;
-    margin-right: 10px;
+  background-color: #007bff;
+  margin-right: 10px;
 }
 
 .btn-secondary {
-    background-color: #6c757d;
+  background-color: #6c757d;
 }
 
 .btn-primary:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
 
 .btn-secondary:hover {
-    background-color: #565e64;
+  background-color: #565e64;
 }
 
 .price {
-    font-size: 1.2em;
-    font-weight: 550;
-    color: #333;
-    margin-left: 10px;
+  font-size: 1.2em;
+  font-weight: 550;
+  color: #333;
+  margin-left: 10px;
 }

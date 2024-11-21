@@ -24,7 +24,7 @@ router.post("/resend-otp", userController.resendOtp);
 
 router.get(
   "/auth/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
+  passport.authenticate("google", { scope: ["profile", "email"] }),
 );
 
 router.get(
@@ -35,7 +35,7 @@ router.get(
   }),
   (req, res) => {
     res.redirect("/");
-  }
+  },
 );
 
 router.get("/login", userController.loadLoginpage);
@@ -48,7 +48,7 @@ router.get("/products", userAuth, productsController.loadProductPage);
 router.get(
   "/product-detail",
   userAuth,
-  productsController.loadProductDetailPage
+  productsController.loadProductDetailPage,
 );
 
 router.get("/profile", userAuth, profileController.loadProfilePage);
@@ -57,7 +57,7 @@ router.post("/edit-profile", userAuth, profileController.profileEdit);
 router.get(
   "/edit-password",
   userAuth,
-  profileController.loadPasswordChangePage
+  profileController.loadPasswordChangePage,
 );
 router.post("/edit-password", userAuth, profileController.passwordChange);
 
@@ -87,7 +87,7 @@ router.get("/checkout", userAuth, checkoutController.getCheckoutPage);
 router.post(
   "/add-checkout-address",
   userAuth,
-  addressController.addCheckoutAddress
+  addressController.addCheckoutAddress,
 );
 
 router.post("/place-order", userAuth, orderController.placeOrder);

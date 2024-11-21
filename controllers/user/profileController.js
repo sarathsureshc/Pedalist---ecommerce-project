@@ -12,11 +12,14 @@ const loadProfilePage = async (req, res) => {
     if (user) {
       const userData = await User.findOne({ _id: user._id });
       const cart = await Cart.findOne({ userId: user._id });
-      
+
       if (cart) {
-        cartCount = cart.items.reduce((total, item) => total + item.quantity, 0);
+        cartCount = cart.items.reduce(
+          (total, item) => total + item.quantity,
+          0,
+        );
       }
-      res.render("user-profile", { user: userData,cartCount});
+      res.render("user-profile", { user: userData, cartCount });
     } else {
       return res.redirect("/login");
     }
@@ -31,7 +34,7 @@ const loadProfileEditPage = async (req, res) => {
     const user = req.session.user || req.user;
     if (user) {
       const userData = await User.findOne({ _id: user._id });
-      res.render("edit-profile", { user: userData,});
+      res.render("edit-profile", { user: userData });
     } else {
       return res.redirect("/login");
     }
@@ -48,7 +51,7 @@ const profileEdit = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       user._id,
       { firstName: firstName, lastName: lastName, mobileNumber: mobileNumber },
-      { new: true }
+      { new: true },
     );
     res.redirect("/profile");
   } catch (error) {
@@ -60,15 +63,18 @@ const profileEdit = async (req, res) => {
 const loadPasswordChangePage = async (req, res) => {
   try {
     const user = req.session.user || req.user;
-    let cartCount = 0 ;
+    let cartCount = 0;
     if (user) {
       const userData = await User.findOne({ _id: user._id });
       const cart = await Cart.findOne({ userId: user._id });
-      
+
       if (cart) {
-        cartCount = cart.items.reduce((total, item) => total + item.quantity, 0);
+        cartCount = cart.items.reduce(
+          (total, item) => total + item.quantity,
+          0,
+        );
       }
-      res.render("edit-password",{user:userData,cartCount});
+      res.render("edit-password", { user: userData, cartCount });
     } else {
       return res.redirect("/login");
     }
@@ -81,28 +87,30 @@ const loadPasswordChangePage = async (req, res) => {
 const passwordChange = async (req, res) => {
   try {
     const user = req.session.user || req.user;
-    if(user){
-    const { currentPassword, newPassword, confirmPassword } = req.body;
-    const userData = await User.findOne({ _id: user._id });
+    if (user) {
+      const { currentPassword, newPassword, confirmPassword } = req.body;
+      const userData = await User.findOne({ _id: user._id });
 
-    const isMatch = await bcrypt.compare(currentPassword, userData.password);
+      const isMatch = await bcrypt.compare(currentPassword, userData.password);
       if (!isMatch) {
-        return res.status(400).json({ message: "Current password is incorrect" });
+        return res
+          .status(400)
+          .json({ message: "Current password is incorrect" });
       }
-    if (newPassword !== confirmPassword) {
-      return res.status(400).json({ message: "Passwords do not match" });
-    }
+      if (newPassword !== confirmPassword) {
+        return res.status(400).json({ message: "Passwords do not match" });
+      }
 
-    const newPasswordHash = await securePassword(newPassword);
-    const updatedUser = await User.findByIdAndUpdate(
-      user._id,
-      { password: newPasswordHash },
-      { new: true }
-    );
-    res.redirect("/profile");
-  }else{
-    return res.redirect("/login");
-  }
+      const newPasswordHash = await securePassword(newPassword);
+      const updatedUser = await User.findByIdAndUpdate(
+        user._id,
+        { password: newPasswordHash },
+        { new: true },
+      );
+      res.redirect("/profile");
+    } else {
+      return res.redirect("/login");
+    }
   } catch (error) {
     console.error(error);
     res.redirect("/pageerror");

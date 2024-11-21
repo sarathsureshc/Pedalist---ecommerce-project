@@ -31,7 +31,7 @@ const placeOrder = async (req, res) => {
     }
 
     const cart = await Cart.findOne({ userId: user._id }).populate(
-      "items.productId"
+      "items.productId",
     );
     if (!cart || cart.items.length === 0) {
       return res
@@ -59,17 +59,17 @@ const placeOrder = async (req, res) => {
         switch (offer.offerGroup) {
           case "Brand":
             isApplicable = offer.brandsIncluded.includes(
-              product.brand._id.toString()
+              product.brand._id.toString(),
             );
             break;
           case "Category":
             isApplicable = offer.categoriesIncluded.includes(
-              product.category._id.toString()
+              product.category._id.toString(),
             );
             break;
           case "Product":
             isApplicable = offer.productsIncluded.includes(
-              product._id.toString()
+              product._id.toString(),
             );
             break;
         }
@@ -86,7 +86,7 @@ const placeOrder = async (req, res) => {
           if (offer.maxDiscountAmount) {
             effectiveDiscount = Math.min(
               effectiveDiscount,
-              offer.maxDiscountAmount
+              offer.maxDiscountAmount,
             );
           }
 
@@ -147,12 +147,10 @@ const placeOrder = async (req, res) => {
     if (paymentMethod === "Wallet Payment") {
       const userWallet = await Wallet.findOne({ userId: user._id });
       if (!userWallet || userWallet.balance < totalPrice) {
-        return res
-          .status(400)
-          .json({
-            success: false,
-            message: "Insufficient balance in your wallet.",
-          });
+        return res.status(400).json({
+          success: false,
+          message: "Insufficient balance in your wallet.",
+        });
       }
       newOrder.paymentMethod = "Wallet Payment";
       newOrder.paymentStatus = "Completed";
@@ -202,7 +200,7 @@ const placeOrder = async (req, res) => {
       for (const item of cart.items) {
         await Product.updateOne(
           { _id: item.productId._id },
-          { $inc: { quantity: -item.quantity } }
+          { $inc: { quantity: -item.quantity } },
         );
       }
 
@@ -246,7 +244,7 @@ const verifyRazorpayPayment = async (req, res) => {
       for (const item of order.items) {
         await Product.updateOne(
           { _id: item.product },
-          { $inc: { quantity: -item.quantity } }
+          { $inc: { quantity: -item.quantity } },
         );
       }
 
@@ -323,8 +321,8 @@ const downloadInvoice = async (req, res) => {
     doc.fontSize(14).text(`Total Amount: ₹${order.totalPrice.toFixed(2)}`);
     doc.text(
       `Total Discount: ₹${order.discount.toFixed(
-        2
-      )} (Including Offers and Coupon)`
+        2,
+      )} (Including Offers and Coupon)`,
     );
     doc.text(`Payment Method: ${order.paymentMethod}`);
     doc.moveDown(1.5);
@@ -363,7 +361,7 @@ const downloadInvoice = async (req, res) => {
       .moveDown(0.5);
     doc.fontSize(14).text(`Name: ${order.address.name}`);
     doc.text(
-      `Address: ${order.address.houseName}, ${order.address.streetName}, ${order.address.landmark}, ${order.address.locality}, ${order.address.city}, ${order.address.state} - ${order.address.pin}`
+      `Address: ${order.address.houseName}, ${order.address.streetName}, ${order.address.landmark}, ${order.address.locality}, ${order.address.city}, ${order.address.state} - ${order.address.pin}`,
     );
     doc.text(`Contact No: ${order.address.contactNo}`);
 
@@ -503,7 +501,7 @@ const cancelOrderItem = async (req, res) => {
             const description = `Refunded ${refundAmount} due to cancellation of ${product.productName}`;
             processRefund(userId, orderId, refundAmount, description);
             console.log(
-              `Refunded ₹${refundAmount} to user ${user._id}'s wallet.`
+              `Refunded ₹${refundAmount} to user ${user._id}'s wallet.`,
             );
           } else {
             console.error("Invalid refund amount calculated:", refundAmount);
@@ -516,7 +514,7 @@ const cancelOrderItem = async (req, res) => {
 
         await Product.updateOne(
           { _id: item.product },
-          { $inc: { quantity: quantity } }
+          { $inc: { quantity: quantity } },
         );
         res.redirect("/orders");
       } else {
@@ -613,12 +611,10 @@ const continuePayment = async (req, res) => {
       order.paymentStatus !== "Pending" ||
       order.paymentMethod !== "Pending"
     ) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Payment cannot be continued for this order.",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Payment cannot be continued for this order.",
+      });
     }
 
     const options = {
