@@ -1,410 +1,424 @@
 <%- include('../partials/admin/header.ejs') %>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f9f9f9;
-        margin: 0;
-        padding: 20px;
-    }
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
 
-    .wrapper {
-        background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        padding: 20px;
-    }
+        .wrapper {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
 
-    .form-group {
-        margin-bottom: 20px;
-        padding: 5px;
-    }
+        .form-group {
+            margin-bottom: 20px;
+            padding: 10px;
+        }
 
-    .form-group label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-        color: #555;
-    }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
 
-    .form-control {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        transition: border 0.3s;
-    }
-    .head{
-        font-size: 24px;
-        font-weight: bold;
-        margin-bottom: 20px;
-    }
-    .option{
-        margin-bottom: 10px;
-        padding-bottom: 3px;
-        display: flex;
-        align-items: center;
-    }
-    .option input{
-        width: 10px;
-        padding-right: 15px;
-    }
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            transition: border 0.3s, box-shadow 0.3s;
+        }
 
-    .form-control:focus {
-        border-color: #007bff;
-        outline: none;
-    }
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+            outline: none;
+        }
 
-    .radio-group,
-    .checkbox-group {
-        margin-top: 10px;
-        display: grid;
-        gap: 10px;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    }
+        .head {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #444;
+        }
 
-    .radio-group label {
-        margin: 0;
-        cursor: pointer;
-        display: flex;
-        align-items: start;
-    }
+        .option {
+            margin-bottom: 10px;
+            padding-bottom: 3px;
+            display: flex;
+            align-items: center;
+        }
 
-    .checkbox-group label {
-        margin: 0;
-        cursor: pointer;
-        display: flexbox;
-        align-items: start;
-    }
+        .option input {
+            width: 15px;
+            margin-right: 10px;
+        }
 
-    .radio-group input[type="radio"],
-    .checkbox-group input[type="checkbox"] {
-        margin-right: 1px;
-    }
+        .radio-group {
+            margin-top: 10px;
+            display: grid;
+            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
 
-    .checkbox-group {
-        flex-direction: column;
-        /* Ensure checkboxes stack vertically */
-    }
 
-    .error-message {
-        color: red;
-        font-size: 0.9em;
-        margin-top: 5px;
-    }
+        .checkbox-group {
+            margin-top: 10px;
+            display: grid;
+            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            background-color: lightgrey;
+        }
 
-    .btn-success {
-        display: block;
-        width: 100%;
-        padding: 10px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 16px;
-        margin-top: 20px;
-        transition: background-color 0.3s;
-    }
+        .radio-group label,
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
 
-    .btn:hover {
-        background-color: #0056b3;
-    }
-</style>
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
 
-<div class="wrapper">
-    <header class="dashboard-header">
-        <h1>Edit Offer</h1>
-        <a href="/admin/logout" class="dashboard-logout-button btn btn-danger">Logout</a>
-    </header>
+        .btn-success {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
 
-    <form id="editOfferForm" method="POST" action="/admin/edit-offer/<%= offer._id %>">
-        <!-- Offer Name -->
-        <div class="form-group">
-            <label for="offerName">Offer Name:</label>
-            <input type="text" id="offerName" name="offerName" class="form-control"
-                value="<%= offer.offerName %>" />
-            <span class="error-message" id="offerNameError"></span>
-        </div>
+        .btn-success:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
 
-        <!-- Discount Description -->
-        <div class="form-group">
-            <label for="discountDescription">Discount Description:</label>
-            <input type="text" id="discountDescription" name="discountDescription" class="form-control"
-                value="<%= offer.discountDescription %>" />
-            <span class="error-message" id="discountDescriptionError"></span>
-        </div>
+        @media (max-width: 768px) {
+            .form-group {
+                margin-bottom: 15px;
+            }
+        }
+    </style>
 
-        <!-- Start Date -->
-        <div class="form-group">
-            <label for="startDate">Start Date:</label>
-            <input type="date" id="startDate" name="startDate" class="form-control"
-                value="<%= offer.startDate.toISOString().substring(0, 10) %>" />
-            <span class="error-message" id="startDateError"></span>
-        </div>
+    <div class="wrapper">
+        <header class="dashboard-header">
+            <h1>Edit Offer</h1>
+            <a href="/admin/logout" class="dashboard-logout-button btn btn-danger">Logout</a>
+        </header>
 
-        <!-- End Date -->
-        <div class="form-group">
-            <label for="endDate">End Date:</label>
-            <input type="date" id="endDate" name="endDate" class="form-control"
-                value="<%= offer.endDate.toISOString().substring(0, 10) %>" />
-            <span class="error-message" id="endDateError"></span>
-        </div>
-
-        <!-- Offer Group -->
-        <div class="form-group">
-            <label>Offer Group:</label>
-            <div class="radio-group">
-                <label> Global<input type="radio" name="offerGroup" value="Global" <%= offer.offerGroup === 'Global' ? 'checked' : '' %> /></label>
-                <label> Product<input type="radio" name="offerGroup" value="Product" <%= offer.offerGroup === 'Product' ? 'checked' : '' %> /></label>
-                <label> Category<input type="radio" name="offerGroup" value="Category" <%= offer.offerGroup === 'Category' ? 'checked' : '' %> /></label>
-                <label> Brand<input type="radio" name="offerGroup" value="Brand" <%= offer.offerGroup === 'Brand' ? 'checked' : '' %> /></label>
-                <label> Referral<input type="radio" name="offerGroup" value="Referral" <%= offer.offerGroup === 'Referral' ? 'checked' : '' %> /></label>
-            </div><span class="error-message" id="offerGroupError"></span>
-        </div>
-
-        <!-- Product Checkboxes -->
-        <div class="form-group checkbox-group" id="productGroup">
-            <label>Products:</label>
-            <div>
-                <% products.forEach(product => { %>
-                    <label>
-                        <%= product.productName %>
-                        <input type="checkbox" name="productsIncluded"
-                            value="<%= product._id %>" <%= (offer.productsIncluded && offer.productsIncluded.includes(product._id)) ? 'checked' : '' %> />
-                    </label>
-                <% }) %>
+        <form id="editOfferForm" method="POST" action="/admin/edit-offer/<%= offer._id %>">
+            <!-- Offer Name -->
+            <div class="form-group">
+                <label for="offerName">Offer Name:</label>
+                <input type="text" id="offerName" name="offerName" class="form-control"
+                    value="<%= offer.offerName %>" />
+                <span class="error-message" id="offerNameError"></span>
             </div>
-            <span class="error-message" id="productsIncludedError"></span>
-        </div>
 
-        <!-- Category Checkboxes -->
-        <div class="form-group checkbox-group" id="categoryGroup">
-            <label>Categories:</label>
-            <div>
-                <% categories.forEach(category => { %>
-                    <label>
-                        <%= category.name %>
-                        <input type="checkbox" name="categoriesIncluded"
-                            value="<%= category._id %>" <%= (offer.categoriesIncluded && offer.categoriesIncluded.includes(category._id)) ? 'checked' : '' %> />
-                    </label>
-                <% }) %>
+            <!-- Discount Description -->
+            <div class="form-group">
+                <label for="discountDescription">Discount Description:</label>
+                <input type="text" id="discountDescription" name="discountDescription" class="form-control"
+                    value="<%= offer.discountDescription %>" />
+                <span class="error-message" id="discountDescriptionError"></span>
             </div>
-            <span class="error-message" id="categoriesIncludedError"></span>
-        </div>
 
-        <!-- Brand Checkboxes -->
-        <div class="form-group checkbox-group" id="brandGroup">
-            <label>Brands:</label>
-            <div>
-                <% brands.forEach(brand => { %>
-                    <label>
-                        <%= brand.brandName %>
-                        <input type="checkbox" name="brandsIncluded"
-                            value="<%= brand._id %>" <%= (offer.brandsIncluded && offer.brandsIncluded.includes(brand._id)) ? 'checked' : '' %> />
-                    </label>
-                <% }) %>
+            <!-- Start Date -->
+            <div class="form-group">
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate" name="startDate" class="form-control"
+                    value="<%= offer.startDate.toISOString().substring(0, 10) %>" />
+                <span class="error-message" id="startDateError"></span>
             </div>
-            <span class="error-message" id="brandsIncludedError"></span>
-        </div>
 
-        <!-- Offer Type -->
-        <div class="form-group">
-            <label>Offer Type:</label>
-            <div class="radio-group">
-                <label><input type="radio" name="offerType" value="Percentage" <%= offer.offerType === 'Percentage' ? 'checked' : '' %> /> Percentage</label>
-                <label><input type="radio" name="offerType" value="Flat" <%= offer.offerType === 'Flat' ? 'checked' : '' %> /> Flat</label>
+            <!-- End Date -->
+            <div class="form-group">
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate" name="endDate" class="form-control"
+                    value="<%= offer.endDate.toISOString().substring(0, 10) %>" />
+                <span class="error-message" id="endDateError"></span>
             </div>
-            <span class="error-message" id="offerTypeError"></span>
-        </div>
 
-        <!-- Offer Value -->
-        <div class="form-group">
-            <label for="offerValue">Offer Value:</label>
-            <input type="number" id="offerValue" name="offerValue" class="form-control"
-                value="<%= offer.offerValue %>" />
-            <span class="error-message" id="offerValueError"></span>
-        </div>
+            <!-- Offer Group -->
+            <div class="form-group">
+                <label>Offer Group:</label>
+                <div class="radio-group">
+                    <label> Global<input type="radio" name="offerGroup" value="Global" <%=offer.offerGroup==='Global'
+                            ? 'checked' : '' %> /></label>
+                    <label> Product<input type="radio" name="offerGroup" value="Product" <%=offer.offerGroup==='Product'
+                            ? 'checked' : '' %> /></label>
+                    <label> Category<input type="radio" name="offerGroup" value="Category"
+                            <%=offer.offerGroup==='Category' ? 'checked' : '' %> /></label>
+                    <label> Brand<input type="radio" name="offerGroup" value="Brand" <%=offer.offerGroup==='Brand'
+                            ? 'checked' : '' %> /></label>
+                    <label> Referral<input type="radio" name="offerGroup" value="Referral"
+                            <%=offer.offerGroup==='Referral' ? 'checked' : '' %> /></label>
+                </div><span class="error-message" id="offerGroupError"></span>
+            </div>
 
-        <!-- Minimum Purchase Amount -->
-        <div class="form-group" id="minPur">
-            <label for="minPurchaseAmount">Minimum Purchase Amount:</label>
-            <input type="number" id="minPurchaseAmount" name="minPurchaseAmount" class="form-control"
-                value="<%= offer.minPurchaseAmount %>" />
-            <span class="error-message" id="minPurchaseAmountError"></span>
-        </div>
+            <!-- Product Checkboxes -->
+            <div class="form-group checkbox-group" id="productGroup">
+                <label class="head">Products:</label>
+                <div>
+                    <% products.forEach(product=> { %>
+                        <label class="option">
+                            <input type="checkbox" name="productsIncluded" value="<%= product._id %>"
+                                <%=(offer.productsIncluded && offer.productsIncluded.includes(product._id)) ? 'checked'
+                                : '' %> />
+                            <%= product.productName %>
+                        </label>
+                        <% }) %>
+                </div>
+                <span class="error-message" id="productsIncludedError"></span>
+            </div>
 
-        <!-- Maximum Discount Amount -->
-        <div class="form-group" id="maxDis">
-            <label for="maxDiscountAmount">Maximum Discount Amount:</label>
-            <input type="number" id="maxDiscountAmount" name="maxDiscountAmount" class="form-control"
-                value="<%= offer.maxDiscountAmount %>" />
-            <span class="error-message" id="maxDiscountAmountError"></span>
-        </div>
+            <!-- Category Checkboxes -->
+            <div class="form-group checkbox-group" id="categoryGroup">
+                <label class="head">Categories:</label>
+                <div>
+                    <% categories.forEach(category=> { %>
+                        <label class="option">
+                            <input type="checkbox" name="categoriesIncluded" value="<%= category._id %>"
+                                <%=(offer.categoriesIncluded && offer.categoriesIncluded.includes(category._id))
+                                ? 'checked' : '' %> />
+                            <%= category.name %>
+                        </label>
+                        <% }) %>
+                </div>
+                <span class="error-message" id="categoriesIncludedError"></span>
+            </div>
 
-        <button type="submit" class="btn btn-success">Update Offer</button>
-    </form>
-</div>
+            <!-- Brand Checkboxes -->
+            <div class="form-group checkbox-group" id="brandGroup">
+                <label class="head">Brands:</label>
+                <div>
+                    <% brands.forEach(brand=> { %>
+                        <label class="option">
+                            <input type="checkbox" name="brandsIncluded" value="<%= brand._id %>"
+                                <%=(offer.brandsIncluded && offer.brandsIncluded.includes(brand._id)) ? 'checked' : ''
+                                %> />
+                            <%= brand.brandName %>
+                        </label>
+                        <% }) %>
+                </div>
+                <span class="error-message" id="brandsIncludedError"></span>
+            </div>
 
-<%- include('../partials/admin/footer.ejs') %>
+            <!-- Offer Type -->
+            <div class="form-group">
+                <label>Offer Type:</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="offerType" value="Percentage" <%=offer.offerType==='Percentage'
+                            ? 'checked' : '' %> /> Percentage</label>
+                    <label><input type="radio" name="offerType" value="Flat" <%=offer.offerType==='Flat' ? 'checked'
+                            : '' %> /> Flat</label>
+                </div>
+                <span class="error-message" id="offerTypeError"></span>
+            </div>
 
-<script>
-    // JavaScript for form validation and dynamic display of fields
-    document.getElementById('editOfferForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-        document.querySelectorAll('.error-message').forEach(msg => msg.textContent = '');
+            <!-- Offer Value -->
+            <div class="form-group">
+                <label for="offerValue">Offer Value:</label>
+                <input type="number" id="offerValue" name="offerValue" class="form-control"
+                    value="<%= offer.offerValue %>" />
+                <span class="error-message" id="offerValueError"></span>
+            </div>
 
-        const offerName = document.getElementById('offerName').value.trim();
-        const discountDescription = document.getElementById('discountDescription').value.trim();
-        const startDate = document.getElementById('startDate').value;
-        const endDate = document.getElementById('endDate').value;
-        const offerType = document.querySelector('input[name="offerType"]:checked');
-        const minPurchaseAmount = document.getElementById('minPurchaseAmount').value.trim();
-        const maxDiscountAmount = document.getElementById('maxDiscountAmount').value.trim();
-        const offerValue = document.getElementById('offerValue').value.trim();
-        const offerGroup = document.querySelector('input[name="offerGroup"]:checked');
+            <!-- Minimum Purchase Amount -->
+            <div class="form-group" id="minPur">
+                <label for="minPurchaseAmount">Minimum Purchase Amount:</label>
+                <input type="number" id="minPurchaseAmount" name="minPurchaseAmount" class="form-control"
+                    value="<%= offer.minPurchaseAmount %>" />
+                <span class="error-message" id="minPurchaseAmountError"></span>
+            </div>
 
-        let valid = true;
+            <!-- Maximum Discount Amount -->
+            <div class="form-group" id="maxDis">
+                <label for="maxDiscountAmount">Maximum Discount Amount:</label>
+                <input type="number" id="maxDiscountAmount" name="maxDiscountAmount" class="form-control"
+                    value="<%= offer.maxDiscountAmount %>" />
+                <span class="error-message" id="maxDiscountAmountError"></span>
+            </div>
 
-        if (!offerName) {
-            document.getElementById('offerNameError').textContent = 'Offer Name is required.';
-            valid = false;
-        }
-        if (!discountDescription) {
-            document.getElementById('discountDescriptionError').textContent = 'Discount Description is required.';
-            valid = false;
-        }
-        if (!startDate) {
-            document.getElementById('startDateError').textContent = 'Start Date is required.';
-            valid = false;
-        }
-        if (!endDate) {
-            document.getElementById('endDateError').textContent = 'End Date is required.';
-            valid = false;
-        }
-        if (!offerType) {
-            document.getElementById('offerTypeError').textContent = 'Offer Type is required.';
-            valid = false;
-        }
-        if (!offerGroup) {
-            document.getElementById('offerGroupError').textContent = 'Offer Group is required.';
-            valid = false;
-        }
+            <button type="submit" class="btn btn-success">Update Offer</button>
+        </form>
+    </div>
 
-        if (offerGroup.value === 'Global' && (!minPurchaseAmount || minPurchaseAmount < 0)) {
-            document.getElementById('minPurchaseAmountError').textContent = 'Minimum Purchase Amount is required and should be greater than zero.';
-            valid = false;
-        }
-        if (offerType.value === 'Percentage' && (!maxDiscountAmount || maxDiscountAmount < 0)) {
-            document.getElementById('maxDiscountAmountError').textContent = 'Maximum Discount Amount is required and should not be a negative number.';
-            valid = false;
-        }
+    <%- include('../partials/admin/footer.ejs') %>
 
-        if (!offerValue) {
-            document.getElementById('offerValueError').textContent = 'Offer Value is required.';
-            valid = false;
-        }
+        <script>
+            // JavaScript for form validation and dynamic display of fields
+            document.getElementById('editOfferForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+                document.querySelectorAll('.error-message').forEach(msg => msg.textContent = '');
 
-        if (offerGroup.value === 'Product' && !Array.from(document.querySelectorAll('input[name="productsIncluded"]:checked')).length) {
-            document.getElementById('productsIncludedError').textContent = 'At least one product must be selected.';
-            valid = false;
-        }
-        if (offerGroup.value === 'Category' && !Array.from(document.querySelectorAll('input[name="categoriesIncluded"]:checked')).length) {
-            document.getElementById('categoriesIncludedError').textContent = 'At least one category must be selected.';
-            valid = false;
-        }
-        if (offerGroup.value === 'Brand' && !Array.from(document.querySelectorAll('input[name="brandsIncluded"]:checked')).length) {
-            document.getElementById('brandsIncludedError').textContent = 'At least one brand must be selected.';
-            valid = false;
-        }
+                const offerName = document.getElementById('offerName').value.trim();
+                const discountDescription = document.getElementById('discountDescription').value.trim();
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                const offerType = document.querySelector('input[name="offerType"]:checked');
+                const minPurchaseAmount = document.getElementById('minPurchaseAmount').value.trim();
+                const maxDiscountAmount = document.getElementById('maxDiscountAmount').value.trim();
+                const offerValue = document.getElementById('offerValue').value.trim();
+                const offerGroup = document.querySelector('input[name="offerGroup"]:checked');
 
-        if (offerType.value === 'Percentage' && offerValue > 92) {
-            document.getElementById('offerValueError').textContent = 'Percentage offer value cannot exceed 92%.';
-        }
+                let valid = true;
 
-        if (offerType.value === 'Percentage' && offerValue < 0) {
-            document.getElementById('offerValueError').textContent = 'Percentage offer value cannot have a value less than 0.';
-        }
-
-        if (new Date(endDate) <= new Date(startDate)) {
-            document.getElementById('endDateError').textContent = 'End Date must be after Start Date.';
-            valid = false;
-        }
-
-        if (valid) {
-            fetch(`/admin/edit-offer/<%= offer._id %>`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    offerName,
-                    discountDescription,
-                    startDate,
-                    endDate,
-                    offerType: offerType.value,
-                    minPurchaseAmount,
-                    maxDiscountAmount,
-                    offerValue,
-                    offerGroup: offerGroup.value,
-                    productsIncluded: Array.from(document.querySelectorAll('input[name="productsIncluded"]:checked')).map(checkbox => checkbox.value),
-                    categoriesIncluded: Array.from(document.querySelectorAll('input[name="categoriesIncluded"]:checked')).map(checkbox => checkbox.value),
-                    brandsIncluded: Array.from(document.querySelectorAll('input[name="brandsIncluded"]:checked')).map(checkbox => checkbox.value)
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Offer Edited Successfully',
-                        text: data.message,
-                    }).then(() => {
-                        window.location.href = '/admin/offers';
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Failed to Edit Offer',
-                        text: data.message
-                    });
+                if (!offerName) {
+                    document.getElementById('offerNameError').textContent = 'Offer Name is required.';
+                    valid = false;
                 }
-            })
-            .catch(error => {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'An unexpected error occurred. Please try again.'
+                if (!discountDescription) {
+                    document.getElementById('discountDescriptionError').textContent = 'Discount Description is required.';
+                    valid = false;
+                }
+                if (!startDate) {
+                    document.getElementById('startDateError').textContent = 'Start Date is required.';
+                    valid = false;
+                }
+                if (!endDate) {
+                    document.getElementById('endDateError').textContent = 'End Date is required.';
+                    valid = false;
+                }
+                if (!offerType) {
+                    document.getElementById('offerTypeError').textContent = 'Offer Type is required.';
+                    valid = false;
+                }
+                if (!offerGroup) {
+                    document.getElementById('offerGroupError').textContent = 'Offer Group is required.';
+                    valid = false;
+                }
+
+                if (offerGroup.value === 'Global' && (!minPurchaseAmount || minPurchaseAmount < 0)) {
+                    document.getElementById('minPurchaseAmountError').textContent = 'Minimum Purchase Amount is required and should be greater than zero.';
+                    valid = false;
+                }
+                if (offerType.value === 'Percentage' && (!maxDiscountAmount || maxDiscountAmount < 0)) {
+                    document.getElementById('maxDiscountAmountError').textContent = 'Maximum Discount Amount is required and should not be a negative number.';
+                    valid = false;
+                }
+
+                if (!offerValue) {
+                    document.getElementById('offerValueError').textContent = 'Offer Value is required.';
+                    valid = false;
+                }
+
+                if (offerGroup.value === 'Product' && !Array.from(document.querySelectorAll('input[name="productsIncluded"]:checked')).length) {
+                    document.getElementById('productsIncludedError').textContent = 'At least one product must be selected.';
+                    valid = false;
+                }
+                if (offerGroup.value === 'Category' && !Array.from(document.querySelectorAll('input[name="categoriesIncluded"]:checked')).length) {
+                    document.getElementById('categoriesIncludedError').textContent = 'At least one category must be selected.';
+                    valid = false;
+                }
+                if (offerGroup.value === 'Brand' && !Array.from(document.querySelectorAll('input[name="brandsIncluded"]:checked')).length) {
+                    document.getElementById('brandsIncludedError').textContent = 'At least one brand must be selected.';
+                    valid = false;
+                }
+
+                if (offerType.value === 'Percentage' && offerValue > 92) {
+                    document.getElementById('offerValueError').textContent = 'Percentage offer value cannot exceed 92%.';
+                }
+
+                if (offerType.value === 'Percentage' && offerValue < 0) {
+                    document.getElementById('offerValueError').textContent = 'Percentage offer value cannot have a value less than 0.';
+                }
+
+                if (new Date(endDate) <= new Date(startDate)) {
+                    document.getElementById('endDateError').textContent = 'End Date must be after Start Date.';
+                    valid = false;
+                }
+
+                if (valid) {
+                    fetch(`/admin/edit-offer/<%= offer._id %>`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            offerName,
+                            discountDescription,
+                            startDate,
+                            endDate,
+                            offerType: offerType.value,
+                            minPurchaseAmount,
+                            maxDiscountAmount,
+                            offerValue,
+                            offerGroup: offerGroup.value,
+                            productsIncluded: Array.from(document.querySelectorAll('input[name="productsIncluded"]:checked')).map(checkbox => checkbox.value),
+                            categoriesIncluded: Array.from(document.querySelectorAll('input[name="categoriesIncluded"]:checked')).map(checkbox => checkbox.value),
+                            brandsIncluded: Array.from(document.querySelectorAll('input[name="brandsIncluded"]:checked')).map(checkbox => checkbox.value)
+                        })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Offer Edited Successfully',
+                                    text: data.message,
+                                }).then(() => {
+                                    window.location.href = '/admin/offers';
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Failed to Edit Offer',
+                                    text: data.message
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'An unexpected error occurred. Please try again.'
+                            });
+                        });
+                }
+            });
+
+            document.querySelectorAll('input[name="offerGroup"]').forEach(radio => {
+                radio.addEventListener('change', function () {
+                    document.querySelectorAll('.checkbox-group').forEach(group => group.style.display = 'none');
+                    document.getElementById('minPur').style.display = 'none';
+                    if (this.value === 'Product') {
+                        document.getElementById('productGroup').style.display = 'block';
+                    } else if (this.value === 'Category') {
+                        document.getElementById('categoryGroup').style.display = 'block';
+                    } else if (this.value === 'Brand') {
+                        document.getElementById('brandGroup').style.display = 'block';
+                    } else if (this.value === 'Global') {
+                        document.getElementById('minPur').style.display = 'block';
+                    }
                 });
             });
-        }
-    });
 
-    document.querySelectorAll('input[name="offerGroup"]').forEach(radio => {
-        radio.addEventListener('change', function () {
-            document.querySelectorAll('.checkbox-group').forEach(group => group.style.display = 'none');
+            document.querySelectorAll('input[name="offerType"]').forEach(radio => {
+                radio.addEventListener('change', function () {
+                    document.getElementById('maxDis').style.display = 'none';
+                    if (this.value === 'Percentage') {
+                        document.getElementById('maxDis').style.display = 'block';
+                    }
+                });
+            });
+
             document.getElementById('minPur').style.display = 'none';
-            if (this.value === 'Product') {
-                document.getElementById('productGroup').style.display = 'block';
-            } else if (this.value === 'Category') {
-                document.getElementById('categoryGroup').style.display = 'block';
-            } else if (this.value === 'Brand') {
-                document.getElementById('brandGroup').style.display = 'block';
-            } else if (this.value === 'Global') {
-                document.getElementById('minPur').style.display = 'block';
-            }
-        });
-    });
-
-    document.querySelectorAll('input[name="offerType"]').forEach(radio => {
-        radio.addEventListener('change', function () {
             document.getElementById('maxDis').style.display = 'none';
-            if (this.value === 'Percentage') {
-                document.getElementById('maxDis').style.display = 'block';
-            }
-        });
-    });
-
-    document.getElementById('minPur').style.display = 'none';
-    document.getElementById('maxDis').style.display = 'none';
-    document.querySelectorAll('.checkbox-group').forEach(group => group.style.display = 'none');
-</script>
+            document.querySelectorAll('.checkbox-group').forEach(group => group.style.display = 'none');
+        </script>

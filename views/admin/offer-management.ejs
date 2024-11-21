@@ -33,6 +33,7 @@
                                 <th class="text-center">#</th>
                                 <th>Offer Name</th>
                                 <th>Discount</th>
+                                <th>Offer Group</th>
                                 <th>Start Date</th>
                                 <th>End Date</th>
                                 <th>Min Purchase</th>
@@ -55,6 +56,9 @@
                                     </td>
                                     <td class="text-start">
                                         <%= offer.discountDescription %>
+                                    </td>
+                                    <td class="text-start">
+                                        <%= offer.offerGroup %>
                                     </td>
                                     <td class="text-start">
                                         <%= offer.startDate.toDateString() %>

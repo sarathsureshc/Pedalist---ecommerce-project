@@ -126,7 +126,6 @@ const downloadSalesReportPDF = async (req, res) => {
     };
     const salesData = await getSalesData(filters);
 
-    // Calculate totals
     const totalSalesCount = salesData.reduce(
       (acc, sale) => acc + sale.totalSalesCount,
       0,
@@ -146,99 +145,50 @@ const downloadSalesReportPDF = async (req, res) => {
     res.setHeader("Content-type", "application/pdf");
 
     doc.pipe(res);
-
     doc.font("C:/Windows/Fonts/Arial.ttf");
 
-    // Headline
-    doc.fontSize(25).text("Pedalist Bikes", { align: "center" });
-    doc.moveDown();
+    doc.fontSize(25).text("Pedalist Bikes", { align: "center" }).moveDown();
+    doc.fontSize(20).text("Sales Report", { align: "center" }).moveDown();
 
-    // Subheading
-    doc.fontSize(20).text("Sales Report", { align: "center" });
-    doc.moveDown();
-
-    // Current Date
     const currentDate = new Date().toLocaleDateString();
-    doc.fontSize(12).text(`Date: ${currentDate}`, { align: "center" });
-    doc.moveDown();
+    doc.fontSize(12).text(`Date: ${currentDate}`, { align: "center" }).moveDown();
 
-    // Sales Date Range
     let salesDateRange =
       filters.filterType === "custom"
         ? `Sales Date: ${new Date(filters.startDate).toLocaleDateString()} - ${new Date(filters.endDate).toLocaleDateString()}`
         : `Sales Date: ${filters.filterType.charAt(0).toUpperCase() + filters.filterType.slice(1)}`;
+    
+    doc.fontSize(12).text(salesDateRange, { align: "center" }).moveDown();
 
-    doc.fontSize(12).text(salesDateRange, { align: "center" });
-    doc.moveDown();
-
-    // Summary Data
     doc.fontSize(12).text(`Total Sales Count: ${totalSalesCount}`);
     doc.text(`Total Order Amount: ₹${totalOrderAmount.toFixed(2)}`);
-    doc.text(`Total Discounts: ₹${totalDiscount.toFixed(2)}`);
-    doc.moveDown();
+    doc.text(`Total Discounts: ₹${totalDiscount.toFixed(2)}`).moveDown();
 
-    // Table setup
-    const tableTop = doc.y;
-    const tableWidth = 500; // Define the table width here
-    const columnWidths = [200, 100, 100, 100]; // Widths of each column
-    const headers = [
-      "Product Name",
-      "Total Sales Count",
-      "Total Revenue",
-      "Discounts",
-    ];
+    const tableTop = doc.y + 20;
+    const tableWidth = 500;
+    const columnWidths = [200, 100, 100, 100];
+    const headers = ["Product Name", "Total Sales Count", "Total Revenue", "Discounts"];
 
-    // Draw table header
     doc.fontSize(12).font("Helvetica-Bold");
     headers.forEach((header, index) => {
-      doc.text(
-        header,
-        10 + columnWidths.slice(0, index).reduce((a, b) => a + b, 0) + 10,
-        tableTop,
-        { width: columnWidths[index], align: "center" },
-      );
+      doc.text(header, 10 + columnWidths.slice(0, index).reduce((a, b) => a + b, 0) + 10, tableTop, { width: columnWidths[index], align: "center" });
     });
 
-    // Draw the rows of the table
     doc.font("Helvetica");
     salesData.forEach((sale, index) => {
       const rowY = tableTop + 40 + index * 20;
-      doc.text(sale.productName, 10 + 10, rowY, {
-        width: columnWidths[0],
-        align: "left",
-      });
-      doc.text(
-        sale.totalSalesCount.toString(),
-        10 + columnWidths[0] + 10,
-        rowY,
-        { width: columnWidths[1], align: "center" },
-      );
-      doc.text(
-        `₹${sale.totalRevenue.toFixed(2)}`,
-        10 + columnWidths[0] + columnWidths[1] + 10,
-        rowY,
-        { width: columnWidths[2], align: "right" },
-      );
-      doc.text(
-        `₹${sale.productDiscount ? sale.productDiscount.toFixed(2) : "0.00"}`,
-        10 + columnWidths[0] + columnWidths[1] + columnWidths[2] + 10,
-        rowY,
-        { width: columnWidths[3], align: "right" },
-      );
-
-      // Draw horizontal border for each row
-      doc
-        .moveTo(10, rowY + 20)
-        .lineTo(10 + tableWidth, rowY + 20)
-        .stroke(); // Row border
+      doc.text(sale.productName, 10 + 10, rowY, { width: columnWidths[0], align: "left" });
+      doc.text(sale.totalSalesCount.toString(), 10 + columnWidths[0] + 10, rowY, { width: columnWidths[1], align: "center" });
+      doc.text(`₹${sale.totalRevenue.toFixed(2)}`, 10 + columnWidths[0] + columnWidths[1] + 10, rowY, { width: columnWidths[2], align: "right" });
+      doc.text(`₹${sale.productDiscount ? sale.productDiscount.toFixed(2) : "0.00"}`, 10 + columnWidths[0] + columnWidths[1] + columnWidths[2] + 10, rowY, { width: columnWidths[3], align: "right" });
     });
 
-    // Draw the final bottom border of the table
     const lastRowY = tableTop + 40 + salesData.length * 20;
-    doc
-      .moveTo(10, lastRowY)
-      .lineTo(10 + tableWidth, lastRowY)
-      .stroke();
+
+    // Footer section
+    doc.moveDown(10);
+    doc.fontSize(10).text("Thank you for your business!", { align: "left" });
+    doc.text("For any inquiries, please contact us at support@pedalistbikes.com", { align: "left" });
 
     doc.end();
   } catch (error) {

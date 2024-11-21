@@ -44,7 +44,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% data.reverse().forEach((product, index) => { %>
+                            <% data.forEach((product, index) => { %>
                                 <tr style="<%= product.isDeleted ? 'opacity: 0.5;' : '' %>">
                                     <td class="text-center">
                                         <%= index + 1 + (currentPage - 1) * 4 %>

@@ -107,6 +107,7 @@ const getProductPage = async (req, res) => {
     const productData = await Product.find({
       productName: { $regex: new RegExp(".*" + search + ".*", "i") },
     })
+    .sort({ createdOn: -1 })
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .populate("category")
