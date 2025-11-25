@@ -86,6 +86,15 @@ const productSchema = new Schema({
   },
 });
 
+// Indexes for improved query performance
+productSchema.index({ productName: "text", description: "text" }); // Text search
+productSchema.index({ category: 1, isListed: 1 }); // Category filtering
+productSchema.index({ brand: 1 }); // Brand filtering
+productSchema.index({ price: 1 }); // Price sorting/filtering
+productSchema.index({ rating: -1 }); // Rating sorting
+productSchema.index({ createdOn: -1 }); // Recent products
+productSchema.index({ isDeleted: 1 }); // Soft delete filtering
+
 const Product = Mongoose.model("Product", productSchema);
 
 module.exports = Product;

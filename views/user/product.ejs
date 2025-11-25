@@ -5,29 +5,30 @@
     <div class="sidebar">
         <h3>Search</h3>
         <div class="search-wrapper" style="display: flex; gap: 10px;">
-            <input id="search" placeholder="Search products..." type="text" value="<%= search %>" onkeydown="handleKeyDown(event)" />
-            <button onclick="applyFilters()">Search</button>
+            <input id="search" placeholder="Search products..." type="text" value="<%= search %>" onkeydown="handleKeyDown(event)" class="input-field"/>
+            <button onclick="applyFilters()" class="btn primary-btn">Search</button>
         </div>
     
         <div class="price-filter">
             <h3>Filter by Price</h3>
-            <div id="priceSlider"></div>
+            <div id="priceSlider" class="slider"></div>
             <div>
                 <span>Selected Price Range: ₹<span id="selectedPriceRange">0 - 100,000</span></span>
             </div>
-            <button onclick="applyFilters()">Apply</button>
+            <button onclick="applyFilters()" class="btn secondary-btn">Apply</button>
         </div>
     
         <div class="out-of-stock-filter">
-            <label>
+            <label class="checkbox-container">
                 <input type="checkbox" id="showOutOfStock" onchange="applyFilters()" <% if (showOutOfStock==="true") { %> checked <% } %> >
+                <span class="checkmark"></span>
                 Show Out of Stock Products
             </label>
         </div>
     
         <div class="category-filter">
             <h3>Filter by Category:</h3>
-            <select id="category" onchange="applyFilters()">
+            <select id="category" onchange="applyFilters()" class="dropdown">
                 <option value="">All Categories</option>
                 <% categories.forEach(category => { %>
                     <option value="<%= category._id %>" <%= selectedCategory === category._id.toString() ? "selected" : "" %>>
@@ -39,7 +40,7 @@
     
         <div class="sorting-options">
             <h3>Sort by:</h3>
-            <select id="sortBy" onchange="applyFilters()">
+            <select id="sortBy" onchange="applyFilters()" class="dropdown">
                 <option value="popularity" <%= sortBy === "popularity" ? "selected" : "" %>>Popularity</option>
                 <option value="priceLowToHigh" <%= sortBy === "priceLowToHigh" ? "selected" : "" %>>Price: Low to High</option>
                 <option value="priceHighToLow" <%= sortBy === "priceHighToLow" ? "selected" : "" %>>Price: High to Low</option>
@@ -62,37 +63,37 @@
         <p>Showing all <%= count %> results</p>
         <div class="products">
             <% products.forEach(product => { %>
-                <a href="/product-detail?id=<%= product._id %>">
+                <a href="/product-detail?id=<%= product._id %>" class="product-card">
                     <div class="product">
-                        <img alt="<%= product.productName %>" height="300" src="uploads/product-images/<%= product.image[0] %>" width="300" />
-                        <h3><%= product.productName %></h3>
-                        <h6><%= product.brand.brandName %></h6>
-                        <p><%= product.category.name %></p>
-                        <p>
+                        <img alt="<%= product.productName %>" height="300" src="uploads/product-images/<%= product.image[0] %>" width="300" class="product-image"/>
+                        <h3 class="product-title"><%= product.productName %></h3>
+                        <h6 class="product-brand"><%= product.brand.brandName %></h6>
+                        <p class="product-category"><%= product.category.name %></p>
+                        <p class="product-price">
                             <% if (product.bestOffer) { %>
-                                <span class="original-price" style="text-decoration: line-through;">₹<%= product.price.toFixed(2) %></span>
-                                <span class="discounted-price" style="color: red;">₹<%= (product.price - product.bestOffer.effectiveDiscount).toFixed(2) %></span>
+                                <span class="original-price">₹<%= product.price.toFixed(2) %></span>
+                                <span class="discounted-price">₹<%= (product.price - product.bestOffer.effectiveDiscount).toFixed(2) %></span>
                                 <p class="discount-info">You save: ₹<%= product.bestOffer.effectiveDiscount.toFixed(2) %></p>
                             <% } else { %>
                                 <span class="discounted-price">₹<%= product.price.toFixed(2) %></span>
                             <% } %>
                         </p>
-                        <p> <%= product.quantity > 0 ? 'Available' : 'Out of Stock' %></p>
+                        <p class="availability"> <%= product.quantity > 0 ? 'Available' : 'Out of Stock' %></p>
                     </div>
                 </a>
             <% }); %>
         </div>
         <div class="pagination">
             <% if (currentPage > 1) { %>
-                <a href="/products?page=<%= currentPage - 1 %>&sortBy=<%= sortBy %>&showOutOfStock=<%= showOutOfStock %>&category=<%= selectedCategory %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>">Previous</a>
+                <a href="/products?page=<%= currentPage - 1 %>&sortBy=<%= sortBy %>&showOutOfStock=<%= showOutOfStock %>&category=<%= selectedCategory %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>" class="pagination-link">Previous</a>
             <% } %>
             
             <% for (let i = 1; i <= totalPages; i++) { %>
-                <a href="/products?page=<%= i %>&sortBy=<%= sortBy %>&showOutOfStock=<%= showOutOfStock %>&category=<%= selectedCategory %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>" class="<%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+                <a href="/products?page=<%= i %>&sortBy=<%= sortBy %>&showOutOfStock=<%= showOutOfStock %>&category=<%= selectedCategory %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>" class="pagination-link <%= i === currentPage ? 'active' : '' %>"><%= i %></a>
             <% } %>
             
             <% if (currentPage < totalPages) { %>
-                <a href="/products?page=<%= parseInt(currentPage) + 1 %>&sortBy=<%= sortBy %>&showOutOfStock=<%= showOutOfStock %>&category=<%= selectedCategory %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>">Next</a>
+                <a href="/products?page=<%= parseInt(currentPage) + 1 %>&sortBy=<%= sortBy %>&showOutOfStock=<%= showOutOfStock %>&category=<%= selectedCategory %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>" class="pagination-link">Next</a>
             <% } %>
         </div>
     </div>

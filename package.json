@@ -1,38 +1,60 @@
 {
   "name": "pedalist-ecommerce-project",
   "version": "1.0.0",
+  "description": "Full-featured e-commerce platform for cycling products",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app"
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "build": "echo 'No build step required for Node.js application'",
+    "test": "echo 'Tests not yet implemented' && exit 0",
+    "lint": "echo 'Linting not yet configured' && exit 0"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
   },
   "author": "",
   "license": "ISC",
-  "description": "",
+  "keywords": [
+    "ecommerce",
+    "nodejs",
+    "express",
+    "mongodb",
+    "cycling"
+  ],
   "dependencies": {
+    "axios": "^1.13.2",
     "bcrypt": "^5.1.1",
     "chart.js": "^4.4.6",
     "connect-flash": "^0.1.1",
+    "connect-mongo": "^5.1.0",
+    "cors": "^2.8.5",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "exceljs": "^4.4.0",
     "express": "^4.21.0",
+    "express-rate-limit": "^8.2.1",
     "express-session": "^1.18.1",
+    "express-validator": "^7.3.1",
+    "helmet": "^8.1.0",
     "mongodb": "^6.9.0",
     "mongoose": "^8.7.0",
     "multer": "^1.4.5-lts.1",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.15",
-    "nodemon": "^3.1.7",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "pdfkit": "^0.15.1",
-    "pedalist-ecommerce-project": "file:",
     "razorpay": "^2.9.5",
     "sharp": "^0.33.5",
-    "uuid": "^10.0.0"
+    "uuid": "^10.0.0",
+    "winston": "^3.18.3",
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
+    "nodemon": "^3.1.7",
     "prettier": "^3.3.3"
   }
 }

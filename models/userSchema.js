@@ -82,6 +82,13 @@ const userSchema = new Schema({
   ],
 });
 
+// Indexes for improved query performance
+userSchema.index({ email: 1 });
+userSchema.index({ googleId: 1 });
+userSchema.index({ referralCode: 1 });
+userSchema.index({ createdOn: -1 });
+userSchema.index({ isBlocked: 1 });
+
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;

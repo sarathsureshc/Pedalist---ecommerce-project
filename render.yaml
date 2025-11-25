@@ -1,0 +1,35 @@
+services:
+  # Web Service
+  - type: web
+    name: pedalist-ecommerce
+    env: node
+    region: oregon # Change to your preferred region
+    plan: free # or starter, standard, pro
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        sync: false # Set in Render Dashboard
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: RAZORPAY_ID_KEY
+        sync: false
+      - key: RAZORPAY_SECRET_KEY
+        sync: false
+      - key: NODEMAILER_EMAIL
+        sync: false
+      - key: NODEMAILER_PASSWORD
+        sync: false
+      - key: RENDER_EXTERNAL_URL
+        value: https://pedalist-ecommerce.onrender.com # Update with your actual URL
+      - key: ALLOWED_ORIGINS
+        value: https://pedalist-ecommerce.onrender.com # Update with your actual URL

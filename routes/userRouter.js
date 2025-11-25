@@ -14,13 +14,27 @@ const walletController = require("../controllers/user/walletController");
 const couponController = require("../controllers/user/couponController");
 const staticController = require("../controllers/user/staticController");
 
+// Validation and rate limiting
+const {
+  signupValidation,
+  loginValidation,
+  addressValidation,
+  handleValidationErrors,
+} = require("../middlewares/validators");
+const { authLimiter, otpLimiter } = require("../middlewares/rateLimiter");
+
 router.get("/pageNotFound", userController.pageNotFound);
 router.get("/", userAuth, userController.loadHomepage);
 
 router.get("/signup", userController.loadSignuppage);
-router.post("/signup", userController.signup);
+router.post(
+  "/signup",
+  signupValidation,
+  handleValidationErrors,
+  userController.signup,
+);
 router.post("/verify-otp", userController.verifyOtp);
-router.post("/resend-otp", userController.resendOtp);
+router.post("/resend-otp", otpLimiter, userController.resendOtp);
 
 router.get(
   "/auth/google",
@@ -39,7 +53,13 @@ router.get(
 );
 
 router.get("/login", userController.loadLoginpage);
-router.post("/login", userController.login);
+router.post(
+  "/login",
+  authLimiter,
+  loginValidation,
+  handleValidationErrors,
+  userController.login,
+);
 // router.get("/forgot-password",userController.loadForgotPassword);
 // router.post("/forgot-password",userController.forgotPassword);
 router.get("/logout", userController.logout);
@@ -63,9 +83,21 @@ router.post("/edit-password", userAuth, profileController.passwordChange);
 
 router.get("/address", userAuth, addressController.loadAddressPage);
 router.get("/add-address", userAuth, addressController.loadAddAddressPage);
-router.post("/add-address", userAuth, addressController.addAddress);
+router.post(
+  "/add-address",
+  userAuth,
+  addressValidation,
+  handleValidationErrors,
+  addressController.addAddress,
+);
 router.get("/edit-address", userAuth, addressController.editAddress);
-router.post("/edit-address/:id", userAuth, addressController.updateAddress);
+router.post(
+  "/edit-address/:id",
+  userAuth,
+  addressValidation,
+  handleValidationErrors,
+  addressController.updateAddress,
+);
 router.get("/remove-address/:id", userAuth, addressController.removeAddress);
 
 router.get("/orders", userAuth, orderController.getUserOrders);
@@ -87,6 +119,8 @@ router.get("/checkout", userAuth, checkoutController.getCheckoutPage);
 router.post(
   "/add-checkout-address",
   userAuth,
+  addressValidation,
+  handleValidationErrors,
   addressController.addCheckoutAddress,
 );
 

@@ -106,6 +106,14 @@ const orderSchema = new Schema({
   },
 });
 
+// Indexes for improved query performance
+orderSchema.index({ orderId: 1 }); // Unique order lookup
+orderSchema.index({ userId: 1, createdOn: -1 }); // User orders by date
+orderSchema.index({ "items.itemOrderId": 1 }); // Individual item lookup
+orderSchema.index({ paymentStatus: 1 }); // Payment status filtering
+orderSchema.index({ "items.status": 1 }); // Order status filtering
+orderSchema.index({ createdOn: -1 }); // Recent orders
+
 const Order = mongoose.model("Order", orderSchema);
 
 module.exports = Order;

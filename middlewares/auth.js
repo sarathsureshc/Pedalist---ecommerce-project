@@ -1,4 +1,5 @@
 const User = require("../models/userSchema");
+const logger = require("../config/logger");
 
 const userAuth = (req, res, next) => {
   if (req.session.user || req.user) {
@@ -16,7 +17,7 @@ const userAuth = (req, res, next) => {
         }
       })
       .catch((err) => {
-        console.log("Error in user authentication middleware", err);
+        logger.error("Error in user authentication middleware:", err);
         res.status(500).send("Internal Server Error");
       });
   } else {
@@ -24,20 +25,28 @@ const userAuth = (req, res, next) => {
   }
 };
 
-const adminAuth = (req, res, next) => {
-  User.findOne({ isAdmin: true })
-    .then((data) => {
-      if (data && req.session.admin) {
-        // console.log("The user exist")
-        next();
-      } else {
-        res.redirect("/admin/login");
-      }
-    })
-    .catch((error) => {
-      console.log("Error in admin auth middleware", error);
-      res.status(500).send("Internal Server error");
-    });
+const adminAuth = async (req, res, next) => {
+  try {
+    if (!req.session.admin) {
+      return res.redirect("/admin/login");
+    }
+
+    // Verify the specific admin user exists and is actually an admin
+    const admin = await User.findById(req.session.admin);
+
+    if (!admin || !admin.isAdmin) {
+      req.session.admin = null;
+      logger.warn(
+        `Unauthorized admin access attempt: ${req.session.admin || "unknown"}`,
+      );
+      return res.redirect("/admin/login");
+    }
+
+    next();
+  } catch (error) {
+    logger.error("Error in admin auth middleware:", error);
+    res.status(500).send("Internal Server error");
+  }
 };
 
 module.exports = {
