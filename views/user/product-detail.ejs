@@ -32,10 +32,10 @@
                 <p class="text-muted"><%= product.category.name %></p>
                 <p class="price">
                     <% if (bestOffer) { %>
-                        <span class="original-price" style="text-decoration: line-through;">&#8377;<%= product.price %></span>
-                        <span class="discounted-price" style="color: red;">&#8377;<%= (product.price - bestOffer.effectiveDiscount).toFixed(2) %></span>
+                        <span class="original-price">&#8377;<%= product.price %></span>
+                        <span class="discounted-price">&#8377;<%= (product.price - bestOffer.effectiveDiscount).toFixed(2) %></span>
                     <% } else { %>
-                        &#8377;<%= product.price %>
+                        <span class="discounted-price">&#8377;<%= product.price %></span>
                     <% } %>
                 </p>
     
@@ -48,13 +48,11 @@
                     <span class="rating-number"><%= product.rating %> / 5</span>
                 </div>
 
-                <p>
-                    <ul class="specification-list">
-                        <% for (let i = 1; i <= 4; i++) { %>
-                            <li><i class="bi bi-bullseye" style="color: red;"></i> <%= product[`specification${i}`] %></li>
-                        <% } %>
-                    </ul>
-                </p>
+                <ul class="specification-list">
+                    <% for (let i = 1; i <= 4; i++) { %>
+                        <li><i class="bi bi-check-circle-fill"></i> <%= product[`specification${i}`] %></li>
+                    <% } %>
+                </ul>
                 <p class="availability">
                     <strong class="<%= product.status === 'Available' ? 'available' : product.status === 'Out of Stock' ? 'out-of-stock' : product.status === 'Discontinued' ? 'discontinued' : '' %>">
                     <%= product.status %></strong>
@@ -64,11 +62,11 @@
                 <div class="pedalist-purchase-options">
                     <div class="form-group">
                         <label for="quantity">Quantity</label>
-                        <input type="number" id="quantity" class="form-control" min="1" max="<%= product.quantity <= 10 ? 1 : 5 %>" value="1">
+                        <input type="number" id="quantity" class="form-control" min="1" max="<%= product.quantity <= 10 ? 1 : 5 %>" value="1" aria-label="Product quantity">
                     </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn btn-warning pedalist-add-to-cart" onclick="addToCart('<%= product._id %>')">Add to Cart</button>
-                        <button class="btn btn-warning pedalist-wishlist" onclick="addToWishlist('<%= product._id %>')">Add to Wishlist</button>
+                    <div class="button-group">
+                        <button class="btn btn-warning pedalist-add-to-cart" onclick="addToCart('<%= product._id %>')" aria-label="Add to cart">Add to Cart</button>
+                        <button class="btn btn-warning pedalist-wishlist" onclick="addToWishlist('<%= product._id %>')" aria-label="Add to wishlist">Add to Wishlist</button>
                     </div>
                 </div>
             </div>

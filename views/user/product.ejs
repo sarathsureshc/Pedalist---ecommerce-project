@@ -3,32 +3,48 @@
 
 <div class="wrapper">
     <div class="sidebar">
-        <h3>Search</h3>
-        <div class="search-wrapper" style="display: flex; gap: 10px;">
-            <input id="search" placeholder="Search products..." type="text" value="<%= search %>" onkeydown="handleKeyDown(event)" class="input-field"/>
-            <button onclick="applyFilters()" class="btn primary-btn">Search</button>
-        </div>
-    
-        <div class="price-filter">
-            <h3>Filter by Price</h3>
-            <div id="priceSlider" class="slider"></div>
-            <div>
-                <span>Selected Price Range: ₹<span id="selectedPriceRange">0 - 100,000</span></span>
+        <h3><i class="bi bi-funnel"></i> Filters</h3>
+        
+        <!-- Search Section -->
+        <div class="filter-section search-section">
+            <label for="search" class="filter-label">
+                <i class="bi bi-search"></i> Search Products
+            </label>
+            <div class="search-wrapper">
+                <input id="search" placeholder="Search by name..." type="text" value="<%= search %>" class="input-field" aria-label="Search products"/>
+                <button id="searchBtn" class="btn primary-btn"><i class="bi bi-search"></i> Search</button>
             </div>
-            <button onclick="applyFilters()" class="btn secondary-btn">Apply</button>
         </div>
     
-        <div class="out-of-stock-filter">
+        <!-- Price Filter Section -->
+        <div class="filter-section price-filter">
+            <label class="filter-label">
+                <i class="bi bi-currency-rupee"></i> Price Range
+            </label>
+            <div id="priceSlider" class="slider"></div>
+            <div class="price-display">
+                <span class="price-label">Selected:</span>
+                <span class="price-value">₹<span id="selectedPriceRange">0 - 100,000</span></span>
+            </div>
+            <button id="applyPriceBtn" class="btn secondary-btn"><i class="bi bi-check-circle"></i> Apply Price</button>
+        </div>
+    
+        <!-- Stock Filter Section -->
+        <div class="filter-section out-of-stock-filter">
             <label class="checkbox-container">
-                <input type="checkbox" id="showOutOfStock" onchange="applyFilters()" <% if (showOutOfStock==="true") { %> checked <% } %> >
-                <span class="checkmark"></span>
-                Show Out of Stock Products
+                <input type="checkbox" id="showOutOfStock" <% if (showOutOfStock==="true") { %> checked <% } %>>
+                <span class="checkbox-label">
+                    <i class="bi bi-eye"></i> Show Out of Stock
+                </span>
             </label>
         </div>
     
-        <div class="category-filter">
-            <h3>Filter by Category:</h3>
-            <select id="category" onchange="applyFilters()" class="dropdown">
+        <!-- Category Filter Section -->
+        <div class="filter-section category-filter">
+            <label for="category" class="filter-label">
+                <i class="bi bi-grid"></i> Category
+            </label>
+            <select id="category" class="dropdown">
                 <option value="">All Categories</option>
                 <% categories.forEach(category => { %>
                     <option value="<%= category._id %>" <%= selectedCategory === category._id.toString() ? "selected" : "" %>>
@@ -38,9 +54,12 @@
             </select>
         </div>
     
-        <div class="sorting-options">
-            <h3>Sort by:</h3>
-            <select id="sortBy" onchange="applyFilters()" class="dropdown">
+        <!-- Sort Options Section -->
+        <div class="filter-section sorting-options">
+            <label for="sortBy" class="filter-label">
+                <i class="bi bi-sort-down"></i> Sort By
+            </label>
+            <select id="sortBy" class="dropdown">
                 <option value="popularity" <%= sortBy === "popularity" ? "selected" : "" %>>Popularity</option>
                 <option value="priceLowToHigh" <%= sortBy === "priceLowToHigh" ? "selected" : "" %>>Price: Low to High</option>
                 <option value="priceHighToLow" <%= sortBy === "priceHighToLow" ? "selected" : "" %>>Price: High to Low</option>
@@ -51,6 +70,9 @@
                 <option value="zToA" <%= sortBy === "zToA" ? "selected" : "" %>>Z - A</option>
             </select>
         </div>
+        
+        <!-- Clear Filters Button -->
+        <button id="clearFiltersBtn" class="btn clear-btn"><i class="bi bi-x-circle"></i> Clear All Filters</button>
     </div>    
 
     <div class="content-product">
@@ -103,12 +125,21 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.js"></script>
 <script>
+    // Initialize elements
     const priceSlider = document.getElementById('priceSlider');
     const selectedPriceRange = document.getElementById('selectedPriceRange');
+    const searchInput = document.getElementById('search');
+    const searchBtn = document.getElementById('searchBtn');
+    const applyPriceBtn = document.getElementById('applyPriceBtn');
+    const showOutOfStockCheckbox = document.getElementById('showOutOfStock');
+    const categorySelect = document.getElementById('category');
+    const sortBySelect = document.getElementById('sortBy');
+    const clearFiltersBtn = document.getElementById('clearFiltersBtn');
 
     const minPrice = <%= minPrice %>;
     const maxPrice = <%= maxPrice %>;
 
+    // Initialize price slider
     noUiSlider.create(priceSlider, {
         start: [minPrice, maxPrice],
         connect: true,
@@ -125,17 +156,12 @@
     priceSlider.noUiSlider.set([minPrice, maxPrice]);
     selectedPriceRange.innerHTML = minPrice + ' - ' + maxPrice; 
 
-    function handleKeyDown(event) {
-        if (event.key === 'Enter') {
-            applyFilters();
-        }
-    }
-
+    // Apply filters function
     function applyFilters() {
-        const searchQuery = document.getElementById("search").value;
-        const sortBy = document.getElementById("sortBy").value;
-        const showOutOfStock = document.getElementById("showOutOfStock").checked;
-        const category = document.getElementById("category").value;
+        const searchQuery = searchInput.value;
+        const sortBy = sortBySelect.value;
+        const showOutOfStock = showOutOfStockCheckbox.checked;
+        const category = categorySelect.value;
 
         const priceValues = priceSlider.noUiSlider.get();
         const minPrice = Math.round(priceValues[0]);
@@ -156,4 +182,24 @@
 
         window.location.href = `/products?${queryParams.toString()}`;
     }
+
+    // Clear filters function
+    function clearFilters() {
+        window.location.href = '/products';
+    }
+
+    // Add event listeners
+    searchBtn.addEventListener('click', applyFilters);
+    applyPriceBtn.addEventListener('click', applyFilters);
+    showOutOfStockCheckbox.addEventListener('change', applyFilters);
+    categorySelect.addEventListener('change', applyFilters);
+    sortBySelect.addEventListener('change', applyFilters);
+    clearFiltersBtn.addEventListener('click', clearFilters);
+    
+    // Search on Enter key
+    searchInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            applyFilters();
+        }
+    });
 </script>
